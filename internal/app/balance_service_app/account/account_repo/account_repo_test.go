@@ -16,16 +16,16 @@ func TestAddNewAccount(t *testing.T) {
 	}
 	defer db.Close()
 
-	var newAccountID int64 = 1
+	var newUserID int64 = 1
 
 	mock.
 		ExpectExec("INSERT INTO").
-		WithArgs(newAccountID).
+		WithArgs(newUserID).
 		WillReturnResult(sqlmock.NewResult(1, 1))
 
 	repo := NewAccountRepo(db)
 
-	execErr := repo.AddNewAccount(newAccountID)
+	execErr := repo.AddNewAccount(newUserID)
 	if execErr != nil {
 		t.Errorf("unexpected err: %v", execErr)
 		return

@@ -14,25 +14,25 @@ func NewAccountRepo(conn *sql.DB) *AccountRepo {
 	return &AccountRepo{conn: conn}
 }
 
-func (repo *AccountRepo) AddNewAccount(accountID int64) error {
+func (repo *AccountRepo) AddNewAccount(userID int64) error {
 	repo.mutex.Lock()
 	query := MySQLAddNewAccount{}.GetString()
-	_, err := repo.conn.Exec(query, accountID)
+	_, err := repo.conn.Exec(query, userID)
 	repo.mutex.Unlock()
 	return err
 }
 
-func (repo *AccountRepo) GetCurrentAmount(accountID int64) (amount float64, err error) {
+func (repo *AccountRepo) GetCurrentAmount(userID int64) (amount float64, err error) {
 	repo.mutex.Lock()
 	query := MySQLGetCurrentAmount{}.GetString()
-	row := repo.conn.QueryRow(query, accountID)
+	row := repo.conn.QueryRow(query, userID)
 	err = row.Scan(&amount)
 	repo.mutex.Unlock()
 
 	if err == sql.ErrNoRows {
 		err = AccountNotExist
 	}
-	
+
 	return amount, err
 }
 
