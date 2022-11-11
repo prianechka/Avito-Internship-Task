@@ -6,17 +6,17 @@ type MySQLChangeAmount struct{}
 type MySQLDeleteAccount struct{}
 
 func (sql MySQLAddNewAccount) GetString() string {
-	return "INSERT INTO balanceApp.accounts(`accountID`, `amount`) VALUES (?, 0);"
+	return "INSERT INTO balanceApp.accounts(`userID`, `amount`) VALUES (?, 0);"
 }
 
 func (sql MySQLGetCurrentAmount) GetString() string {
-	return "SELECT amount FROM balanceApp.accounts WHERE accountID = ?;"
+	return "SELECT amount FROM balanceApp.accounts WHERE userID = ?;"
 }
 
 func (sql MySQLChangeAmount) GetString() string {
-	return "UPDATE balanceApp.accounts SET amount = amoumt + ? WHERE accountID = ?;"
+	return "UPDATE balanceApp.accounts SET amount = amoumt + ? WHERE userID = ?;"
 }
 
 func (sql MySQLDeleteAccount) GetString() string {
-	return "DELETE FROM balanceApp.accounts WHERE accountID = ?;"
+	return "DELETE FROM balanceApp.accounts WHERE userID = ?;"
 }
