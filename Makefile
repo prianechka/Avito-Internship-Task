@@ -5,6 +5,7 @@ build: go build -o server.out -v ./cmd/server
 
 
 run-coverage:
+`	go work init
 	go work edit -json | jq -r '.Use[].DiskPath'  | xargs -I{} golangci-lint run {}/...
 	go work use .
 	go test ./... -covermode=atomic -coverprofile=cover
