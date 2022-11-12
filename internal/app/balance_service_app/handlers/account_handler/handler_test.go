@@ -388,3 +388,368 @@ func TestRefillAccountNotExist(t *testing.T) {
 		return
 	}
 }
+
+// TestHandlerTransferSuccess проверяет, что перевод средств между двумя аккаунтами прошёл успешно и вернулось 200
+func TestHandlerTransferSuccess(t *testing.T) {
+	var (
+		srcUserID          int64   = 1
+		dstUserID          int64   = 2
+		sum                float64 = 200
+		balanceFirst       float64 = 400
+		balanceSecond      float64 = 200
+		comment                    = "Всё хорошо!"
+		expectedStatusCode         = http.StatusOK
+	)
+
+	// Подготовка БД для таблицы с аккаунтами
+	accountDB, accountMock, createAccountDBErr := sqlmock.New()
+	if createAccountDBErr != nil {
+		t.Fatalf("cant create mock: %s", createAccountDBErr)
+	}
+	defer accountDB.Close()
+
+	accountFirstRows := sqlmock.NewRows([]string{"amount"})
+	accountFirstRows.AddRow(balanceFirst)
+	accountSecondRows := sqlmock.NewRows([]string{"amount"})
+	accountSecondRows.AddRow(balanceSecond)
+	accountThirdRows := sqlmock.NewRows([]string{"amount"})
+	accountThirdRows.AddRow(balanceFirst)
+	accountFourthRows := sqlmock.NewRows([]string{"amount"})
+	accountFourthRows.AddRow(balanceFirst)
+	accountFifthRows := sqlmock.NewRows([]string{"amount"})
+	accountFifthRows.AddRow(balanceFirst)
+
+	accountMock.ExpectQuery("SELECT amount FROM balanceApp.accounts WHERE userID").
+		WithArgs(srcUserID).
+		WillReturnRows(accountFirstRows)
+
+	accountMock.ExpectQuery("SELECT amount FROM balanceApp.accounts WHERE userID").
+		WithArgs(dstUserID).
+		WillReturnRows(accountSecondRows)
+
+	accountMock.ExpectQuery("SELECT amount FROM balanceApp.accounts WHERE userID").
+		WithArgs(srcUserID).
+		WillReturnRows(accountThirdRows)
+
+	accountMock.ExpectQuery("SELECT amount FROM balanceApp.accounts WHERE userID").
+		WithArgs(srcUserID).
+		WillReturnRows(accountFourthRows)
+
+	accountMock.ExpectQuery("SELECT amount FROM balanceApp.accounts WHERE userID").
+		WithArgs(srcUserID).
+		WillReturnRows(accountFifthRows)
+
+	accountMock.ExpectExec("UPDATE balanceApp.accounts SET amount = amoumt +").
+		WithArgs(-sum, srcUserID).
+		WillReturnResult(sqlmock.NewResult(1, 1))
+
+	accountMock.ExpectExec("UPDATE balanceApp.accounts SET amount = amoumt +").
+		WithArgs(sum, dstUserID).
+		WillReturnResult(sqlmock.NewResult(1, 1))
+
+	// Подготовка БД для таблицы с транзакциями
+	transactionDB, transactionMock, createTransactDBErr := sqlmock.New()
+	if createTransactDBErr != nil {
+		t.Fatalf("cant create mock: %s", createTransactDBErr)
+	}
+	defer transactionDB.Close()
+
+	newTransaction := transaction.Transaction{
+		TransactionID:   0,
+		UserID:          srcUserID,
+		TransactionType: transaction.Transfer,
+		Sum:             sum,
+		Time:            time.Now(),
+		ActionComments:  "перевод пользователю: " + fmt.Sprintf("%d", dstUserID),
+		AddComments:     comment,
+	}
+
+	newTransaction1 := transaction.Transaction{
+		TransactionID:   1,
+		UserID:          dstUserID,
+		TransactionType: transaction.Transfer,
+		Sum:             sum,
+		Time:            time.Now(),
+		ActionComments:  "перевод от пользователя: " + fmt.Sprintf("%d", srcUserID),
+		AddComments:     comment,
+	}
+
+	transactionMock.ExpectExec("INSERT INTO balanceApp.transactions").
+		WithArgs(newTransaction.TransactionID, newTransaction.UserID, newTransaction.TransactionType,
+			newTransaction.Sum, sqlmock.AnyArg(), newTransaction.ActionComments, newTransaction.AddComments).
+		WillReturnResult(sqlmock.NewResult(1, 1))
+
+	transactionMock.ExpectExec("INSERT INTO balanceApp.transactions").
+		WithArgs(newTransaction1.TransactionID, newTransaction1.UserID, newTransaction1.TransactionType,
+			newTransaction1.Sum, sqlmock.AnyArg(), newTransaction1.ActionComments, newTransaction1.AddComments).
+		WillReturnResult(sqlmock.NewResult(1, 1))
+
+	// Подготовка БД для таблицы с заказами
+	orderDB, orderMock, createOrderErr := sqlmock.New()
+	if createOrderErr != nil {
+		t.Fatalf("cant create mock: %s", createOrderErr)
+	}
+	defer orderDB.Close()
+
+	// Создание объектов
+	accountRepo := account_repo.NewAccountRepo(accountDB)
+	accountController := ac.CreateNewAccountController(accountRepo)
+
+	orderRepo := order_repo.NewOrderRepo(orderDB)
+	orderController := oc.CreateNewOrderController(orderRepo)
+
+	transactionRepo := transaction_repo.NewTransactionRepo(transactionDB)
+	transactionController := tc.CreateNewTransactionController(transactionRepo)
+
+	serverManager := manager.CreateNewManager(accountController, orderController, transactionController)
+
+	accountHandler := CreateAccountHandler(serverManager)
+	ts := httptest.NewServer(http.HandlerFunc(accountHandler.Transfer))
+	defer ts.Close()
+
+	bodyParams := messages.TransferMessage{
+		SrcUserID: srcUserID,
+		DstUserID: dstUserID,
+		Sum:       sum,
+		Comment:   comment,
+	}
+
+	reqBody, _ := json.Marshal(bodyParams)
+	searcherReq, _ := http.NewRequest("POST", ts.URL, bytes.NewBuffer(reqBody))
+	r, _ := ts.Client().Do(searcherReq)
+
+	msg := response.ShortResponseMessage{}
+	body, _ := ioutil.ReadAll(r.Body)
+
+	unmarshalError := json.Unmarshal(body, &msg)
+	if unmarshalError != nil {
+		t.Errorf("unexpected error: %v", unmarshalError)
+		return
+	}
+
+	if r.StatusCode != expectedStatusCode {
+		t.Errorf("unexpected status code: %d %v", r.StatusCode, msg.Comment)
+		return
+	}
+
+	if expectationAccErr := accountMock.ExpectationsWereMet(); expectationAccErr != nil {
+		t.Errorf("there were unfulfilled expectations: %s", expectationAccErr)
+		return
+	}
+
+	if expectationOrderErr := orderMock.ExpectationsWereMet(); expectationOrderErr != nil {
+		t.Errorf("there were unfulfilled expectations: %s", expectationOrderErr)
+		return
+	}
+
+	if expectationTransactionsErr := transactionMock.ExpectationsWereMet(); expectationTransactionsErr != nil {
+		t.Errorf("there were unfulfilled expectations: %s", expectationTransactionsErr)
+		return
+	}
+}
+
+// TestHandlerTransferAccNotExistError проверяет, что если аккаунта не существует, вернется 400
+func TestHandlerTransferAccNotExistError(t *testing.T) {
+	var (
+		srcUserID          int64   = 1
+		dstUserID          int64   = 2
+		sum                float64 = 200
+		comment                    = "Всё хорошо!"
+		expectedStatusCode         = http.StatusBadRequest
+	)
+	// Подготовка БД для таблицы с аккаунтами
+	accountDB, accountMock, createAccountDBErr := sqlmock.New()
+	if createAccountDBErr != nil {
+		t.Fatalf("cant create mock: %s", createAccountDBErr)
+	}
+	defer accountDB.Close()
+
+	accountFirstRows := sqlmock.NewRows([]string{"amount"})
+
+	accountMock.ExpectQuery("SELECT amount FROM balanceApp.accounts WHERE userID").
+		WithArgs(srcUserID).
+		WillReturnRows(accountFirstRows)
+
+	// Подготовка БД для таблицы с транзакциями
+	transactionDB, transactionMock, createTransactDBErr := sqlmock.New()
+	if createTransactDBErr != nil {
+		t.Fatalf("cant create mock: %s", createTransactDBErr)
+	}
+	defer transactionDB.Close()
+
+	// Подготовка БД для таблицы с заказами
+	orderDB, orderMock, createOrderErr := sqlmock.New()
+	if createOrderErr != nil {
+		t.Fatalf("cant create mock: %s", createOrderErr)
+	}
+	defer orderDB.Close()
+
+	// Создание объектов
+	accountRepo := account_repo.NewAccountRepo(accountDB)
+	accountController := ac.CreateNewAccountController(accountRepo)
+
+	orderRepo := order_repo.NewOrderRepo(orderDB)
+	orderController := oc.CreateNewOrderController(orderRepo)
+
+	transactionRepo := transaction_repo.NewTransactionRepo(transactionDB)
+	transactionController := tc.CreateNewTransactionController(transactionRepo)
+
+	serverManager := manager.CreateNewManager(accountController, orderController, transactionController)
+
+	accountHandler := CreateAccountHandler(serverManager)
+	ts := httptest.NewServer(http.HandlerFunc(accountHandler.Transfer))
+	defer ts.Close()
+
+	bodyParams := messages.TransferMessage{
+		SrcUserID: srcUserID,
+		DstUserID: dstUserID,
+		Sum:       sum,
+		Comment:   comment,
+	}
+
+	reqBody, _ := json.Marshal(bodyParams)
+	searcherReq, _ := http.NewRequest("POST", ts.URL, bytes.NewBuffer(reqBody))
+	r, _ := ts.Client().Do(searcherReq)
+
+	msg := response.ShortResponseMessage{}
+	body, _ := ioutil.ReadAll(r.Body)
+
+	unmarshalError := json.Unmarshal(body, &msg)
+	if unmarshalError != nil {
+		t.Errorf("unexpected error: %v", unmarshalError)
+		return
+	}
+
+	if r.StatusCode != expectedStatusCode {
+		t.Errorf("unexpected status code: %d %v", r.StatusCode, msg.Comment)
+		return
+	}
+
+	if expectationAccErr := accountMock.ExpectationsWereMet(); expectationAccErr != nil {
+		t.Errorf("there were unfulfilled expectations: %s", expectationAccErr)
+		return
+	}
+
+	if expectationOrderErr := orderMock.ExpectationsWereMet(); expectationOrderErr != nil {
+		t.Errorf("there were unfulfilled expectations: %s", expectationOrderErr)
+		return
+	}
+
+	if expectationTransactionsErr := transactionMock.ExpectationsWereMet(); expectationTransactionsErr != nil {
+		t.Errorf("there were unfulfilled expectations: %s", expectationTransactionsErr)
+		return
+	}
+}
+
+// TestHandlerTransferNotEnoughMoneyError проверяет, что если не хватает денег для перевода, вернется 400
+func TestHandlerTransferNotEnoughMoneyError(t *testing.T) {
+	var (
+		srcUserID          int64   = 1
+		dstUserID          int64   = 2
+		sum                float64 = 500
+		balanceFirst       float64 = 400
+		balanceSecond      float64 = 200
+		comment                    = "Всё хорошо!"
+		expectedStatusCode         = http.StatusBadRequest
+	)
+	accountDB, accountMock, createAccountDBErr := sqlmock.New()
+	if createAccountDBErr != nil {
+		t.Fatalf("cant create mock: %s", createAccountDBErr)
+	}
+	defer accountDB.Close()
+
+	accountFirstRows := sqlmock.NewRows([]string{"amount"})
+	accountFirstRows.AddRow(balanceFirst)
+	accountSecondRows := sqlmock.NewRows([]string{"amount"})
+	accountSecondRows.AddRow(balanceSecond)
+	accountThirdRows := sqlmock.NewRows([]string{"amount"})
+	accountThirdRows.AddRow(balanceFirst)
+	accountFourthRows := sqlmock.NewRows([]string{"amount"})
+	accountFourthRows.AddRow(balanceFirst)
+
+	accountMock.ExpectQuery("SELECT amount FROM balanceApp.accounts WHERE userID").
+		WithArgs(srcUserID).
+		WillReturnRows(accountFirstRows)
+
+	accountMock.ExpectQuery("SELECT amount FROM balanceApp.accounts WHERE userID").
+		WithArgs(dstUserID).
+		WillReturnRows(accountSecondRows)
+
+	accountMock.ExpectQuery("SELECT amount FROM balanceApp.accounts WHERE userID").
+		WithArgs(srcUserID).
+		WillReturnRows(accountThirdRows)
+
+	accountMock.ExpectQuery("SELECT amount FROM balanceApp.accounts WHERE userID").
+		WithArgs(srcUserID).
+		WillReturnRows(accountFourthRows)
+
+	// Подготовка БД для таблицы с транзакциями
+	transactionDB, transactionMock, createTransactDBErr := sqlmock.New()
+	if createTransactDBErr != nil {
+		t.Fatalf("cant create mock: %s", createTransactDBErr)
+	}
+	defer transactionDB.Close()
+
+	// Подготовка БД для таблицы с заказами
+	orderDB, orderMock, createOrderErr := sqlmock.New()
+	if createOrderErr != nil {
+		t.Fatalf("cant create mock: %s", createOrderErr)
+	}
+	defer orderDB.Close()
+
+	// Создание объектов
+	accountRepo := account_repo.NewAccountRepo(accountDB)
+	accountController := ac.CreateNewAccountController(accountRepo)
+
+	orderRepo := order_repo.NewOrderRepo(orderDB)
+	orderController := oc.CreateNewOrderController(orderRepo)
+
+	transactionRepo := transaction_repo.NewTransactionRepo(transactionDB)
+	transactionController := tc.CreateNewTransactionController(transactionRepo)
+
+	serverManager := manager.CreateNewManager(accountController, orderController, transactionController)
+
+	accountHandler := CreateAccountHandler(serverManager)
+	ts := httptest.NewServer(http.HandlerFunc(accountHandler.Transfer))
+	defer ts.Close()
+
+	bodyParams := messages.TransferMessage{
+		SrcUserID: srcUserID,
+		DstUserID: dstUserID,
+		Sum:       sum,
+		Comment:   comment,
+	}
+
+	reqBody, _ := json.Marshal(bodyParams)
+	searcherReq, _ := http.NewRequest("POST", ts.URL, bytes.NewBuffer(reqBody))
+	r, _ := ts.Client().Do(searcherReq)
+
+	msg := response.ShortResponseMessage{}
+	body, _ := ioutil.ReadAll(r.Body)
+
+	unmarshalError := json.Unmarshal(body, &msg)
+	if unmarshalError != nil {
+		t.Errorf("unexpected error: %v", unmarshalError)
+		return
+	}
+
+	if r.StatusCode != expectedStatusCode {
+		t.Errorf("unexpected status code: %d %v", r.StatusCode, msg.Comment)
+		return
+	}
+
+	if expectationAccErr := accountMock.ExpectationsWereMet(); expectationAccErr != nil {
+		t.Errorf("there were unfulfilled expectations: %s", expectationAccErr)
+		return
+	}
+
+	if expectationOrderErr := orderMock.ExpectationsWereMet(); expectationOrderErr != nil {
+		t.Errorf("there were unfulfilled expectations: %s", expectationOrderErr)
+		return
+	}
+
+	if expectationTransactionsErr := transactionMock.ExpectationsWereMet(); expectationTransactionsErr != nil {
+		t.Errorf("there were unfulfilled expectations: %s", expectationTransactionsErr)
+		return
+	}
+}

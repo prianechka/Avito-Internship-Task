@@ -145,7 +145,7 @@ func (m *Manager) Transfer(srcUserID, dstUserID int64, sum float64, comment stri
 					if err == nil {
 						err = m.accountController.DonateMoney(dstUserID, sum)
 						if err == nil {
-							err = m.transactionController.AddNewRecordTransferFrom(srcUserID, dstUserID, sum, comment)
+							err = m.makeReportsForAllUsers(srcUserID, dstUserID, sum, comment)
 						}
 					}
 				} else {
