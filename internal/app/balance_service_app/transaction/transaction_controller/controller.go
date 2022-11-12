@@ -91,7 +91,6 @@ func (c *TransactionController) AddNewRecordTransferTo(srcUserID, dstUserID int6
 		ActionComments:  "перевод пользователю: " + fmt.Sprintf("%d", dstUserID),
 		AddComments:     comments,
 	}
-
 	c.mutex.Lock()
 	err := c.repo.AddNewTransaction(newTransact)
 	atomic.AddInt64(&c.transactCount, 1)

@@ -48,16 +48,3 @@ func (repo *AccountRepo) ChangeAmount(accountID int64, delta float64) error {
 
 	return err
 }
-
-func (repo *AccountRepo) DeleteAccount(accountID int64) error {
-	repo.mutex.Lock()
-	query := MySQLDeleteAccount{}.GetString()
-	_, err := repo.conn.Exec(query, accountID)
-	repo.mutex.Unlock()
-
-	if err == sql.ErrTxDone {
-		err = AccountNotExist
-	}
-
-	return err
-}

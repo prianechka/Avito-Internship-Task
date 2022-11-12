@@ -127,6 +127,97 @@ func TestGetAccountBalance(t *testing.T) {
 	}
 }
 
+// TestGetAccountBalance проверяет, что аккаунт неправильный, то выдаст 400
+func TestGetAccountBalanceBadAccount(t *testing.T) {
+
+	// Подготовка БД к тестам
+	var (
+		userID             int64 = 1
+		expectedStatusCode       = http.StatusBadRequest
+	)
+
+	// Подготовка БД для таблицы с аккаунтами
+	accountDB, accountMock, createAccountDBErr := sqlmock.New()
+	if createAccountDBErr != nil {
+		t.Fatalf("cant create mock: %s", createAccountDBErr)
+	}
+	defer accountDB.Close()
+
+	accountFirstRows := sqlmock.NewRows([]string{"amount"})
+
+	accountMock.ExpectQuery("SELECT amount FROM balanceApp.accounts WHERE userID").
+		WithArgs(userID).
+		WillReturnRows(accountFirstRows)
+
+	// Подготовка БД для таблицы с транзакциями
+	transactionDB, transactionMock, createTransactDBErr := sqlmock.New()
+	if createTransactDBErr != nil {
+		t.Fatalf("cant create mock: %s", createTransactDBErr)
+	}
+	defer transactionDB.Close()
+
+	// Подготовка БД для таблицы с заказами
+	orderDB, orderMock, createOrderErr := sqlmock.New()
+	if createOrderErr != nil {
+		t.Fatalf("cant create mock: %s", createOrderErr)
+	}
+	defer orderDB.Close()
+
+	accountRepo := account_repo.NewAccountRepo(accountDB)
+	accountController := ac.CreateNewAccountController(accountRepo)
+
+	orderRepo := order_repo.NewOrderRepo(orderDB)
+	orderController := oc.CreateNewOrderController(orderRepo)
+
+	transactionRepo := transaction_repo.NewTransactionRepo(transactionDB)
+	transactionController := tc.CreateNewTransactionController(transactionRepo)
+
+	serverManager := manager.CreateNewManager(accountController, orderController, transactionController)
+
+	accountHandler := CreateAccountHandler(serverManager)
+	ts := httptest.NewServer(http.HandlerFunc(accountHandler.GetBalance))
+	defer ts.Close()
+
+	searcherReq, err := http.NewRequest("GET", ts.URL+fmt.Sprintf("?id=%d", userID), nil)
+	//searcherReq := httptest.NewRequest("GET", "/balance/{id}", nil)
+	r, err := ts.Client().Do(searcherReq)
+
+	// Проверка
+	if err != nil {
+		t.Errorf("unexpected err: %v", err)
+		return
+	}
+
+	msg := response.BalanceResponseMessage{}
+	body, _ := ioutil.ReadAll(r.Body)
+
+	unmarshalError := json.Unmarshal(body, &msg)
+	if unmarshalError != nil {
+		t.Errorf("unexpected error: %v", unmarshalError)
+		return
+	}
+
+	if r.StatusCode != expectedStatusCode {
+		t.Errorf("unexpected status code: %d %v", r.StatusCode, msg.Comment)
+		return
+	}
+
+	if expectationAccErr := accountMock.ExpectationsWereMet(); expectationAccErr != nil {
+		t.Errorf("there were unfulfilled expectations: %s", expectationAccErr)
+		return
+	}
+
+	if expectationOrderErr := orderMock.ExpectationsWereMet(); expectationOrderErr != nil {
+		t.Errorf("there were unfulfilled expectations: %s", expectationOrderErr)
+		return
+	}
+
+	if expectationTransactionsErr := transactionMock.ExpectationsWereMet(); expectationTransactionsErr != nil {
+		t.Errorf("there were unfulfilled expectations: %s", expectationTransactionsErr)
+		return
+	}
+}
+
 // TestRefillAccountSuccess проверяет, что сервер правильно отвечает на запрос по пополнению счёта
 func TestRefillAccountSuccess(t *testing.T) {
 	var (

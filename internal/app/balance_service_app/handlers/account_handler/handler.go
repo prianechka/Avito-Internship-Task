@@ -123,9 +123,6 @@ func (h *AccountHandler) GetBalance(w http.ResponseWriter, r *http.Request) {
 	case ac.AccountNotExistErr:
 		statusCode = http.StatusBadRequest
 		handleMessage = fmt.Sprintf("%v", ac.AccountNotExistErr)
-	case ac.NegSumError:
-		statusCode = http.StatusBadRequest
-		handleMessage = fmt.Sprintf("%v", ac.NegSumError)
 	default:
 		statusCode = http.StatusInternalServerError
 		handleMessage = fmt.Sprintf("internal server error: %v", getBalanceErr)
