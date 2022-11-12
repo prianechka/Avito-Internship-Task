@@ -8,11 +8,13 @@ import (
 	oc "Avito-Internship-Task/internal/app/balance_service_app/order/order_controller"
 	"encoding/json"
 	"fmt"
+	"github.com/sirupsen/logrus"
 	"io"
 	"net/http"
 )
 
 type ServiceHandler struct {
+	logger  logrus.Logger
 	manager manager.ManagerInterface
 }
 
@@ -22,6 +24,8 @@ func CreateServiceHandler(man manager.ManagerInterface) *ServiceHandler {
 
 func (h *ServiceHandler) BuyService(w http.ResponseWriter, r *http.Request) {
 	var buyParams messages.BuyServiceMessage
+	var statusCode int
+	var handleMessage string
 
 	body, readErr := io.ReadAll(r.Body)
 	if readErr != nil {
@@ -40,18 +44,27 @@ func (h *ServiceHandler) BuyService(w http.ResponseWriter, r *http.Request) {
 
 	switch buyError {
 	case nil:
-		response.SendShortResponse(w, http.StatusOK, "OK")
+		statusCode = http.StatusOK
+		handleMessage = "OK"
 	case ac.AccountNotExistErr:
-		response.SendShortResponse(w, http.StatusBadRequest, fmt.Sprintf("%v", ac.AccountNotExistErr))
+		statusCode = http.StatusBadRequest
+		handleMessage = fmt.Sprintf("%v", ac.AccountNotExistErr)
 	case ac.NotEnoughMoneyErr:
-		response.SendShortResponse(w, http.StatusBadRequest, fmt.Sprintf("%v", ac.NotEnoughMoneyErr))
+		statusCode = http.StatusBadRequest
+		handleMessage = fmt.Sprintf("%v", ac.NotEnoughMoneyErr)
 	default:
-		response.SendShortResponse(w, http.StatusInternalServerError, fmt.Sprintf("internal server error: %v", buyError))
+		statusCode = http.StatusInternalServerError
+		handleMessage = fmt.Sprintf("internal server error: %v", buyError)
 	}
+	response.SendShortResponse(w, statusCode, handleMessage)
+	h.logger.Infof("Request: method - %s,  url - %s, Result: status_code = %d, text = %s",
+		r.Method, r.URL.Path, statusCode, handleMessage)
 }
 
 func (h *ServiceHandler) AcceptService(w http.ResponseWriter, r *http.Request) {
 	var acceptParams messages.AcceptServiceMessage
+	var statusCode int
+	var handleMessage string
 
 	body, readErr := io.ReadAll(r.Body)
 	if readErr != nil {
@@ -69,20 +82,30 @@ func (h *ServiceHandler) AcceptService(w http.ResponseWriter, r *http.Request) {
 
 	switch acceptBuy {
 	case nil:
-		response.SendShortResponse(w, http.StatusOK, "OK")
+		statusCode = http.StatusOK
+		handleMessage = "OK"
 	case ac.AccountNotExistErr:
-		response.SendShortResponse(w, http.StatusBadRequest, fmt.Sprintf("%v", ac.AccountNotExistErr))
+		statusCode = http.StatusBadRequest
+		handleMessage = fmt.Sprintf("%v", ac.AccountNotExistErr)
 	case oc.OrderNotFound:
-		response.SendShortResponse(w, http.StatusBadRequest, fmt.Sprintf("%v", oc.OrderNotFound))
+		statusCode = http.StatusBadRequest
+		handleMessage = fmt.Sprintf("%v", oc.OrderNotFound)
 	case oc.WrongStateError:
-		response.SendShortResponse(w, http.StatusBadRequest, fmt.Sprintf("%v", oc.WrongStateError))
+		statusCode = http.StatusBadRequest
+		handleMessage = fmt.Sprintf("%v", oc.OrderNotFound)
 	default:
-		response.SendShortResponse(w, http.StatusInternalServerError, fmt.Sprintf("internal server error: %v", acceptBuy))
+		statusCode = http.StatusInternalServerError
+		handleMessage = fmt.Sprintf("internal server error: %v", acceptBuy)
 	}
+	response.SendShortResponse(w, statusCode, handleMessage)
+	h.logger.Infof("Request: method - %s,  url - %s, Result: status_code = %d, text = %s",
+		r.Method, r.URL.Path, statusCode, handleMessage)
 }
 
 func (h *ServiceHandler) RefuseService(w http.ResponseWriter, r *http.Request) {
 	var refuseParams messages.RefuseServiceMessage
+	var statusCode int
+	var handleMessage string
 
 	body, readErr := io.ReadAll(r.Body)
 	if readErr != nil {
@@ -101,14 +124,22 @@ func (h *ServiceHandler) RefuseService(w http.ResponseWriter, r *http.Request) {
 
 	switch acceptBuy {
 	case nil:
-		response.SendShortResponse(w, http.StatusOK, "OK")
+		statusCode = http.StatusOK
+		handleMessage = "OK"
 	case ac.AccountNotExistErr:
-		response.SendShortResponse(w, http.StatusBadRequest, fmt.Sprintf("%v", ac.AccountNotExistErr))
+		statusCode = http.StatusBadRequest
+		handleMessage = fmt.Sprintf("%v", ac.AccountNotExistErr)
 	case oc.OrderNotFound:
-		response.SendShortResponse(w, http.StatusBadRequest, fmt.Sprintf("%v", oc.OrderNotFound))
+		statusCode = http.StatusBadRequest
+		handleMessage = fmt.Sprintf("%v", oc.OrderNotFound)
 	case oc.WrongStateError:
-		response.SendShortResponse(w, http.StatusBadRequest, fmt.Sprintf("%v", oc.WrongStateError))
+		statusCode = http.StatusBadRequest
+		handleMessage = fmt.Sprintf("%v", oc.WrongStateError)
 	default:
-		response.SendShortResponse(w, http.StatusInternalServerError, fmt.Sprintf("internal server error: %v", acceptBuy))
+		statusCode = http.StatusInternalServerError
+		handleMessage = fmt.Sprintf("internal server error: %v", acceptBuy)
 	}
+	response.SendShortResponse(w, statusCode, handleMessage)
+	h.logger.Infof("Request: method - %s,  url - %s, Result: status_code = %d, text = %s",
+		r.Method, r.URL.Path, statusCode, handleMessage)
 }

@@ -22,8 +22,8 @@ import (
 	"time"
 )
 
-// TestGetAccountBalance проверяет, что сервер правильно отвечает на запрос по количеству денег на балансе
-func TestBuyServiceSuccess(t *testing.T) {
+// TestHandlerGetAccountBalance проверяет, что сервер правильно отвечает на запрос по количеству денег на балансе
+func TestHandlerBuyServiceSuccess(t *testing.T) {
 	var (
 		userID             int64   = 1
 		orderID            int64   = 1
@@ -205,8 +205,8 @@ func TestBuyServiceSuccess(t *testing.T) {
 	}
 }
 
-// TestBuyServiceNotAccExist проверяет, что покупки не произойдёт, если аккаунта не существует, и сервер вернет 400
-func TestBuyServiceNotAccExist(t *testing.T) {
+// TestHandlerBuyServiceNotAccExist проверяет, что покупки не произойдёт, если аккаунта не существует, и сервер вернет 400
+func TestHandlerBuyServiceNotAccExist(t *testing.T) {
 	var (
 		userID             int64   = 1
 		orderID            int64   = 1
@@ -307,8 +307,8 @@ func TestBuyServiceNotAccExist(t *testing.T) {
 	}
 }
 
-// TestBuyServiceNotEnoughMoneyErr проверяет, что покупки не произойдёт, если аккаунта не существует, и сервер вернет 400
-func TestBuyServiceNotEnoughMoneyErr(t *testing.T) {
+// TestHandlerBuyServiceNotEnoughMoneyErr проверяет, что покупки не произойдёт, если аккаунта не существует, и сервер вернет 400
+func TestHandlerBuyServiceNotEnoughMoneyErr(t *testing.T) {
 	var (
 		userID             int64   = 1
 		orderID            int64   = 1
@@ -416,8 +416,8 @@ func TestBuyServiceNotEnoughMoneyErr(t *testing.T) {
 	}
 }
 
-// TestAcceptBuySuccess проверяет, что подтверждение покупки осуществлено корректно
-func TestAcceptBuySuccess(t *testing.T) {
+// TestHandlerAcceptBuySuccess проверяет, что подтверждение покупки осуществлено корректно
+func TestHandlerAcceptBuySuccess(t *testing.T) {
 	var (
 		userID             int64   = 1
 		orderID            int64   = 1
@@ -551,8 +551,8 @@ func TestAcceptBuySuccess(t *testing.T) {
 	}
 }
 
-// TestAcceptBuyError проверяет, что если заказа не существует, то вернется 400.
-func TestAcceptBuyError(t *testing.T) {
+// TestHandlerAcceptBuyError проверяет, что если заказа не существует, то вернется 400.
+func TestHandlerAcceptBuyError(t *testing.T) {
 	var (
 		userID             int64 = 1
 		orderID            int64 = 1
@@ -649,8 +649,8 @@ func TestAcceptBuyError(t *testing.T) {
 	}
 }
 
-// TestAcceptBuyWrongStatusError проверяет, что если статус неверный, то вернется 400.
-func TestAcceptBuyWrongStatusError(t *testing.T) {
+// TestHandlerAcceptBuyWrongStatusError проверяет, что если статус неверный, то вернется 400.
+func TestHandlerAcceptBuyWrongStatusError(t *testing.T) {
 	var (
 		userID             int64   = 1
 		orderID            int64   = 1
@@ -780,8 +780,8 @@ func TestAcceptBuyWrongStatusError(t *testing.T) {
 	}
 }
 
-// TestRefuseServiceSuccess проверяет, что возврат произойдёт успешно и вернется 200.
-func TestRefuseServiceSuccess(t *testing.T) {
+// TestHandlerRefuseServiceSuccess проверяет, что возврат произойдёт успешно и вернется 200.
+func TestHandlerRefuseServiceSuccess(t *testing.T) {
 	var (
 		userID             int64   = 1
 		orderID            int64   = 1
@@ -938,8 +938,8 @@ func TestRefuseServiceSuccess(t *testing.T) {
 	}
 }
 
-// TestRefuseServiceWrongStatusError проверяет, что если у заказа неправильный статус, то вернётся 400.
-func TestRefuseServiceWrongStatusError(t *testing.T) {
+// TestHandlerRefuseServiceWrongStatusError проверяет, что если у заказа неправильный статус, то вернётся 400.
+func TestHandlerRefuseServiceWrongStatusError(t *testing.T) {
 	var (
 		userID             int64   = 1
 		orderID            int64   = 1
@@ -1069,8 +1069,8 @@ func TestRefuseServiceWrongStatusError(t *testing.T) {
 	}
 }
 
-// TestRefuseServiceOrderNoExistError проверяет, что если аккаунта не существует, то вернется 400.
-func TestRefuseServiceOrderNoExistError(t *testing.T) {
+// TestHandlerRefuseServiceOrderNoExistError проверяет, что если аккаунта не существует, то вернется 400.
+func TestHandlerRefuseServiceOrderNoExistError(t *testing.T) {
 	var (
 		userID             int64 = 1
 		orderID            int64 = 1

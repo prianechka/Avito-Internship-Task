@@ -14,10 +14,13 @@ import (
 	"Avito-Internship-Task/internal/app/balance_service_app/transaction/transaction_repo"
 	"database/sql"
 	"github.com/gorilla/mux"
+	"github.com/sirupsen/logrus"
 	"net/http"
 )
 
-type Server struct{}
+type Server struct {
+	logger logrus.Logger
+}
 
 func CreateDB(DBName string) *sql.DB {
 	dsn := "root:love@tcp(localhost:3306)/" + DBName + "?&charset=utf8&interpolateParams=true"

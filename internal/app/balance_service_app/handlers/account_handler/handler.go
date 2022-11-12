@@ -7,12 +7,14 @@ import (
 	"Avito-Internship-Task/internal/app/balance_service_app/manager"
 	"encoding/json"
 	"fmt"
+	"github.com/sirupsen/logrus"
 	"io"
 	"net/http"
 	"strconv"
 )
 
 type AccountHandler struct {
+	logger  logrus.Logger
 	manager manager.ManagerInterface
 }
 
@@ -20,36 +22,10 @@ func CreateAccountHandler(newManager manager.ManagerInterface) *AccountHandler {
 	return &AccountHandler{manager: newManager}
 }
 
-func (h *AccountHandler) GetBalance(w http.ResponseWriter, r *http.Request) {
-	//vars := mux.Vars(r)
-
-	strUserID := r.URL.Query().Get("id")
-
-	if strUserID == "" {
-		response.SendShortResponse(w, http.StatusBadRequest, "userID not found")
-		return
-	}
-
-	userID, err := strconv.Atoi(strUserID)
-	if err != nil {
-		response.SendShortResponse(w, http.StatusBadRequest, "userID isn't number")
-		return
-	}
-
-	balance, getBalanceErr := h.manager.GetUserBalance(int64(userID))
-	switch getBalanceErr {
-	case nil:
-		response.BalanceResponse(w, balance, "OK")
-	case ac.AccountNotExistErr:
-		response.SendShortResponse(w, http.StatusBadRequest, fmt.Sprintf("%v", ac.AccountNotExistErr))
-	case ac.NegSumError:
-		response.SendShortResponse(w, http.StatusBadRequest, fmt.Sprintf("%v", ac.NegSumError))
-	default:
-		response.SendShortResponse(w, http.StatusInternalServerError, fmt.Sprintf("internal server error: %v", getBalanceErr))
-	}
-}
-
 func (h *AccountHandler) RefillBalance(w http.ResponseWriter, r *http.Request) {
+	var statusCode int
+	var handleMessage string
+
 	var refillParams messages.RefillParams
 
 	body, readErr := io.ReadAll(r.Body)
@@ -68,15 +44,24 @@ func (h *AccountHandler) RefillBalance(w http.ResponseWriter, r *http.Request) {
 
 	switch refillError {
 	case nil:
-		response.SendShortResponse(w, http.StatusOK, "OK")
+		statusCode = http.StatusOK
+		handleMessage = "OK"
 	case ac.AccountNotExistErr:
-		response.SendShortResponse(w, http.StatusBadRequest, fmt.Sprintf("%v", ac.AccountNotExistErr))
+		statusCode = http.StatusBadRequest
+		handleMessage = fmt.Sprintf("%v", ac.AccountNotExistErr)
 	default:
-		response.SendShortResponse(w, http.StatusInternalServerError, fmt.Sprintf("internal server error: %v", refillError))
+		statusCode = http.StatusInternalServerError
+		handleMessage = fmt.Sprintf("internal server error: %v", refillError)
 	}
+	response.SendShortResponse(w, statusCode, handleMessage)
+	h.logger.Infof("Request: method - %s,  url - %s, Result: status_code = %d, text = %s",
+		r.Method, r.URL.Path, statusCode, handleMessage)
 }
 
 func (h *AccountHandler) Transfer(w http.ResponseWriter, r *http.Request) {
+	var statusCode int
+	var handleMessage string
+
 	var transferParams messages.TransferMessage
 
 	body, readErr := io.ReadAll(r.Body)
@@ -96,12 +81,56 @@ func (h *AccountHandler) Transfer(w http.ResponseWriter, r *http.Request) {
 
 	switch transferError {
 	case nil:
-		response.SendShortResponse(w, http.StatusOK, "OK")
+		statusCode = http.StatusOK
+		handleMessage = "OK"
 	case ac.AccountNotExistErr:
-		response.SendShortResponse(w, http.StatusBadRequest, fmt.Sprintf("%v", ac.AccountNotExistErr))
+		statusCode = http.StatusBadRequest
+		handleMessage = fmt.Sprintf("%v", ac.AccountNotExistErr)
 	case ac.NotEnoughMoneyErr:
-		response.SendShortResponse(w, http.StatusBadRequest, fmt.Sprintf("%v", ac.NotEnoughMoneyErr))
+		statusCode = http.StatusBadRequest
+		handleMessage = fmt.Sprintf("%v", ac.NotEnoughMoneyErr)
 	default:
-		response.SendShortResponse(w, http.StatusInternalServerError, fmt.Sprintf("internal server error: %v", transferError))
+		statusCode = http.StatusInternalServerError
+		handleMessage = fmt.Sprintf("internal server error: %v", transferError)
 	}
+	response.SendShortResponse(w, statusCode, handleMessage)
+	h.logger.Infof("Request: method - %s,  url - %s, Result: status_code = %d, text = %s",
+		r.Method, r.URL.Path, statusCode, handleMessage)
+}
+
+func (h *AccountHandler) GetBalance(w http.ResponseWriter, r *http.Request) {
+	var statusCode int
+	var handleMessage string
+
+	strUserID := r.URL.Query().Get("id")
+
+	if strUserID == "" {
+		response.SendShortResponse(w, http.StatusBadRequest, "userID not found")
+		return
+	}
+
+	userID, err := strconv.Atoi(strUserID)
+	if err != nil {
+		response.SendShortResponse(w, http.StatusBadRequest, "userID isn't number")
+		return
+	}
+
+	balance, getBalanceErr := h.manager.GetUserBalance(int64(userID))
+	switch getBalanceErr {
+	case nil:
+		response.BalanceResponse(w, balance, "OK")
+		return
+	case ac.AccountNotExistErr:
+		statusCode = http.StatusBadRequest
+		handleMessage = fmt.Sprintf("%v", ac.AccountNotExistErr)
+	case ac.NegSumError:
+		statusCode = http.StatusBadRequest
+		handleMessage = fmt.Sprintf("%v", ac.NegSumError)
+	default:
+		statusCode = http.StatusInternalServerError
+		handleMessage = fmt.Sprintf("internal server error: %v", getBalanceErr)
+	}
+	response.SendShortResponse(w, statusCode, handleMessage)
+	h.logger.Infof("Request: method - %s,  url - %s, Result: status_code = %d, text = %s",
+		r.Method, r.URL.Path, statusCode, handleMessage)
 }
