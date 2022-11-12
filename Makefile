@@ -5,6 +5,7 @@ build: go build -o server.out -v ./cmd/server
 
 
 run-coverage:
+	go work edit -json | jq -r '.Use[].DiskPath'  | xargs -I{} golangci-lint run {}/...
 	go work use .
 	go test ./... -covermode=atomic -coverprofile=cover
 	cat cover | fgrep -v "mocks" | fgrep -v "testing.go" | fgrep -v "docs"  | fgrep -v "configs" | fgrep -v "main.go" > cover2
