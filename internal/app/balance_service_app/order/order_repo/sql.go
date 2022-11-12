@@ -17,7 +17,7 @@ func (sql MySQLGetAllOrders) GetString() string {
 }
 
 func (sql MySQLGetOrderByID) GetString() string {
-	return "SELECT orderID, userID, serviceType, orderCost, creatingTime, comments, orderState FROM balanceApp.orders WHERE orderID = ?;"
+	return "SELECT orderID, userID, serviceType, orderCost, creatingTime, comments, orderState FROM balanceApp.orders WHERE orderID = ? AND userID = ? AND serviceType = ?;"
 }
 
 func (sql MySQLGetUserOrders) GetString() string {
@@ -29,5 +29,5 @@ func (sql MySQLGetServiceOrders) GetString() string {
 }
 
 func (sql MySQLChangeOrderState) GetString() string {
-	return "UPDATE balanceApp.orders SET orderState = ? WHERE orderID = ?"
+	return "UPDATE balanceApp.orders SET orderState = ? WHERE orderID = ? AND userID = ? AND serviceType = ?"
 }

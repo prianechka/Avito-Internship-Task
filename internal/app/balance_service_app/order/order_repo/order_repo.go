@@ -19,7 +19,7 @@ func NewOrderRepo(conn *sql.DB) *OrderRepo {
 func (repo *OrderRepo) CreateOrder(order order.Order) error {
 	repo.mutex.Lock()
 	query := MySQLAddNewOrder{}.GetString()
-	_, err := repo.conn.Exec(query, order.OrderID, order.UserID, order.ServiceType,
+	_, err := repo.conn.Exec(query, order.OrderID, order.UserID, order.ServiceID,
 		order.OrderCost, order.CreatingTime, order.Comment, order.OrderState)
 	repo.mutex.Unlock()
 	return err
@@ -36,7 +36,7 @@ func (repo *OrderRepo) GetAllOrders() ([]order.Order, error) {
 	if err == nil {
 		for rows.Next() {
 			newOrder := &order.Order{}
-			err = rows.Scan(&newOrder.OrderID, &newOrder.UserID, &newOrder.ServiceType,
+			err = rows.Scan(&newOrder.OrderID, &newOrder.UserID, &newOrder.ServiceID,
 				&newOrder.OrderCost, &newOrder.CreatingTime, &newOrder.Comment, &newOrder.OrderState)
 			if err != nil {
 				break
@@ -48,15 +48,15 @@ func (repo *OrderRepo) GetAllOrders() ([]order.Order, error) {
 	return allOrders, err
 }
 
-func (repo *OrderRepo) GetOrderByID(orderID int64) (order.Order, error) {
+func (repo *OrderRepo) GetOrderByID(orderID, userID, serviceType int64) (order.Order, error) {
 	order := order.Order{}
 
 	repo.mutex.Lock()
 	query := MySQLGetOrderByID{}.GetString()
-	row := repo.conn.QueryRow(query, orderID)
+	row := repo.conn.QueryRow(query, orderID, userID, serviceType)
 	repo.mutex.Unlock()
 
-	err := row.Scan(&order.OrderID, &order.UserID, &order.ServiceType,
+	err := row.Scan(&order.OrderID, &order.UserID, &order.ServiceID,
 		&order.OrderCost, &order.CreatingTime, &order.Comment, &order.OrderState)
 
 	return order, err
@@ -73,7 +73,7 @@ func (repo *OrderRepo) GetUserOrders(userID int64) ([]order.Order, error) {
 	if err == nil {
 		for rows.Next() {
 			newOrder := &order.Order{}
-			err = rows.Scan(&newOrder.OrderID, &newOrder.UserID, &newOrder.ServiceType,
+			err = rows.Scan(&newOrder.OrderID, &newOrder.UserID, &newOrder.ServiceID,
 				&newOrder.OrderCost, &newOrder.CreatingTime, &newOrder.Comment, &newOrder.OrderState)
 			if err != nil {
 				break
@@ -96,7 +96,7 @@ func (repo *OrderRepo) GetServiceOrders(serviceType int64) ([]order.Order, error
 	if err == nil {
 		for rows.Next() {
 			newOrder := &order.Order{}
-			err = rows.Scan(&newOrder.OrderID, &newOrder.UserID, &newOrder.ServiceType,
+			err = rows.Scan(&newOrder.OrderID, &newOrder.UserID, &newOrder.ServiceID,
 				&newOrder.OrderCost, &newOrder.CreatingTime, &newOrder.Comment, &newOrder.OrderState)
 			if err != nil {
 				break
@@ -108,10 +108,10 @@ func (repo *OrderRepo) GetServiceOrders(serviceType int64) ([]order.Order, error
 	return allOrders, err
 }
 
-func (repo *OrderRepo) ChangeOrderState(orderID int64, orderState int64) error {
+func (repo *OrderRepo) ChangeOrderState(orderID, userID, serviceType int64, orderState int64) error {
 	repo.mutex.Lock()
 	query := MySQLChangeOrderState{}.GetString()
-	_, err := repo.conn.Exec(query, orderState, orderID)
+	_, err := repo.conn.Exec(query, orderState, orderID, userID, serviceType)
 	repo.mutex.Unlock()
 	return err
 }

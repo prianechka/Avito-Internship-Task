@@ -22,7 +22,7 @@ func TestAddNewOrder(t *testing.T) {
 
 	mock.
 		ExpectExec("INSERT INTO balanceApp.orders").
-		WithArgs(newOrder.OrderID, newOrder.UserID, newOrder.ServiceType,
+		WithArgs(newOrder.OrderID, newOrder.UserID, newOrder.ServiceID,
 			newOrder.OrderCost, newOrder.CreatingTime, newOrder.Comment, newOrder.OrderState).
 		WillReturnResult(sqlmock.NewResult(1, 1))
 
@@ -53,7 +53,7 @@ func TestGetAllOrders(t *testing.T) {
 	expect := []order.Order{{1, 1, 1, 100, curTime, "Good", 1},
 		{2, 2, 2, 200, curTime, "Bad", 1}}
 	for _, order := range expect {
-		rows = rows.AddRow(order.OrderID, order.UserID, order.ServiceType, order.OrderCost,
+		rows = rows.AddRow(order.OrderID, order.UserID, order.ServiceID, order.OrderCost,
 			order.CreatingTime, order.Comment, order.OrderState)
 	}
 
@@ -95,7 +95,7 @@ func TestGetUserOrders(t *testing.T) {
 	expect := []order.Order{{1, 1, 1, 100, curTime, "Good", 1},
 		{2, 1, 2, 200, curTime, "Bad", 1}}
 	for _, order := range expect {
-		rows = rows.AddRow(order.OrderID, order.UserID, order.ServiceType, order.OrderCost,
+		rows = rows.AddRow(order.OrderID, order.UserID, order.ServiceID, order.OrderCost,
 			order.CreatingTime, order.Comment, order.OrderState)
 	}
 
@@ -136,7 +136,7 @@ func TestGetServiceOrders(t *testing.T) {
 	expect := []order.Order{{1, 1, 2, 100, curTime, "Good", 1},
 		{2, 1, 2, 200, curTime, "Bad", 1}}
 	for _, order := range expect {
-		rows = rows.AddRow(order.OrderID, order.UserID, order.ServiceType, order.OrderCost,
+		rows = rows.AddRow(order.OrderID, order.UserID, order.ServiceID, order.OrderCost,
 			order.CreatingTime, order.Comment, order.OrderState)
 	}
 
@@ -172,11 +172,13 @@ func TestGetOrderByID(t *testing.T) {
 
 	curTime := time.Now()
 	var orderID int64 = 1
+	var userID int64 = 1
+	var serviceType int64 = 1
 
 	rows := sqlmock.NewRows([]string{"orderID", "userID", "serviceType", "orderCost",
 		"creatingTime", "comment", "orderState"})
-	expect := order.Order{1, 1, 2, 100, curTime, "Good", 1}
-	rows.AddRow(expect.OrderID, expect.UserID, expect.ServiceType, expect.OrderCost,
+	expect := order.Order{orderID, userID, serviceType, 100, curTime, "Good", 1}
+	rows.AddRow(expect.OrderID, expect.UserID, expect.ServiceID, expect.OrderCost,
 		expect.CreatingTime, expect.Comment, expect.OrderState)
 
 	mock.
@@ -185,7 +187,7 @@ func TestGetOrderByID(t *testing.T) {
 
 	repo := NewOrderRepo(db)
 
-	allOrders, execErr := repo.GetOrderByID(orderID)
+	allOrders, execErr := repo.GetOrderByID(orderID, userID, orderID)
 	if execErr != nil {
 		t.Errorf("unexpected err: %v", execErr)
 		return
@@ -210,16 +212,18 @@ func TestChangeState(t *testing.T) {
 	defer db.Close()
 
 	var orderID int64 = 1
+	var userID int64 = 1
+	var serviceType int64 = order.REGISTRATED
 	var orderState int64 = 2
 
 	mock.
 		ExpectExec("UPDATE balanceApp.orders SET orderState = ").
-		WithArgs(orderState, orderID).
+		WithArgs(orderState, orderID, userID, serviceType).
 		WillReturnResult(sqlmock.NewResult(1, 1))
 
 	repo := NewOrderRepo(db)
 
-	execErr := repo.ChangeOrderState(orderID, orderState)
+	execErr := repo.ChangeOrderState(orderID, userID, serviceType, orderState)
 	if execErr != nil {
 		t.Errorf("unexpected err: %v", execErr)
 		return
