@@ -42,36 +42,13 @@ func (m *Manager) GetUserBalance(userID int64) (float64, error) {
 	isAccExist, err := m.accountController.CheckAccountIsExist(userID)
 	if err == nil {
 		if isAccExist {
-			return m.GetUserBalance(userID)
+			return m.accountController.CheckBalance(userID)
 		} else {
 			return 0, ac.AccountNotExistErr
 		}
 	} else {
 		return 0, fmt.Errorf("manager call: %w", err)
 	}
-}
-
-func (m *Manager) checkUserCanBuyService(userID int64, sum float64) (bool, error) {
-	var canBuy bool
-	isAccExist, err := m.accountController.CheckAccountIsExist(userID)
-	if err == nil {
-		if isAccExist {
-			canBuy, err = m.accountController.CheckAbleToBuyService(userID, sum)
-		}
-	}
-	return canBuy, err
-}
-
-func (m *Manager) createOrder(userID, orderID, serviceID int64, sum float64, comment string) error {
-	isOrderExist, err := m.orderController.CheckOrderIsExist(orderID, userID, serviceID)
-	if err == nil {
-		if !isOrderExist {
-			err = m.orderController.CreateNewOrder(orderID, userID, serviceID, sum, comment)
-		} else {
-			err = oc.OrderIsAlreadyExist
-		}
-	}
-	return err
 }
 
 func (m *Manager) BuyService(userID, orderID, serviceID int64, sum float64, comment string) error {
@@ -90,6 +67,31 @@ func (m *Manager) BuyService(userID, orderID, serviceID int64, sum float64, comm
 			}
 		} else {
 			err = ac.NotEnoughMoneyErr
+		}
+	}
+	return err
+}
+
+func (m *Manager) checkUserCanBuyService(userID int64, sum float64) (bool, error) {
+	var canBuy bool
+	isAccExist, err := m.accountController.CheckAccountIsExist(userID)
+	if err == nil {
+		if isAccExist {
+			canBuy, err = m.accountController.CheckAbleToBuyService(userID, sum)
+		} else {
+			err = ac.AccountNotExistErr
+		}
+	}
+	return canBuy, err
+}
+
+func (m *Manager) createOrder(userID, orderID, serviceID int64, sum float64, comment string) error {
+	isOrderExist, err := m.orderController.CheckOrderIsExist(orderID, userID, serviceID)
+	if err == nil {
+		if !isOrderExist {
+			err = m.orderController.CreateNewOrder(orderID, userID, serviceID, sum, comment)
+		} else {
+			err = oc.OrderIsAlreadyExist
 		}
 	}
 	return err
