@@ -1,6 +1,8 @@
 package transaction
 
 const (
-	Enrollment = iota
-	TransferFrom
+	Refill = iota
+	Buy
+	Return
+	Transfer
 )

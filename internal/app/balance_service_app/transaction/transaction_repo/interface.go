@@ -7,5 +7,5 @@ type TransactionRepoInterface interface {
 	AddNewTransaction(newTransaction transaction.Transaction) error
 	GetAllTransactions() ([]transaction.Transaction, error)
 	GetUserTransactions(userID int64) ([]transaction.Transaction, error)
-	GetTransactionByID(orderID int64) (transaction.Transaction, error)
+	GetTransactionByID(transactionID int64) (transaction.Transaction, error)
 }

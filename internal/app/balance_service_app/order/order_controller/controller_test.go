@@ -9,7 +9,7 @@ import (
 	"time"
 )
 
-// TestCheckOrderIsExist проверяет, что если заказ существует, то controller ответит true
+// TestCheckOrderIsExist проверяет, что если заказ существует, то mocks ответит true
 func TestCheckOrderIsExist(t *testing.T) {
 	db, mock, err := sqlmock.New()
 	if err != nil {
@@ -53,7 +53,7 @@ func TestCheckOrderIsExist(t *testing.T) {
 	}
 }
 
-// TestCheckOrderIsNotExist проверяет, что если заказ не существует, то controller ответит false
+// TestCheckOrderIsNotExist проверяет, что если заказ не существует, то mocks ответит false
 func TestCheckOrderIsNotExist(t *testing.T) {
 	db, mock, err := sqlmock.New()
 	if err != nil {

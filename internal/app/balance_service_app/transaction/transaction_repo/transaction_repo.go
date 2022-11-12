@@ -72,12 +72,12 @@ func (repo *TransactionRepo) GetUserTransactions(userID int64) ([]transaction.Tr
 	return allTransactions, err
 }
 
-func (repo *TransactionRepo) GetTransactionByID(orderID int64) (transaction.Transaction, error) {
+func (repo *TransactionRepo) GetTransactionByID(transactionID int64) (transaction.Transaction, error) {
 	newTransact := transaction.Transaction{}
 
 	repo.mutex.Lock()
 	query := MySQLGetTransactionByID{}.GetString()
-	row := repo.conn.QueryRow(query, orderID)
+	row := repo.conn.QueryRow(query, transactionID)
 	repo.mutex.Unlock()
 
 	err := row.Scan(&newTransact.TransactionID, &newTransact.UserID, &newTransact.TransactionType,

@@ -7,7 +7,7 @@ import (
 	"testing"
 )
 
-// TestCheckAccountIsExist проверяет, что если аккаунт существует, то controller вернёт True
+// TestCheckAccountIsExist проверяет, что если аккаунт существует, то mocks вернёт True
 func TestCheckAccountIsExist(t *testing.T) {
 	db, mock, err := sqlmock.New()
 	if err != nil {
@@ -47,7 +47,7 @@ func TestCheckAccountIsExist(t *testing.T) {
 	}
 }
 
-// TestCheckAccountIsNotExist проверяет, что если аккаунт не существует, то controller вернёт False
+// TestCheckAccountIsNotExist проверяет, что если аккаунт не существует, то mocks вернёт False
 func TestCheckAccountIsNotExist(t *testing.T) {
 	db, mock, err := sqlmock.New()
 	if err != nil {
@@ -85,7 +85,7 @@ func TestCheckAccountIsNotExist(t *testing.T) {
 	}
 }
 
-// TestCreateNewAccount проверяет, что если аккаунт не существует, то controller создаст новый аккаунт
+// TestCreateNewAccount проверяет, что если аккаунт не существует, то mocks создаст новый аккаунт
 func TestCreateNewAccount(t *testing.T) {
 	db, mock, err := sqlmock.New()
 	if err != nil {
@@ -120,7 +120,7 @@ func TestCreateNewAccount(t *testing.T) {
 	}
 }
 
-// TestCreateNewAccountWithErrorItExists проверяет, что если аккаунт существует, то controller вернет ошибку
+// TestCreateNewAccountWithErrorItExists проверяет, что если аккаунт существует, то mocks вернет ошибку
 func TestCreateNewAccountWithErrorItExists(t *testing.T) {
 	db, mock, err := sqlmock.New()
 	if err != nil {
