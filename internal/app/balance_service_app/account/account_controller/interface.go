@@ -1,7 +1,7 @@
-package account_manager
+package account_controller
 
-//go:generate mockgen -source=interface.go -destination=mocks/manager_mocks.go -package=mocks AccountManagerInterface
-type AccountManagerInterface interface {
+//go:generate mockgen -source=interface.go -destination=mocks/controller_mocks.go -package=mocks AccountControllerInterface
+type AccountControllerInterface interface {
 	CheckAccountIsExist(userID int64) (result bool, err error)
 	CreateNewAccount(userID int64) error
 	CheckBalance(userID int64) (float64, error)

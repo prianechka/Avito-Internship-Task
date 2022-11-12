@@ -1,4 +1,4 @@
-package account_manager
+package account_controller
 
 import "errors"
 

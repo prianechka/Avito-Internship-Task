@@ -7,7 +7,7 @@ import (
 	"testing"
 )
 
-// TestCheckAccountIsExist проверяет, что если аккаунт существует, то manager вернёт True
+// TestCheckAccountIsExist проверяет, что если аккаунт существует, то controller вернёт True
 func TestCheckAccountIsExist(t *testing.T) {
 	db, mock, err := sqlmock.New()
 	if err != nil {
@@ -28,9 +28,9 @@ func TestCheckAccountIsExist(t *testing.T) {
 		WillReturnRows(rows)
 
 	repo := account_repo.NewAccountRepo(db)
-	manager := CreateNewAccountManager(repo)
+	controller := CreateNewAccountController(repo)
 
-	result, execErr := manager.CheckAccountIsExist(checkUserID)
+	result, execErr := controller.CheckAccountIsExist(checkUserID)
 
 	if execErr != nil {
 		t.Errorf("unexpected err: %v", execErr)
@@ -47,7 +47,7 @@ func TestCheckAccountIsExist(t *testing.T) {
 	}
 }
 
-// TestCheckAccountIsNotExist проверяет, что если аккаунт не существует, то manager вернёт False
+// TestCheckAccountIsNotExist проверяет, что если аккаунт не существует, то controller вернёт False
 func TestCheckAccountIsNotExist(t *testing.T) {
 	db, mock, err := sqlmock.New()
 	if err != nil {
@@ -66,9 +66,9 @@ func TestCheckAccountIsNotExist(t *testing.T) {
 		WillReturnRows(rows)
 
 	repo := account_repo.NewAccountRepo(db)
-	manager := CreateNewAccountManager(repo)
+	controller := CreateNewAccountController(repo)
 
-	result, execErr := manager.CheckAccountIsExist(checkUserID)
+	result, execErr := controller.CheckAccountIsExist(checkUserID)
 
 	if execErr != nil {
 		t.Errorf("unexpected err: %v", execErr)
@@ -85,7 +85,7 @@ func TestCheckAccountIsNotExist(t *testing.T) {
 	}
 }
 
-// TestCreateNewAccount проверяет, что если аккаунт не существует, то manager создаст новый аккаунт
+// TestCreateNewAccount проверяет, что если аккаунт не существует, то controller создаст новый аккаунт
 func TestCreateNewAccount(t *testing.T) {
 	db, mock, err := sqlmock.New()
 	if err != nil {
@@ -106,9 +106,9 @@ func TestCreateNewAccount(t *testing.T) {
 		WillReturnResult(sqlmock.NewResult(1, 1))
 
 	repo := account_repo.NewAccountRepo(db)
-	manager := CreateNewAccountManager(repo)
+	controller := CreateNewAccountController(repo)
 
-	execErr := manager.CreateNewAccount(checkUserID)
+	execErr := controller.CreateNewAccount(checkUserID)
 
 	if execErr != nil {
 		t.Errorf("unexpected err: %v", execErr)
@@ -120,7 +120,7 @@ func TestCreateNewAccount(t *testing.T) {
 	}
 }
 
-// TestCreateNewAccountWithErrorItExists проверяет, что если аккаунт существует, то manager вернет ошибку
+// TestCreateNewAccountWithErrorItExists проверяет, что если аккаунт существует, то controller вернет ошибку
 func TestCreateNewAccountWithErrorItExists(t *testing.T) {
 	db, mock, err := sqlmock.New()
 	if err != nil {
@@ -139,9 +139,9 @@ func TestCreateNewAccountWithErrorItExists(t *testing.T) {
 		WillReturnRows(rows)
 
 	repo := account_repo.NewAccountRepo(db)
-	manager := CreateNewAccountManager(repo)
+	controller := CreateNewAccountController(repo)
 
-	execErr := manager.CreateNewAccount(checkUserID)
+	execErr := controller.CreateNewAccount(checkUserID)
 
 	if execErr != AccountIsExistErr {
 		t.Errorf("unexpected err: %v", execErr)
@@ -172,9 +172,9 @@ func TestCheckBalance(t *testing.T) {
 		WillReturnRows(rows)
 
 	repo := account_repo.NewAccountRepo(db)
-	manager := CreateNewAccountManager(repo)
+	controller := CreateNewAccountController(repo)
 
-	amount, execErr := manager.CheckBalance(checkUserID)
+	amount, execErr := controller.CheckBalance(checkUserID)
 
 	if execErr != nil {
 		t.Errorf("unexpected err: %v", execErr)
@@ -212,9 +212,9 @@ func TestCheckCanAbleToBuy(t *testing.T) {
 		WillReturnRows(rows)
 
 	repo := account_repo.NewAccountRepo(db)
-	manager := CreateNewAccountManager(repo)
+	controller := CreateNewAccountController(repo)
 
-	canBuy, execErr := manager.CheckAbleToBuyService(checkUserID, sum)
+	canBuy, execErr := controller.CheckAbleToBuyService(checkUserID, sum)
 
 	if execErr != nil {
 		t.Errorf("unexpected err: %v", execErr)
@@ -252,9 +252,9 @@ func TestCheckCanNotAbleToBuy(t *testing.T) {
 		WillReturnRows(rows)
 
 	repo := account_repo.NewAccountRepo(db)
-	manager := CreateNewAccountManager(repo)
+	controller := CreateNewAccountController(repo)
 
-	canBuy, execErr := manager.CheckAbleToBuyService(checkUserID, sum)
+	canBuy, execErr := controller.CheckAbleToBuyService(checkUserID, sum)
 
 	if execErr != nil {
 		t.Errorf("unexpected err: %v", execErr)
@@ -287,9 +287,9 @@ func TestUpdateMoney(t *testing.T) {
 		WillReturnResult(sqlmock.NewResult(1, 1))
 
 	repo := account_repo.NewAccountRepo(db)
-	manager := CreateNewAccountManager(repo)
+	controller := CreateNewAccountController(repo)
 
-	execErr := manager.DonateMoney(checkUserID, sum)
+	execErr := controller.DonateMoney(checkUserID, sum)
 
 	if execErr != nil {
 		t.Errorf("unexpected err: %v", execErr)
@@ -305,7 +305,7 @@ func TestUpdateMoney(t *testing.T) {
 		WithArgs(checkUserID).
 		WillReturnRows(rows)
 
-	balance, secExecError := manager.CheckBalance(checkUserID)
+	balance, secExecError := controller.CheckBalance(checkUserID)
 
 	if secExecError != nil {
 		t.Errorf("unexpected err: %v", secExecError)
@@ -347,9 +347,9 @@ func TestSpendMoneySuccess(t *testing.T) {
 		WillReturnResult(sqlmock.NewResult(1, 1))
 
 	repo := account_repo.NewAccountRepo(db)
-	manager := CreateNewAccountManager(repo)
+	controller := CreateNewAccountController(repo)
 
-	execErr := manager.SpendMoney(checkUserID, sum)
+	execErr := controller.SpendMoney(checkUserID, sum)
 
 	if execErr != nil {
 		t.Errorf("unexpected err: %v", execErr)
@@ -366,7 +366,7 @@ func TestSpendMoneySuccess(t *testing.T) {
 		WithArgs(checkUserID).
 		WillReturnRows(rows)
 
-	balance, secExecError := manager.CheckBalance(checkUserID)
+	balance, secExecError := controller.CheckBalance(checkUserID)
 
 	if secExecError != nil {
 		t.Errorf("unexpected err: %v", secExecError)
@@ -404,9 +404,9 @@ func TestSpendMoneyWithNotEnoughMoney(t *testing.T) {
 		WillReturnRows(rows)
 
 	repo := account_repo.NewAccountRepo(db)
-	manager := CreateNewAccountManager(repo)
+	controller := CreateNewAccountController(repo)
 
-	execErr := manager.SpendMoney(checkUserID, sum)
+	execErr := controller.SpendMoney(checkUserID, sum)
 
 	if execErr != NotEnoughMoneyErr {
 		t.Errorf("unexpected err: %v", execErr)
@@ -422,7 +422,7 @@ func TestSpendMoneyWithNotEnoughMoney(t *testing.T) {
 		WithArgs(checkUserID).
 		WillReturnRows(rows)
 
-	balance, secExecError := manager.CheckBalance(checkUserID)
+	balance, secExecError := controller.CheckBalance(checkUserID)
 
 	if secExecError != nil {
 		t.Errorf("unexpected err: %v", secExecError)

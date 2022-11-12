@@ -5,16 +5,16 @@ import (
 	"sync"
 )
 
-type AccountManager struct {
+type AccountController struct {
 	mutex sync.RWMutex
 	repo  account_repo.AccountRepoInterface
 }
 
-func CreateNewAccountManager(repo account_repo.AccountRepoInterface) *AccountManager {
-	return &AccountManager{mutex: sync.RWMutex{}, repo: repo}
+func CreateNewAccountController(repo account_repo.AccountRepoInterface) *AccountController {
+	return &AccountController{mutex: sync.RWMutex{}, repo: repo}
 }
 
-func (m *AccountManager) CheckAccountIsExist(userID int64) (result bool, err error) {
+func (m *AccountController) CheckAccountIsExist(userID int64) (result bool, err error) {
 	_, isAccExistErr := m.repo.GetCurrentAmount(userID)
 	switch isAccExistErr {
 	case account_repo.AccountNotExist:
@@ -27,7 +27,7 @@ func (m *AccountManager) CheckAccountIsExist(userID int64) (result bool, err err
 	return result, err
 }
 
-func (m *AccountManager) CreateNewAccount(userID int64) error {
+func (m *AccountController) CreateNewAccount(userID int64) error {
 	m.mutex.Lock()
 	isAccExist, err := m.CheckAccountIsExist(userID)
 	if err == nil {
@@ -41,11 +41,11 @@ func (m *AccountManager) CreateNewAccount(userID int64) error {
 	return err
 }
 
-func (m *AccountManager) CheckBalance(userID int64) (float64, error) {
+func (m *AccountController) CheckBalance(userID int64) (float64, error) {
 	return m.repo.GetCurrentAmount(userID)
 }
 
-func (m *AccountManager) CheckAbleToBuyService(userID int64, servicePrice float64) (bool, error) {
+func (m *AccountController) CheckAbleToBuyService(userID int64, servicePrice float64) (bool, error) {
 	var result bool
 	balance, err := m.repo.GetCurrentAmount(userID)
 	if err == nil {
@@ -56,7 +56,7 @@ func (m *AccountManager) CheckAbleToBuyService(userID int64, servicePrice float6
 	return result, err
 }
 
-func (m *AccountManager) DonateMoney(userID int64, sum float64) (err error) {
+func (m *AccountController) DonateMoney(userID int64, sum float64) (err error) {
 	m.mutex.Lock()
 	if sum >= 0 {
 		err = m.repo.ChangeAmount(userID, sum)
@@ -67,7 +67,7 @@ func (m *AccountManager) DonateMoney(userID int64, sum float64) (err error) {
 	return err
 }
 
-func (m *AccountManager) SpendMoney(userID int64, sum float64) error {
+func (m *AccountController) SpendMoney(userID int64, sum float64) error {
 	m.mutex.Lock()
 	canSpendMoney, err := m.CheckAbleToBuyService(userID, sum)
 	if err == nil && canSpendMoney {
