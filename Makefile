@@ -5,7 +5,7 @@ build: go build -o server.out -v ./cmd/server
 
 
 run-coverage:
-	go test -covermode=atomic -coverpkg=./internal/... -coverprofile=cover ./internal/...
+	go test ./... -covermode=atomic -coverprofile=cover
 	cat cover | fgrep -v "mocks" | fgrep -v "testing.go" | fgrep -v "docs"  | fgrep -v "configs" | fgrep -v "main.go" > cover2
 	go tool cover -func=cover2
 
