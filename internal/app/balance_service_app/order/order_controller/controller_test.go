@@ -371,11 +371,12 @@ func TestReturnOrderSuccess(t *testing.T) {
 	var orderID int64 = 1
 	var userID int64 = 1
 	var serviceID int64 = 1
+	var orderCost float64 = 100
 	curTime := time.Now()
 
 	rows := sqlmock.NewRows([]string{"orderID", "userID", "serviceType", "orderCost",
 		"creatingTime", "comment", "orderState"})
-	expect := order.Order{orderID, userID, serviceID, 100, curTime, "Good", order.RESERVED}
+	expect := order.Order{orderID, userID, serviceID, orderCost, curTime, "Good", order.RESERVED}
 	rows.AddRow(expect.OrderID, expect.UserID, expect.ServiceID, expect.OrderCost,
 		expect.CreatingTime, expect.Comment, expect.OrderState)
 
@@ -397,7 +398,7 @@ func TestReturnOrderSuccess(t *testing.T) {
 	repo := order_repo.NewOrderRepo(db)
 	controller := CreateNewOrderController(repo)
 
-	execErr := controller.ReturnOrder(orderID, userID, serviceID)
+	sum, execErr := controller.ReturnOrder(orderID, userID, serviceID)
 
 	if execErr != nil {
 		t.Errorf("unexpected err: %v", execErr)
@@ -405,6 +406,11 @@ func TestReturnOrderSuccess(t *testing.T) {
 	}
 	if expectationErr := mock.ExpectationsWereMet(); expectationErr != nil {
 		t.Errorf("there were unfulfilled expectations: %s", expectationErr)
+		return
+	}
+
+	if !reflect.DeepEqual(sum, orderCost) {
+		t.Errorf("results not match, want %v, have %v", orderCost, sum)
 		return
 	}
 }
@@ -417,6 +423,7 @@ func TestReturnOrderWrongStateError(t *testing.T) {
 	}
 	defer db.Close()
 
+	var orderCost float64 = 100
 	var orderID int64 = 1
 	var userID int64 = 1
 	var serviceID int64 = 1
@@ -424,7 +431,7 @@ func TestReturnOrderWrongStateError(t *testing.T) {
 
 	rows := sqlmock.NewRows([]string{"orderID", "userID", "serviceType", "orderCost",
 		"creatingTime", "comment", "orderState"})
-	expect := order.Order{orderID, userID, serviceID, 100, curTime, "Good", order.REGISTRATED}
+	expect := order.Order{orderID, userID, serviceID, orderCost, curTime, "Good", order.REGISTRATED}
 	rows.AddRow(expect.OrderID, expect.UserID, expect.ServiceID, expect.OrderCost,
 		expect.CreatingTime, expect.Comment, expect.OrderState)
 
@@ -442,7 +449,7 @@ func TestReturnOrderWrongStateError(t *testing.T) {
 	repo := order_repo.NewOrderRepo(db)
 	controller := CreateNewOrderController(repo)
 
-	execErr := controller.ReturnOrder(orderID, userID, serviceID)
+	_, execErr := controller.ReturnOrder(orderID, userID, serviceID)
 
 	if execErr != WrongStateError {
 		t.Errorf("unexpected err: %v", execErr)

@@ -105,7 +105,8 @@ func (c *OrderController) FinishOrder(orderID, userID, serviceID int64) error {
 	return err
 }
 
-func (c *OrderController) ReturnOrder(orderID, userID, serviceID int64) error {
+func (c *OrderController) ReturnOrder(orderID, userID, serviceID int64) (float64, error) {
+	var sum float64
 	isOrderExist, err := c.CheckOrderIsExist(orderID, userID, serviceID)
 
 	if err == nil {
@@ -113,6 +114,9 @@ func (c *OrderController) ReturnOrder(orderID, userID, serviceID int64) error {
 			curOrder, getOrderErr := c.GetOrder(orderID, userID, serviceID)
 			if getOrderErr == nil && curOrder.OrderState == order.RESERVED {
 				err = c.repo.ChangeOrderState(orderID, userID, serviceID, order.RETURNED)
+				if err == nil {
+					sum = curOrder.OrderCost
+				}
 			} else {
 				if getOrderErr != nil {
 					err = GetOrderError
@@ -122,5 +126,5 @@ func (c *OrderController) ReturnOrder(orderID, userID, serviceID int64) error {
 			}
 		}
 	}
-	return err
+	return sum, err
 }

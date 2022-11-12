@@ -9,5 +9,5 @@ type OrderControllerInterface interface {
 	CheckOrderIsExist(orderID, userID, serviceID int64) (bool, error)
 	ReserveOrder(orderID, userID, serviceID int64) error
 	FinishOrder(orderID, userID, serviceID int64) error
-	ReturnOrder(orderID, userID, serviceID int64) error
+	ReturnOrder(orderID, userID, serviceID int64) (float64, error)
 }

@@ -99,6 +99,24 @@ func (c *TransactionController) AddNewRecordTransferTo(srcUserID, dstUserID int6
 	return err
 }
 
+func (c *TransactionController) AddNewRecordTransferFrom(srcUserID, dstUserID int64, sum float64, comments string) error {
+	newTransact := transaction.Transaction{
+		TransactionID:   c.transactCount,
+		UserID:          srcUserID,
+		TransactionType: transaction.Transfer,
+		Sum:             sum,
+		Time:            time.Now(),
+		ActionComments:  "перевод от пользователя: " + fmt.Sprintf("%d", dstUserID),
+		AddComments:     comments,
+	}
+
+	c.mutex.Lock()
+	err := c.repo.AddNewTransaction(newTransact)
+	atomic.AddInt64(&c.transactCount, 1)
+	c.mutex.Unlock()
+	return err
+}
+
 func (c *TransactionController) GetUserTransactions(userID int64) ([]transaction.Transaction, error) {
 	return c.repo.GetUserTransactions(userID)
 }
