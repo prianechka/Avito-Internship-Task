@@ -8,6 +8,6 @@ type ManagerInterface interface {
 	AcceptBuy(userID, orderID, serviceID int64) error
 	RefuseBuy(userID, orderID, serviceID int64, comment string) error
 	Transfer(srcUserID, dstUserID int64, sum float64, comment string) error
-	GetReport() error
+	GetFinanceReport(month, year int64, url string) error
 	GetUserReport() error
 }

@@ -3,6 +3,8 @@ package order_controller
 import (
 	"Avito-Internship-Task/internal/app/balance_service_app/order"
 	"Avito-Internship-Task/internal/app/balance_service_app/order/order_repo"
+	"Avito-Internship-Task/internal/app/balance_service_app/report"
+	"Avito-Internship-Task/internal/pkg/utils"
 	"database/sql"
 	"sync"
 	"time"
@@ -127,4 +129,17 @@ func (c *OrderController) ReturnOrder(orderID, userID, serviceID int64) (float64
 		}
 	}
 	return sum, err
+}
+
+func (c *OrderController) GetFinanceReports(month, year int64) ([]report.FinanceReport, error) {
+	var report = make([]report.FinanceReport, utils.EMPTY)
+	var err error = nil
+	if month < utils.January || month > utils.December {
+		err = BadMonthError
+	} else if year < utils.FirstYear || year > utils.LastYear {
+		err = BadYearError
+	} else {
+		report, err = c.repo.GetSumOfFinishedServices(month, year)
+	}
+	return report, err
 }

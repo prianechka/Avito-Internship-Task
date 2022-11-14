@@ -3,6 +3,7 @@ package manager
 import (
 	ac "Avito-Internship-Task/internal/app/balance_service_app/account/account_controller"
 	oc "Avito-Internship-Task/internal/app/balance_service_app/order/order_controller"
+	"Avito-Internship-Task/internal/app/balance_service_app/report/report_controller"
 	tc "Avito-Internship-Task/internal/app/balance_service_app/transaction/transaction_controller"
 	"fmt"
 )
@@ -188,8 +189,13 @@ func (m *Manager) makeReportsForAllUsers(srcUserID, dstUserID int64, sum float64
 	return err
 }
 
-func (m *Manager) GetReport() error {
-	return nil
+func (m *Manager) GetFinanceReport(month, year int64, url string) error {
+	dataToReport, err := m.orderController.GetFinanceReports(month, year)
+	if err == nil {
+		reportController := report_controller.CreateNewReportController()
+		err = reportController.CreateFinancialReportCSV(dataToReport, url)
+	}
+	return err
 }
 
 func (m *Manager) GetUserReport() error {

@@ -14,6 +14,10 @@ type BalanceResponseMessage struct {
 	Comment string  `json:"comment"`
 }
 
+type FinanceReportResponseMessage struct {
+	FileURL string `json:"fileURL"`
+}
+
 func SendShortResponse(w http.ResponseWriter, code int, comment string) {
 	var msg = ShortResponseMessage{comment}
 	result, err := json.Marshal(msg)
@@ -32,6 +36,17 @@ func BalanceResponse(w http.ResponseWriter, balance float64, comment string) {
 		w.WriteHeader(http.StatusOK)
 		_, _ = w.Write(result)
 	} else {
-		SendShortResponse(w, http.StatusInternalServerError, "server problems")
+		SendShortResponse(w, http.StatusInternalServerError, "internal server problems")
+	}
+}
+
+func FinanceReportResponse(w http.ResponseWriter, fileURL string) {
+	var msg = FinanceReportResponseMessage{fileURL}
+	result, err := json.Marshal(msg)
+	if err == nil {
+		w.WriteHeader(http.StatusOK)
+		_, _ = w.Write(result)
+	} else {
+		SendShortResponse(w, http.StatusInternalServerError, "internal server problems")
 	}
 }

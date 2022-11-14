@@ -57,7 +57,7 @@ func (s *Server) Start() error {
 
 	accountHandler := account_handler.CreateAccountHandler(serverManager)
 	serviceHandler := service_handler.CreateServiceHandler(serverManager)
-	reportHandler := report_handler.ReportHandler{Manager: serverManager}
+	reportHandler := report_handler.CreateReportHandler(serverManager)
 
 	router.PathPrefix("/swagger/").Handler(httpSwagger.WrapHandler)
 
@@ -69,8 +69,8 @@ func (s *Server) Start() error {
 	router.HandleFunc("/services/accept", serviceHandler.AcceptService).Methods("POST")
 	router.HandleFunc("/services/refuse", serviceHandler.RefuseService).Methods("POST")
 
-	router.HandleFunc("/reports/user/{id}", reportHandler.GetUserReport).Methods("GET")
-	router.HandleFunc("/reports/{year}/{month}", reportHandler.GetFinanceReport).Methods("GET")
+	router.HandleFunc("/reports/user", reportHandler.GetUserReport).Methods("GET")
+	router.HandleFunc("/reports/finance", reportHandler.GetFinanceReport).Methods("GET")
 
 	withLogsRouter := middleware.Log(s.logger, router)
 	upgradedRouter := middleware.Panic(withLogsRouter)

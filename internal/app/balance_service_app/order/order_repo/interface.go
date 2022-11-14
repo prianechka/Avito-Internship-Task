@@ -1,6 +1,9 @@
 package order_repo
 
-import "Avito-Internship-Task/internal/app/balance_service_app/order"
+import (
+	"Avito-Internship-Task/internal/app/balance_service_app/order"
+	"Avito-Internship-Task/internal/app/balance_service_app/report"
+)
 
 //go:generate mockgen -source=interface.go -destination=mocks/order_repo_mock.go -package=mocks OrderRepoInterface
 type OrderRepoInterface interface {
@@ -10,4 +13,5 @@ type OrderRepoInterface interface {
 	GetUserOrders(userID int64) ([]order.Order, error)
 	GetServiceOrders(serviceType int64) ([]order.Order, error)
 	ChangeOrderState(orderID, userID, serviceType int64, orderState int64) error
+	GetSumOfFinishedServices(month, year int64) ([]report.FinanceReport, error)
 }

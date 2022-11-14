@@ -1,6 +1,9 @@
 package order_controller
 
-import "Avito-Internship-Task/internal/app/balance_service_app/order"
+import (
+	"Avito-Internship-Task/internal/app/balance_service_app/order"
+	"Avito-Internship-Task/internal/app/balance_service_app/report"
+)
 
 //go:generate mockgen -source=interface.go -destination=mocks/order_controller_mock.go -package=mocks OrderControllerInterface
 type OrderControllerInterface interface {
@@ -10,4 +13,5 @@ type OrderControllerInterface interface {
 	ReserveOrder(orderID, userID, serviceID int64) error
 	FinishOrder(orderID, userID, serviceID int64) error
 	ReturnOrder(orderID, userID, serviceID int64) (float64, error)
+	GetFinanceReports(month, year int64) ([]report.FinanceReport, error)
 }

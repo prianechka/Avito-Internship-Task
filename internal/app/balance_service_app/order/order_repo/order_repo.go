@@ -2,6 +2,7 @@ package order_repo
 
 import (
 	"Avito-Internship-Task/internal/app/balance_service_app/order"
+	"Avito-Internship-Task/internal/app/balance_service_app/report"
 	"Avito-Internship-Task/internal/pkg/utils"
 	"database/sql"
 	"sync"
@@ -127,4 +128,26 @@ func (repo *OrderRepo) ChangeOrderState(orderID, userID, serviceType int64, orde
 	_, err := repo.conn.Exec(query, orderState, orderID, userID, serviceType)
 	repo.mutex.Unlock()
 	return err
+}
+
+func (repo *OrderRepo) GetSumOfFinishedServices(month, year int64) ([]report.FinanceReport, error) {
+	allServices := make([]report.FinanceReport, utils.EMPTY)
+
+	repo.mutex.Lock()
+	query := MySQLGetAllOrdersStat{}.GetString()
+	rows, err := repo.conn.Query(query, month, year)
+	repo.mutex.Unlock()
+
+	if err == nil {
+		for rows.Next() {
+			newServiceReport := report.FinanceReport{}
+			err = rows.Scan(&newServiceReport.ServiceType, &newServiceReport.Sum)
+			if err != nil {
+				break
+			} else {
+				allServices = append(allServices, newServiceReport)
+			}
+		}
+	}
+	return allServices, err
 }

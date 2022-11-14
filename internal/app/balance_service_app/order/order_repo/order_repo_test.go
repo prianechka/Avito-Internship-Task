@@ -2,6 +2,7 @@ package order_repo
 
 import (
 	"Avito-Internship-Task/internal/app/balance_service_app/order"
+	"Avito-Internship-Task/internal/app/balance_service_app/report"
 	"reflect"
 	"testing"
 	"time"
@@ -242,6 +243,43 @@ func TestChangeState(t *testing.T) {
 	}
 	if expectationErr := mock.ExpectationsWereMet(); expectationErr != nil {
 		t.Errorf("there were unfulfilled expectations: %s", expectationErr)
+		return
+	}
+}
+
+func TestGetFinanceReport(t *testing.T) {
+	db, mock, err := sqlmock.New()
+	if err != nil {
+		t.Fatalf("cant create mock: %s", err)
+	}
+	defer db.Close()
+
+	var month int64 = 2
+	var year int64 = 3
+
+	rows := sqlmock.NewRows([]string{"serviceType", "sum"})
+	allServicesReport := []report.FinanceReport{{1, 100}, {2, 150}}
+	for _, service := range allServicesReport {
+		rows.AddRow(service.ServiceType, service.Sum)
+	}
+
+	mock.ExpectQuery("SELECT serviceType ").
+		WithArgs(month, year).WillReturnRows(rows)
+
+	repo := NewOrderRepo(db)
+
+	curReports, execErr := repo.GetSumOfFinishedServices(month, year)
+	if execErr != nil {
+		t.Errorf("unexpected err: %v", execErr)
+		return
+	}
+	if expectationErr := mock.ExpectationsWereMet(); expectationErr != nil {
+		t.Errorf("there were unfulfilled expectations: %s", expectationErr)
+		return
+	}
+
+	if !reflect.DeepEqual(curReports, allServicesReport) {
+		t.Errorf("results not match, want %v, have %v", allServicesReport, curReports)
 		return
 	}
 }

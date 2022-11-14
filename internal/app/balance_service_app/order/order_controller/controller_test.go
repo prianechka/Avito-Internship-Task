@@ -3,6 +3,7 @@ package order_controller
 import (
 	"Avito-Internship-Task/internal/app/balance_service_app/order"
 	"Avito-Internship-Task/internal/app/balance_service_app/order/order_repo"
+	"Avito-Internship-Task/internal/app/balance_service_app/report"
 	"gopkg.in/DATA-DOG/go-sqlmock.v1"
 	"reflect"
 	"testing"
@@ -452,6 +453,95 @@ func TestReturnOrderWrongStateError(t *testing.T) {
 	_, execErr := controller.ReturnOrder(orderID, userID, serviceID)
 
 	if execErr != WrongStateError {
+		t.Errorf("unexpected err: %v", execErr)
+		return
+	}
+	if expectationErr := mock.ExpectationsWereMet(); expectationErr != nil {
+		t.Errorf("there were unfulfilled expectations: %s", expectationErr)
+		return
+	}
+}
+
+// TestGetFinancialReportSuccess проверяет, что из базы данные по услугам получаются корректно.
+func TestGetFinancialReportSuccess(t *testing.T) {
+	db, mock, err := sqlmock.New()
+	if err != nil {
+		t.Fatalf("cant create mock: %s", err)
+	}
+	defer db.Close()
+
+	var month int64 = 2
+	var year int64 = 2022
+
+	rows := sqlmock.NewRows([]string{"serviceType", "sum"})
+	allServicesReport := []report.FinanceReport{{1, 100}, {2, 150}}
+	for _, service := range allServicesReport {
+		rows.AddRow(service.ServiceType, service.Sum)
+	}
+
+	mock.ExpectQuery("SELECT serviceType ").
+		WithArgs(month, year).WillReturnRows(rows)
+
+	repo := order_repo.NewOrderRepo(db)
+	controller := CreateNewOrderController(repo)
+
+	curReports, execErr := controller.GetFinanceReports(month, year)
+	if execErr != nil {
+		t.Errorf("unexpected err: %v", execErr)
+		return
+	}
+	if expectationErr := mock.ExpectationsWereMet(); expectationErr != nil {
+		t.Errorf("there were unfulfilled expectations: %s", expectationErr)
+		return
+	}
+
+	if !reflect.DeepEqual(curReports, allServicesReport) {
+		t.Errorf("results not match, want %v, have %v", allServicesReport, curReports)
+		return
+	}
+}
+
+// TestGetFinancialReportBadMonth проверяет, что если месяц задан некорректно, то вернётся ошибка.
+func TestGetFinancialReportBadMonth(t *testing.T) {
+	db, mock, err := sqlmock.New()
+	if err != nil {
+		t.Fatalf("cant create mock: %s", err)
+	}
+	defer db.Close()
+
+	var month int64 = 13
+	var year int64 = 2022
+
+	repo := order_repo.NewOrderRepo(db)
+	controller := CreateNewOrderController(repo)
+
+	_, execErr := controller.GetFinanceReports(month, year)
+	if execErr != BadMonthError {
+		t.Errorf("unexpected err: %v", execErr)
+		return
+	}
+	if expectationErr := mock.ExpectationsWereMet(); expectationErr != nil {
+		t.Errorf("there were unfulfilled expectations: %s", expectationErr)
+		return
+	}
+}
+
+// TestGetFinancialReportBadYear проверяет, что если год задан некорректно, то вернётся ошибка.
+func TestGetFinancialReportBadYear(t *testing.T) {
+	db, mock, err := sqlmock.New()
+	if err != nil {
+		t.Fatalf("cant create mock: %s", err)
+	}
+	defer db.Close()
+
+	var month int64 = 13
+	var year int64 = 2024
+
+	repo := order_repo.NewOrderRepo(db)
+	controller := CreateNewOrderController(repo)
+
+	_, execErr := controller.GetFinanceReports(month, year)
+	if execErr != BadMonthError {
 		t.Errorf("unexpected err: %v", execErr)
 		return
 	}
