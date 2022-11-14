@@ -13,5 +13,5 @@ func (sql MySQLGetCurrentAmount) GetString() string {
 }
 
 func (sql MySQLChangeAmount) GetString() string {
-	return "UPDATE balanceApp.accounts SET amount = amoumt + ? WHERE userID = ?;"
+	return "UPDATE balanceApp.accounts SET amount = amount + ? WHERE userID = ?;"
 }

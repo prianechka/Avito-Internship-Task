@@ -30,7 +30,7 @@ func CreateServer(logger *logrus.Logger) *Server {
 }
 
 func CreateDB(DBName string) *sql.DB {
-	dsn := "root:love@tcp(localhost:3306)/" + DBName + "?&charset=utf8&interpolateParams=true"
+	dsn := "root:Ghzyz28052001!@tcp(localhost:3306)/" + DBName + "?&charset=utf8&interpolateParams=true"
 	db, err := sql.Open("mysql", dsn)
 	if err == nil {
 		db.SetMaxOpenConns(10)
@@ -50,9 +50,9 @@ func (s *Server) Start() error {
 	router := r.PathPrefix("/api/v1/").Subrouter()
 	router.PathPrefix("/swagger/").Handler(httpSwagger.WrapHandler)
 
-	accountDB := CreateDB("accounts")
-	orderDB := CreateDB("orders")
-	transactionDB := CreateDB("transactions")
+	accountDB := CreateDB("balanceApp")
+	orderDB := CreateDB("balanceApp")
+	transactionDB := CreateDB("balanceApp")
 
 	accountRepo := account_repo.NewAccountRepo(accountDB)
 	accountController := ac.CreateNewAccountController(accountRepo)
@@ -71,7 +71,7 @@ func (s *Server) Start() error {
 
 	router.PathPrefix("/swagger/").Handler(httpSwagger.WrapHandler)
 
-	router.HandleFunc("/accounts/{userID}", accountHandler.GetBalance).Methods("GET")
+	router.HandleFunc("/accounts", accountHandler.GetBalance).Methods("GET")
 	router.HandleFunc("/accounts/refill", accountHandler.RefillBalance).Methods("POST")
 	router.HandleFunc("/transfer", accountHandler.Transfer).Methods("POST")
 
@@ -85,5 +85,6 @@ func (s *Server) Start() error {
 	upgradedRouter := middleware.Panic(router)
 
 	addr := ":8080"
+	s.logger.Println("server works!")
 	return http.ListenAndServe(addr, upgradedRouter)
 }

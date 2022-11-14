@@ -5,6 +5,7 @@ import (
 	"Avito-Internship-Task/internal/pkg/utils"
 	"database/sql"
 	"sync"
+	"time"
 )
 
 type TransactionRepo struct {
@@ -19,8 +20,9 @@ func NewTransactionRepo(conn *sql.DB) *TransactionRepo {
 func (repo *TransactionRepo) AddNewTransaction(newTransaction transaction.Transaction) error {
 	repo.mutex.Lock()
 	query := MySQLAddNewTransaction{}.GetString()
+	time := newTransaction.Time.Format(utils.TimeLayout)
 	_, err := repo.conn.Exec(query, newTransaction.TransactionID, newTransaction.UserID,
-		newTransaction.TransactionType, newTransaction.Sum, newTransaction.Time,
+		newTransaction.TransactionType, newTransaction.Sum, time,
 		newTransaction.ActionComments, newTransaction.AddComments)
 	repo.mutex.Unlock()
 	return err
@@ -37,8 +39,10 @@ func (repo *TransactionRepo) GetAllTransactions() ([]transaction.Transaction, er
 	if err == nil {
 		for rows.Next() {
 			newTransact := transaction.Transaction{}
+			var transactTime string
 			err = rows.Scan(&newTransact.TransactionID, &newTransact.UserID, &newTransact.TransactionType,
-				&newTransact.Sum, &newTransact.Time, &newTransact.ActionComments, &newTransact.AddComments)
+				&newTransact.Sum, &transactTime, &newTransact.ActionComments, &newTransact.AddComments)
+			newTransact.Time, _ = time.Parse(utils.TimeLayout, transactTime)
 			if err != nil {
 				break
 			} else {
@@ -60,8 +64,10 @@ func (repo *TransactionRepo) GetUserTransactions(userID int64) ([]transaction.Tr
 	if err == nil {
 		for rows.Next() {
 			newTransact := transaction.Transaction{}
+			var transactTime string
 			err = rows.Scan(&newTransact.TransactionID, &newTransact.UserID, &newTransact.TransactionType,
-				&newTransact.Sum, &newTransact.Time, &newTransact.ActionComments, &newTransact.AddComments)
+				&newTransact.Sum, &transactTime, &newTransact.ActionComments, &newTransact.AddComments)
+			newTransact.Time, _ = time.Parse(utils.TimeLayout, transactTime)
 			if err != nil {
 				break
 			} else {
@@ -80,8 +86,10 @@ func (repo *TransactionRepo) GetTransactionByID(transactionID int64) (transactio
 	row := repo.conn.QueryRow(query, transactionID)
 	repo.mutex.Unlock()
 
+	var transactTime string
 	err := row.Scan(&newTransact.TransactionID, &newTransact.UserID, &newTransact.TransactionType,
-		&newTransact.Sum, &newTransact.Time, &newTransact.ActionComments, &newTransact.AddComments)
+		&newTransact.Sum, &transactTime, &newTransact.ActionComments, &newTransact.AddComments)
+	newTransact.Time, _ = time.Parse(utils.TimeLayout, transactTime)
 
 	return newTransact, err
 }

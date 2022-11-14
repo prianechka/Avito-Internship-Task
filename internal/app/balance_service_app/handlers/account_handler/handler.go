@@ -14,12 +14,15 @@ import (
 )
 
 type AccountHandler struct {
-	logger  logrus.Logger
+	logger  *logrus.Entry
 	manager manager.ManagerInterface
 }
 
 func CreateAccountHandler(newManager manager.ManagerInterface) *AccountHandler {
-	return &AccountHandler{manager: newManager}
+	contextLogger := logrus.WithFields(logrus.Fields{})
+	logrus.SetReportCaller(false)
+	logrus.SetFormatter(&logrus.TextFormatter{PadLevelText: false, DisableLevelTruncation: false})
+	return &AccountHandler{logger: contextLogger, manager: newManager}
 }
 
 // RefillBalance
@@ -27,12 +30,12 @@ func CreateAccountHandler(newManager manager.ManagerInterface) *AccountHandler {
 // @Description users refill balance in the app
 // @Accept json
 // @Produce json
-// @Param user_id path int true "user_id in balanceApp"
+// @Param data body messages.RefillParams true "body for transfer money"
 // @Success 200 {object} response.ShortResponseMessage "OK"
 // @Failure 400 {object} response.ShortResponseMessage "invalid body params"
 // @Failure 401 {object} response.ShortResponseMessage "account is not exist"
 // @Failure 500 {object} response.ShortResponseMessage "internal server error"
-// @Router /accounts/refill [POST]
+// @Router /api/v1/accounts/refill [POST]
 func (h *AccountHandler) RefillBalance(w http.ResponseWriter, r *http.Request) {
 	var statusCode int
 	var handleMessage string
@@ -80,7 +83,7 @@ func (h *AccountHandler) RefillBalance(w http.ResponseWriter, r *http.Request) {
 // @Failure 401 {object} response.ShortResponseMessage "account is not exist"
 // @Failure 422 {object} response.ShortResponseMessage "not enough money"
 // @Failure 500 {object} response.ShortResponseMessage "internal server error"
-// @Router /transfer [POST]
+// @Router /api/v1/transfer [POST]
 func (h *AccountHandler) Transfer(w http.ResponseWriter, r *http.Request) {
 	var statusCode int
 	var handleMessage string
@@ -125,12 +128,12 @@ func (h *AccountHandler) Transfer(w http.ResponseWriter, r *http.Request) {
 // @Summary get user balance
 // @Description get user balance
 // @Produce json
-// @Param id path int true "user_id in balanceApp"
+// @Param userID query int true "user_id in balanceApp"
 // @Success 200 {object} response.BalanceResponseMessage
 // @Failure 400 {object} response.ShortResponseMessage "userID not found | userID isn't number"
 // @Failure 401 {object} response.ShortResponseMessage "account is not exist"
 // @Failure 500 {object} response.ShortResponseMessage "internal server error"
-// @Router /accounts/{id} [GET]
+// @Router /api/v1/accounts [GET]
 func (h *AccountHandler) GetBalance(w http.ResponseWriter, r *http.Request) {
 	var statusCode int
 	var handleMessage string

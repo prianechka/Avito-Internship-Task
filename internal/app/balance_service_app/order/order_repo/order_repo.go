@@ -5,6 +5,7 @@ import (
 	"Avito-Internship-Task/internal/pkg/utils"
 	"database/sql"
 	"sync"
+	"time"
 )
 
 type OrderRepo struct {
@@ -19,8 +20,9 @@ func NewOrderRepo(conn *sql.DB) *OrderRepo {
 func (repo *OrderRepo) CreateOrder(order order.Order) error {
 	repo.mutex.Lock()
 	query := MySQLAddNewOrder{}.GetString()
+	time := order.CreatingTime.Format(utils.TimeLayout)
 	_, err := repo.conn.Exec(query, order.OrderID, order.UserID, order.ServiceID,
-		order.OrderCost, order.CreatingTime, order.Comment, order.OrderState)
+		order.OrderCost, time, order.Comment, order.OrderState)
 	repo.mutex.Unlock()
 	return err
 }
@@ -36,8 +38,10 @@ func (repo *OrderRepo) GetAllOrders() ([]order.Order, error) {
 	if err == nil {
 		for rows.Next() {
 			newOrder := &order.Order{}
+			var orderTime string
 			err = rows.Scan(&newOrder.OrderID, &newOrder.UserID, &newOrder.ServiceID,
-				&newOrder.OrderCost, &newOrder.CreatingTime, &newOrder.Comment, &newOrder.OrderState)
+				&newOrder.OrderCost, &orderTime, &newOrder.Comment, &newOrder.OrderState)
+			newOrder.CreatingTime, _ = time.Parse(utils.TimeLayout, orderTime)
 			if err != nil {
 				break
 			} else {
@@ -56,8 +60,12 @@ func (repo *OrderRepo) GetOrderByID(orderID, userID, serviceType int64) (order.O
 	row := repo.conn.QueryRow(query, orderID, userID, serviceType)
 	repo.mutex.Unlock()
 
+	var orderTime string
+
 	err := row.Scan(&order.OrderID, &order.UserID, &order.ServiceID,
-		&order.OrderCost, &order.CreatingTime, &order.Comment, &order.OrderState)
+		&order.OrderCost, &orderTime, &order.Comment, &order.OrderState)
+
+	order.CreatingTime, _ = time.Parse(utils.TimeLayout, orderTime)
 
 	return order, err
 }
@@ -73,8 +81,11 @@ func (repo *OrderRepo) GetUserOrders(userID int64) ([]order.Order, error) {
 	if err == nil {
 		for rows.Next() {
 			newOrder := &order.Order{}
+
+			var orderTime string
 			err = rows.Scan(&newOrder.OrderID, &newOrder.UserID, &newOrder.ServiceID,
-				&newOrder.OrderCost, &newOrder.CreatingTime, &newOrder.Comment, &newOrder.OrderState)
+				&newOrder.OrderCost, &orderTime, &newOrder.Comment, &newOrder.OrderState)
+			newOrder.CreatingTime, _ = time.Parse(utils.TimeLayout, orderTime)
 			if err != nil {
 				break
 			} else {
@@ -96,8 +107,10 @@ func (repo *OrderRepo) GetServiceOrders(serviceType int64) ([]order.Order, error
 	if err == nil {
 		for rows.Next() {
 			newOrder := &order.Order{}
+			var orderTime string
 			err = rows.Scan(&newOrder.OrderID, &newOrder.UserID, &newOrder.ServiceID,
-				&newOrder.OrderCost, &newOrder.CreatingTime, &newOrder.Comment, &newOrder.OrderState)
+				&newOrder.OrderCost, &orderTime, &newOrder.Comment, &newOrder.OrderState)
+			newOrder.CreatingTime, _ = time.Parse(utils.TimeLayout, orderTime)
 			if err != nil {
 				break
 			} else {

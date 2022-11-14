@@ -14,12 +14,15 @@ import (
 )
 
 type ServiceHandler struct {
-	logger  logrus.Logger
+	logger  *logrus.Entry
 	manager manager.ManagerInterface
 }
 
 func CreateServiceHandler(man manager.ManagerInterface) *ServiceHandler {
-	return &ServiceHandler{manager: man}
+	contextLogger := logrus.WithFields(logrus.Fields{})
+	logrus.SetReportCaller(false)
+	logrus.SetFormatter(&logrus.TextFormatter{PadLevelText: false, DisableLevelTruncation: false})
+	return &ServiceHandler{logger: contextLogger, manager: man}
 }
 
 // BuyService
@@ -33,7 +36,7 @@ func CreateServiceHandler(man manager.ManagerInterface) *ServiceHandler {
 // @Failure 401 {object} response.ShortResponseMessage "account is not exist"
 // @Failure 422 {object} response.ShortResponseMessage "not enough money"
 // @Failure 500 {object} response.ShortResponseMessage "internal server error"
-// @Router /buy [POST]
+// @Router /api/v1/services/buy [POST]
 func (h *ServiceHandler) BuyService(w http.ResponseWriter, r *http.Request) {
 	var buyParams messages.BuyServiceMessage
 	var statusCode int
@@ -86,7 +89,7 @@ func (h *ServiceHandler) BuyService(w http.ResponseWriter, r *http.Request) {
 // @Failure 404 {object} response.ShortResponseMessage "order not found"
 // @Failure 422 {object} response.ShortResponseMessage "not enough money"
 // @Failure 500 {object} response.ShortResponseMessage "internal server error"
-// @Router /accept [POST]
+// @Router /api/v1/services/accept [POST]
 func (h *ServiceHandler) AcceptService(w http.ResponseWriter, r *http.Request) {
 	var acceptParams messages.AcceptServiceMessage
 	var statusCode int
@@ -141,7 +144,7 @@ func (h *ServiceHandler) AcceptService(w http.ResponseWriter, r *http.Request) {
 // @Failure 404 {object} response.ShortResponseMessage "order not found"
 // @Failure 422 {object} response.ShortResponseMessage "not enough money"
 // @Failure 500 {object} response.ShortResponseMessage "internal server error"
-// @Router /refuse [POST]
+// @Router /api/v1/services/refuse [POST]
 func (h *ServiceHandler) RefuseService(w http.ResponseWriter, r *http.Request) {
 	var refuseParams messages.RefuseServiceMessage
 	var statusCode int
