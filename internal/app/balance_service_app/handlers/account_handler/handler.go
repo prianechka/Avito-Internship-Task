@@ -2,8 +2,8 @@ package account_handler
 
 import (
 	ac "Avito-Internship-Task/internal/app/balance_service_app/account/account_controller"
-	"Avito-Internship-Task/internal/app/balance_service_app/handlers/account_handler/messages"
-	"Avito-Internship-Task/internal/app/balance_service_app/handlers/response"
+	"Avito-Internship-Task/internal/app/balance_service_app/handlers/account_handler/request_models"
+	"Avito-Internship-Task/internal/app/balance_service_app/handlers/models"
 	"Avito-Internship-Task/internal/app/balance_service_app/manager"
 	"encoding/json"
 	"fmt"
@@ -30,17 +30,17 @@ func CreateAccountHandler(newManager manager.ManagerInterface) *AccountHandler {
 // @Description users refill balance in the app
 // @Accept json
 // @Produce json
-// @Param data body messages.RefillParams true "body for transfer money"
-// @Success 200 {object} response.ShortResponseMessage "OK"
-// @Failure 400 {object} response.ShortResponseMessage "invalid body params"
-// @Failure 401 {object} response.ShortResponseMessage "account is not exist"
-// @Failure 500 {object} response.ShortResponseMessage "internal server error"
+// @Param data body request_models.RefillParams true "body for transfer money"
+// @Success 200 {object} models.ShortResponseMessage "OK"
+// @Failure 400 {object} models.ShortResponseMessage "invalid body params"
+// @Failure 401 {object} models.ShortResponseMessage "account is not exist"
+// @Failure 500 {object} models.ShortResponseMessage "internal server error"
 // @Router /api/v1/accounts/refill [POST]
 func (h *AccountHandler) RefillBalance(w http.ResponseWriter, r *http.Request) {
 	var statusCode int
 	var handleMessage string
 
-	var refillParams messages.RefillParams
+	var refillParams request_models.RefillMessage
 
 	body, readErr := io.ReadAll(r.Body)
 	if readErr != nil {
@@ -67,7 +67,7 @@ func (h *AccountHandler) RefillBalance(w http.ResponseWriter, r *http.Request) {
 		statusCode = http.StatusInternalServerError
 		handleMessage = fmt.Sprintf("internal server error")
 	}
-	response.SendShortResponse(w, statusCode, handleMessage)
+	models.SendShortResponse(w, statusCode, handleMessage)
 	h.logger.Infof("Request: method - %s,  url - %s, Result: status_code = %d, text = %s, err = %v",
 		r.Method, r.URL.Path, statusCode, handleMessage, refillError)
 }
@@ -77,18 +77,18 @@ func (h *AccountHandler) RefillBalance(w http.ResponseWriter, r *http.Request) {
 // @Description money transfer between users
 // @Accept json
 // @Produce json
-// @Param data body messages.TransferMessage true "body for transfer money"
-// @Success 200 {object} response.ShortResponseMessage "OK"
-// @Failure 400 {object} response.ShortResponseMessage "invalid body params"
-// @Failure 401 {object} response.ShortResponseMessage "account is not exist"
-// @Failure 422 {object} response.ShortResponseMessage "not enough money"
-// @Failure 500 {object} response.ShortResponseMessage "internal server error"
+// @Param data body request_models.TransferMessage true "body for transfer money"
+// @Success 200 {object} models.ShortResponseMessage "OK"
+// @Failure 400 {object} models.ShortResponseMessage "invalid body params"
+// @Failure 401 {object} models.ShortResponseMessage "account is not exist"
+// @Failure 422 {object} models.ShortResponseMessage "not enough money"
+// @Failure 500 {object} models.ShortResponseMessage "internal server error"
 // @Router /api/v1/transfer [POST]
 func (h *AccountHandler) Transfer(w http.ResponseWriter, r *http.Request) {
 	var statusCode int
 	var handleMessage string
 
-	var transferParams messages.TransferMessage
+	var transferParams request_models.TransferMessage
 
 	body, readErr := io.ReadAll(r.Body)
 	if readErr != nil {
@@ -119,7 +119,7 @@ func (h *AccountHandler) Transfer(w http.ResponseWriter, r *http.Request) {
 		statusCode = http.StatusInternalServerError
 		handleMessage = fmt.Sprintf("internal server error: %v", transferError)
 	}
-	response.SendShortResponse(w, statusCode, handleMessage)
+	models.SendShortResponse(w, statusCode, handleMessage)
 	h.logger.Infof("Request: method - %s,  url - %s, Result: status_code = %d, text = %s",
 		r.Method, r.URL.Path, statusCode, handleMessage)
 }
@@ -129,10 +129,10 @@ func (h *AccountHandler) Transfer(w http.ResponseWriter, r *http.Request) {
 // @Description get user balance
 // @Produce json
 // @Param userID query int true "user_id in balanceApp"
-// @Success 200 {object} response.BalanceResponseMessage
-// @Failure 400 {object} response.ShortResponseMessage "userID not found | userID isn't number"
-// @Failure 401 {object} response.ShortResponseMessage "account is not exist"
-// @Failure 500 {object} response.ShortResponseMessage "internal server error"
+// @Success 200 {object} models.BalanceResponseMessage
+// @Failure 400 {object} models.ShortResponseMessage "userID not found | userID isn't number"
+// @Failure 401 {object} models.ShortResponseMessage "account is not exist"
+// @Failure 500 {object} models.ShortResponseMessage "internal server error"
 // @Router /api/v1/accounts [GET]
 func (h *AccountHandler) GetBalance(w http.ResponseWriter, r *http.Request) {
 	var statusCode int
@@ -141,20 +141,20 @@ func (h *AccountHandler) GetBalance(w http.ResponseWriter, r *http.Request) {
 	strUserID := r.URL.Query().Get("userID")
 
 	if strUserID == "" {
-		response.SendShortResponse(w, http.StatusBadRequest, "userID not found")
+		models.SendShortResponse(w, http.StatusBadRequest, "userID not found")
 		return
 	}
 
 	userID, err := strconv.Atoi(strUserID)
 	if err != nil {
-		response.SendShortResponse(w, http.StatusBadRequest, "userID isn't number")
+		models.SendShortResponse(w, http.StatusBadRequest, "userID isn't number")
 		return
 	}
 
 	balance, getBalanceErr := h.manager.GetUserBalance(int64(userID))
 	switch getBalanceErr {
 	case nil:
-		response.BalanceResponse(w, balance, "OK")
+		models.BalanceResponse(w, balance, "OK")
 		return
 	case ac.AccountNotExistErr:
 		statusCode = http.StatusUnauthorized
@@ -163,7 +163,7 @@ func (h *AccountHandler) GetBalance(w http.ResponseWriter, r *http.Request) {
 		statusCode = http.StatusInternalServerError
 		handleMessage = fmt.Sprintf("internal server error")
 	}
-	response.SendShortResponse(w, statusCode, handleMessage)
+	models.SendShortResponse(w, statusCode, handleMessage)
 	h.logger.Infof("Request: method - %s,  url - %s, Result: status_code = %d, text = %s",
 		r.Method, r.URL.Path, statusCode, handleMessage)
 }

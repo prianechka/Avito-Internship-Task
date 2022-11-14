@@ -1,4 +1,4 @@
-package messages
+package request_models
 
 type RefuseServiceMessage struct {
 	UserID    int64  `json:"user_id"`

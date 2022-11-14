@@ -2,8 +2,8 @@ package service_handler
 
 import (
 	ac "Avito-Internship-Task/internal/app/balance_service_app/account/account_controller"
-	"Avito-Internship-Task/internal/app/balance_service_app/handlers/response"
-	"Avito-Internship-Task/internal/app/balance_service_app/handlers/service_handler/messages"
+	"Avito-Internship-Task/internal/app/balance_service_app/handlers/models"
+	"Avito-Internship-Task/internal/app/balance_service_app/handlers/service_handler/request_models"
 	"Avito-Internship-Task/internal/app/balance_service_app/manager"
 	oc "Avito-Internship-Task/internal/app/balance_service_app/order/order_controller"
 	"encoding/json"
@@ -30,15 +30,15 @@ func CreateServiceHandler(man manager.ManagerInterface) *ServiceHandler {
 // @Description user buy service
 // @Accept json
 // @Produce json
-// @Param data body messages.BuyServiceMessage true "body for buy service"
-// @Success 200 {object} response.ShortResponseMessage "OK"
-// @Failure 400 {object} response.ShortResponseMessage "invalid body params"
-// @Failure 401 {object} response.ShortResponseMessage "account is not exist"
-// @Failure 422 {object} response.ShortResponseMessage "not enough money"
-// @Failure 500 {object} response.ShortResponseMessage "internal server error"
+// @Param data body request_models.BuyServiceMessage true "body for buy service"
+// @Success 200 {object} models.ShortResponseMessage "OK"
+// @Failure 400 {object} models.ShortResponseMessage "invalid body params"
+// @Failure 401 {object} models.ShortResponseMessage "account is not exist"
+// @Failure 422 {object} models.ShortResponseMessage "not enough money"
+// @Failure 500 {object} models.ShortResponseMessage "internal server error"
 // @Router /api/v1/services/buy [POST]
 func (h *ServiceHandler) BuyService(w http.ResponseWriter, r *http.Request) {
-	var buyParams messages.BuyServiceMessage
+	var buyParams request_models.BuyServiceMessage
 	var statusCode int
 	var handleMessage string
 
@@ -71,7 +71,7 @@ func (h *ServiceHandler) BuyService(w http.ResponseWriter, r *http.Request) {
 		statusCode = http.StatusInternalServerError
 		handleMessage = fmt.Sprintf("internal server error")
 	}
-	response.SendShortResponse(w, statusCode, handleMessage)
+	models.SendShortResponse(w, statusCode, handleMessage)
 	h.logger.Infof("Request: method - %s,  url - %s, Result: status_code = %d, text = %s, err = %v",
 		r.Method, r.URL.Path, statusCode, handleMessage, buyError)
 }
@@ -81,17 +81,17 @@ func (h *ServiceHandler) BuyService(w http.ResponseWriter, r *http.Request) {
 // @Description service bought by user is accepted
 // @Accept json
 // @Produce json
-// @Param data body messages.AcceptServiceMessage true "body for accept service"
-// @Success 200 {object} response.ShortResponseMessage "OK"
-// @Failure 400 {object} response.ShortResponseMessage "invalid body params"
-// @Failure 401 {object} response.ShortResponseMessage "account is not exist"
-// @Failure 403 {object} response.ShortResponseMessage "state isn't right to change order state"
-// @Failure 404 {object} response.ShortResponseMessage "order not found"
-// @Failure 422 {object} response.ShortResponseMessage "not enough money"
-// @Failure 500 {object} response.ShortResponseMessage "internal server error"
+// @Param data body request_models.AcceptServiceMessage true "body for accept service"
+// @Success 200 {object} models.ShortResponseMessage "OK"
+// @Failure 400 {object} models.ShortResponseMessage "invalid body params"
+// @Failure 401 {object} models.ShortResponseMessage "account is not exist"
+// @Failure 403 {object} models.ShortResponseMessage "state isn't right to change order state"
+// @Failure 404 {object} models.ShortResponseMessage "order not found"
+// @Failure 422 {object} models.ShortResponseMessage "not enough money"
+// @Failure 500 {object} models.ShortResponseMessage "internal server error"
 // @Router /api/v1/services/accept [POST]
 func (h *ServiceHandler) AcceptService(w http.ResponseWriter, r *http.Request) {
-	var acceptParams messages.AcceptServiceMessage
+	var acceptParams request_models.AcceptServiceMessage
 	var statusCode int
 	var handleMessage string
 
@@ -126,7 +126,7 @@ func (h *ServiceHandler) AcceptService(w http.ResponseWriter, r *http.Request) {
 		statusCode = http.StatusInternalServerError
 		handleMessage = fmt.Sprintf("internal server error")
 	}
-	response.SendShortResponse(w, statusCode, handleMessage)
+	models.SendShortResponse(w, statusCode, handleMessage)
 	h.logger.Infof("Request: method - %s,  url - %s, Result: status_code = %d, text = %s, err = %v",
 		r.Method, r.URL.Path, statusCode, handleMessage, acceptBuyErr)
 }
@@ -136,17 +136,17 @@ func (h *ServiceHandler) AcceptService(w http.ResponseWriter, r *http.Request) {
 // @Description service bought by user is refused and money returned to user
 // @Accept json
 // @Produce json
-// @Param data body messages.RefuseServiceMessage true "body for refuse service"
-// @Success 200 {object} response.ShortResponseMessage "OK"
-// @Failure 400 {object} response.ShortResponseMessage "invalid body params"
-// @Failure 401 {object} response.ShortResponseMessage "account is not exist"
-// @Failure 403 {object} response.ShortResponseMessage "state isn't right to change order state"
-// @Failure 404 {object} response.ShortResponseMessage "order not found"
-// @Failure 422 {object} response.ShortResponseMessage "not enough money"
-// @Failure 500 {object} response.ShortResponseMessage "internal server error"
+// @Param data body request_models.RefuseServiceMessage true "body for refuse service"
+// @Success 200 {object} models.ShortResponseMessage "OK"
+// @Failure 400 {object} models.ShortResponseMessage "invalid body params"
+// @Failure 401 {object} models.ShortResponseMessage "account is not exist"
+// @Failure 403 {object} models.ShortResponseMessage "state isn't right to change order state"
+// @Failure 404 {object} models.ShortResponseMessage "order not found"
+// @Failure 422 {object} models.ShortResponseMessage "not enough money"
+// @Failure 500 {object} models.ShortResponseMessage "internal server error"
 // @Router /api/v1/services/refuse [POST]
 func (h *ServiceHandler) RefuseService(w http.ResponseWriter, r *http.Request) {
-	var refuseParams messages.RefuseServiceMessage
+	var refuseParams request_models.RefuseServiceMessage
 	var statusCode int
 	var handleMessage string
 
@@ -182,7 +182,7 @@ func (h *ServiceHandler) RefuseService(w http.ResponseWriter, r *http.Request) {
 		statusCode = http.StatusInternalServerError
 		handleMessage = fmt.Sprintf("internal server error")
 	}
-	response.SendShortResponse(w, statusCode, handleMessage)
+	models.SendShortResponse(w, statusCode, handleMessage)
 	h.logger.Infof("Request: method - %s,  url - %s, Result: status_code = %d, text = %s, err = %v",
 		r.Method, r.URL.Path, statusCode, handleMessage, refuseBuyErr)
 }

@@ -3,8 +3,8 @@ package account_handler
 import (
 	ac "Avito-Internship-Task/internal/app/balance_service_app/account/account_controller"
 	"Avito-Internship-Task/internal/app/balance_service_app/account/account_repo"
-	"Avito-Internship-Task/internal/app/balance_service_app/handlers/account_handler/messages"
-	"Avito-Internship-Task/internal/app/balance_service_app/handlers/response"
+	"Avito-Internship-Task/internal/app/balance_service_app/handlers/account_handler/request_models"
+	"Avito-Internship-Task/internal/app/balance_service_app/handlers/models"
 	"Avito-Internship-Task/internal/app/balance_service_app/manager"
 	oc "Avito-Internship-Task/internal/app/balance_service_app/order/order_controller"
 	"Avito-Internship-Task/internal/app/balance_service_app/order/order_repo"
@@ -82,8 +82,7 @@ func TestGetAccountBalance(t *testing.T) {
 	ts := httptest.NewServer(http.HandlerFunc(accountHandler.GetBalance))
 	defer ts.Close()
 
-	searcherReq, err := http.NewRequest("GET", ts.URL+fmt.Sprintf("?id=%d", userID), nil)
-	//searcherReq := httptest.NewRequest("GET", "/balance/{id}", nil)
+	searcherReq, err := http.NewRequest("GET", ts.URL+fmt.Sprintf("?userID=%d", userID), nil)
 	r, err := ts.Client().Do(searcherReq)
 
 	// Проверка
@@ -92,7 +91,7 @@ func TestGetAccountBalance(t *testing.T) {
 		return
 	}
 
-	msg := response.BalanceResponseMessage{}
+	msg := models.BalanceResponseMessage{}
 	body, _ := ioutil.ReadAll(r.Body)
 
 	unmarshalError := json.Unmarshal(body, &msg)
@@ -133,7 +132,7 @@ func TestGetAccountBalanceBadAccount(t *testing.T) {
 	// Подготовка БД к тестам
 	var (
 		userID             int64 = 1
-		expectedStatusCode       = http.StatusBadRequest
+		expectedStatusCode       = http.StatusUnauthorized
 	)
 
 	// Подготовка БД для таблицы с аккаунтами
@@ -178,7 +177,7 @@ func TestGetAccountBalanceBadAccount(t *testing.T) {
 	ts := httptest.NewServer(http.HandlerFunc(accountHandler.GetBalance))
 	defer ts.Close()
 
-	searcherReq, err := http.NewRequest("GET", ts.URL+fmt.Sprintf("?id=%d", userID), nil)
+	searcherReq, err := http.NewRequest("GET", ts.URL+fmt.Sprintf("?userID=%d", userID), nil)
 	//searcherReq := httptest.NewRequest("GET", "/balance/{id}", nil)
 	r, err := ts.Client().Do(searcherReq)
 
@@ -188,7 +187,7 @@ func TestGetAccountBalanceBadAccount(t *testing.T) {
 		return
 	}
 
-	msg := response.BalanceResponseMessage{}
+	msg := models.BalanceResponseMessage{}
 	body, _ := ioutil.ReadAll(r.Body)
 
 	unmarshalError := json.Unmarshal(body, &msg)
@@ -245,7 +244,7 @@ func TestRefillAccountSuccess(t *testing.T) {
 		WithArgs(userID).
 		WillReturnRows(accountFirstRows)
 
-	accountMock.ExpectExec("UPDATE balanceApp.accounts SET amount = amoumt +").
+	accountMock.ExpectExec("UPDATE balanceApp.accounts SET amount = amount +").
 		WithArgs(sum, userID).
 		WillReturnResult(sqlmock.NewResult(1, 1))
 
@@ -294,7 +293,7 @@ func TestRefillAccountSuccess(t *testing.T) {
 	ts := httptest.NewServer(http.HandlerFunc(accountHandler.RefillBalance))
 	defer ts.Close()
 
-	bodyParams := messages.RefillParams{
+	bodyParams := request_models.RefillMessage{
 		UserID:  userID,
 		Sum:     sum,
 		Comment: comment,
@@ -312,7 +311,7 @@ func TestRefillAccountSuccess(t *testing.T) {
 		return
 	}
 
-	msg := response.ShortResponseMessage{}
+	msg := models.ShortResponseMessage{}
 	body, _ := ioutil.ReadAll(r.Body)
 
 	unmarshalError := json.Unmarshal(body, &msg)
@@ -353,7 +352,7 @@ func TestRefillAccountNotExist(t *testing.T) {
 		userID             int64   = 1
 		sum                float64 = 200
 		comment                    = "Всё хорошо!"
-		expectedStatusCode         = http.StatusUnauthorized
+		expectedStatusCode         = http.StatusOK
 	)
 
 	// Подготовка БД для таблицы с аккаунтами
@@ -378,7 +377,7 @@ func TestRefillAccountNotExist(t *testing.T) {
 		WithArgs(userID).
 		WillReturnResult(sqlmock.NewResult(1, 1))
 
-	accountMock.ExpectExec("UPDATE balanceApp.accounts SET amount = amoumt +").
+	accountMock.ExpectExec("UPDATE balanceApp.accounts SET amount = amount +").
 		WithArgs(sum, userID).
 		WillReturnResult(sqlmock.NewResult(1, 1))
 
@@ -427,7 +426,7 @@ func TestRefillAccountNotExist(t *testing.T) {
 	ts := httptest.NewServer(http.HandlerFunc(accountHandler.RefillBalance))
 	defer ts.Close()
 
-	bodyParams := messages.RefillParams{
+	bodyParams := request_models.RefillMessage{
 		UserID:  userID,
 		Sum:     sum,
 		Comment: comment,
@@ -445,7 +444,7 @@ func TestRefillAccountNotExist(t *testing.T) {
 		return
 	}
 
-	msg := response.ShortResponseMessage{}
+	msg := models.ShortResponseMessage{}
 	body, _ := ioutil.ReadAll(r.Body)
 
 	unmarshalError := json.Unmarshal(body, &msg)
@@ -530,11 +529,11 @@ func TestHandlerTransferSuccess(t *testing.T) {
 		WithArgs(srcUserID).
 		WillReturnRows(accountFifthRows)
 
-	accountMock.ExpectExec("UPDATE balanceApp.accounts SET amount = amoumt +").
+	accountMock.ExpectExec("UPDATE balanceApp.accounts SET amount = amount +").
 		WithArgs(-sum, srcUserID).
 		WillReturnResult(sqlmock.NewResult(1, 1))
 
-	accountMock.ExpectExec("UPDATE balanceApp.accounts SET amount = amoumt +").
+	accountMock.ExpectExec("UPDATE balanceApp.accounts SET amount = amount +").
 		WithArgs(sum, dstUserID).
 		WillReturnResult(sqlmock.NewResult(1, 1))
 
@@ -598,7 +597,7 @@ func TestHandlerTransferSuccess(t *testing.T) {
 	ts := httptest.NewServer(http.HandlerFunc(accountHandler.Transfer))
 	defer ts.Close()
 
-	bodyParams := messages.TransferMessage{
+	bodyParams := request_models.TransferMessage{
 		SrcUserID: srcUserID,
 		DstUserID: dstUserID,
 		Sum:       sum,
@@ -609,7 +608,7 @@ func TestHandlerTransferSuccess(t *testing.T) {
 	searcherReq, _ := http.NewRequest("POST", ts.URL, bytes.NewBuffer(reqBody))
 	r, _ := ts.Client().Do(searcherReq)
 
-	msg := response.ShortResponseMessage{}
+	msg := models.ShortResponseMessage{}
 	body, _ := ioutil.ReadAll(r.Body)
 
 	unmarshalError := json.Unmarshal(body, &msg)
@@ -691,7 +690,7 @@ func TestHandlerTransferAccNotExistError(t *testing.T) {
 	ts := httptest.NewServer(http.HandlerFunc(accountHandler.Transfer))
 	defer ts.Close()
 
-	bodyParams := messages.TransferMessage{
+	bodyParams := request_models.TransferMessage{
 		SrcUserID: srcUserID,
 		DstUserID: dstUserID,
 		Sum:       sum,
@@ -702,7 +701,7 @@ func TestHandlerTransferAccNotExistError(t *testing.T) {
 	searcherReq, _ := http.NewRequest("POST", ts.URL, bytes.NewBuffer(reqBody))
 	r, _ := ts.Client().Do(searcherReq)
 
-	msg := response.ShortResponseMessage{}
+	msg := models.ShortResponseMessage{}
 	body, _ := ioutil.ReadAll(r.Body)
 
 	unmarshalError := json.Unmarshal(body, &msg)
@@ -741,7 +740,7 @@ func TestHandlerTransferNotEnoughMoneyError(t *testing.T) {
 		balanceFirst       float64 = 400
 		balanceSecond      float64 = 200
 		comment                    = "Всё хорошо!"
-		expectedStatusCode         = http.StatusBadRequest
+		expectedStatusCode         = http.StatusUnprocessableEntity
 	)
 	accountDB, accountMock, createAccountDBErr := sqlmock.New()
 	if createAccountDBErr != nil {
@@ -804,7 +803,7 @@ func TestHandlerTransferNotEnoughMoneyError(t *testing.T) {
 	ts := httptest.NewServer(http.HandlerFunc(accountHandler.Transfer))
 	defer ts.Close()
 
-	bodyParams := messages.TransferMessage{
+	bodyParams := request_models.TransferMessage{
 		SrcUserID: srcUserID,
 		DstUserID: dstUserID,
 		Sum:       sum,
@@ -815,7 +814,7 @@ func TestHandlerTransferNotEnoughMoneyError(t *testing.T) {
 	searcherReq, _ := http.NewRequest("POST", ts.URL, bytes.NewBuffer(reqBody))
 	r, _ := ts.Client().Do(searcherReq)
 
-	msg := response.ShortResponseMessage{}
+	msg := models.ShortResponseMessage{}
 	body, _ := ioutil.ReadAll(r.Body)
 
 	unmarshalError := json.Unmarshal(body, &msg)

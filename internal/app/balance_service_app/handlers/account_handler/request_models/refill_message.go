@@ -1,6 +1,6 @@
-package messages
+package request_models
 
-type RefillParams struct {
+type RefillMessage struct {
 	UserID  int64   `json:"user_id"`
 	Sum     float64 `json:"sum"`
 	Comment string  `json:"comment"`

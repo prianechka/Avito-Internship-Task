@@ -1,4 +1,4 @@
-package messages
+package request_models
 
 type TransferMessage struct {
 	SrcUserID int64   `json:"src_user_id"`

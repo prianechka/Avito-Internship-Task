@@ -3,8 +3,8 @@ package service_handler
 import (
 	ac "Avito-Internship-Task/internal/app/balance_service_app/account/account_controller"
 	"Avito-Internship-Task/internal/app/balance_service_app/account/account_repo"
-	"Avito-Internship-Task/internal/app/balance_service_app/handlers/response"
-	"Avito-Internship-Task/internal/app/balance_service_app/handlers/service_handler/messages"
+	"Avito-Internship-Task/internal/app/balance_service_app/handlers/models"
+	"Avito-Internship-Task/internal/app/balance_service_app/handlers/service_handler/request_models"
 	"Avito-Internship-Task/internal/app/balance_service_app/manager"
 	"Avito-Internship-Task/internal/app/balance_service_app/order"
 	oc "Avito-Internship-Task/internal/app/balance_service_app/order/order_controller"
@@ -72,7 +72,7 @@ func TestHandlerBuyServiceSuccess(t *testing.T) {
 		WithArgs(userID).
 		WillReturnRows(accountThirdRows)
 
-	accountMock.ExpectExec("UPDATE balanceApp.accounts SET amount = amoumt +").
+	accountMock.ExpectExec("UPDATE balanceApp.accounts SET amount = amount +").
 		WithArgs(-sum, userID).
 		WillReturnResult(sqlmock.NewResult(1, 1))
 
@@ -156,7 +156,7 @@ func TestHandlerBuyServiceSuccess(t *testing.T) {
 	ts := httptest.NewServer(http.HandlerFunc(serviceHandler.BuyService))
 	defer ts.Close()
 
-	bodyParams := messages.BuyServiceMessage{
+	bodyParams := request_models.BuyServiceMessage{
 		UserID:    userID,
 		OrderID:   orderID,
 		ServiceID: serviceID,
@@ -175,7 +175,7 @@ func TestHandlerBuyServiceSuccess(t *testing.T) {
 		return
 	}
 
-	msg := response.ShortResponseMessage{}
+	msg := models.ShortResponseMessage{}
 	body, _ := ioutil.ReadAll(r.Body)
 
 	unmarshalError := json.Unmarshal(body, &msg)
@@ -213,7 +213,7 @@ func TestHandlerBuyServiceNotAccExist(t *testing.T) {
 		serviceID          int64   = 1
 		sum                float64 = 200
 		comment                    = "Всё хорошо!"
-		expectedStatusCode         = http.StatusBadRequest
+		expectedStatusCode         = http.StatusUnauthorized
 	)
 
 	// Подготовка БД для таблицы с аккаунтами
@@ -258,7 +258,7 @@ func TestHandlerBuyServiceNotAccExist(t *testing.T) {
 	ts := httptest.NewServer(http.HandlerFunc(serviceHandler.BuyService))
 	defer ts.Close()
 
-	bodyParams := messages.BuyServiceMessage{
+	bodyParams := request_models.BuyServiceMessage{
 		UserID:    userID,
 		OrderID:   orderID,
 		ServiceID: serviceID,
@@ -277,7 +277,7 @@ func TestHandlerBuyServiceNotAccExist(t *testing.T) {
 		return
 	}
 
-	msg := response.ShortResponseMessage{}
+	msg := models.ShortResponseMessage{}
 	body, _ := ioutil.ReadAll(r.Body)
 
 	unmarshalError := json.Unmarshal(body, &msg)
@@ -316,7 +316,7 @@ func TestHandlerBuyServiceNotEnoughMoneyErr(t *testing.T) {
 		sum                float64 = 400
 		balance            float64 = 200
 		comment                    = "Всё хорошо!"
-		expectedStatusCode         = http.StatusBadRequest
+		expectedStatusCode         = http.StatusUnprocessableEntity
 	)
 
 	accountDB, accountMock, createAccountDBErr := sqlmock.New()
@@ -367,7 +367,7 @@ func TestHandlerBuyServiceNotEnoughMoneyErr(t *testing.T) {
 	ts := httptest.NewServer(http.HandlerFunc(serviceHandler.BuyService))
 	defer ts.Close()
 
-	bodyParams := messages.BuyServiceMessage{
+	bodyParams := request_models.BuyServiceMessage{
 		UserID:    userID,
 		OrderID:   orderID,
 		ServiceID: serviceID,
@@ -386,7 +386,7 @@ func TestHandlerBuyServiceNotEnoughMoneyErr(t *testing.T) {
 		return
 	}
 
-	msg := response.ShortResponseMessage{}
+	msg := models.ShortResponseMessage{}
 	body, _ := ioutil.ReadAll(r.Body)
 
 	unmarshalError := json.Unmarshal(body, &msg)
@@ -504,7 +504,7 @@ func TestHandlerAcceptBuySuccess(t *testing.T) {
 	ts := httptest.NewServer(http.HandlerFunc(serviceHandler.AcceptService))
 	defer ts.Close()
 
-	bodyParams := messages.AcceptServiceMessage{
+	bodyParams := request_models.AcceptServiceMessage{
 		UserID:    userID,
 		OrderID:   orderID,
 		ServiceID: serviceID,
@@ -521,7 +521,7 @@ func TestHandlerAcceptBuySuccess(t *testing.T) {
 		return
 	}
 
-	msg := response.ShortResponseMessage{}
+	msg := models.ShortResponseMessage{}
 	body, _ := ioutil.ReadAll(r.Body)
 
 	unmarshalError := json.Unmarshal(body, &msg)
@@ -551,13 +551,13 @@ func TestHandlerAcceptBuySuccess(t *testing.T) {
 	}
 }
 
-// TestHandlerAcceptBuyError проверяет, что если заказа не существует, то вернется 400.
+// TestHandlerAcceptBuyError проверяет, что если заказа не существует, то вернется 404.
 func TestHandlerAcceptBuyError(t *testing.T) {
 	var (
 		userID             int64 = 1
 		orderID            int64 = 1
 		serviceID          int64 = 1
-		expectedStatusCode       = http.StatusBadRequest
+		expectedStatusCode       = http.StatusNotFound
 	)
 
 	// Подготовка БД для таблицы с аккаунтами
@@ -602,7 +602,7 @@ func TestHandlerAcceptBuyError(t *testing.T) {
 	ts := httptest.NewServer(http.HandlerFunc(serviceHandler.AcceptService))
 	defer ts.Close()
 
-	bodyParams := messages.AcceptServiceMessage{
+	bodyParams := request_models.AcceptServiceMessage{
 		UserID:    userID,
 		OrderID:   orderID,
 		ServiceID: serviceID,
@@ -619,7 +619,7 @@ func TestHandlerAcceptBuyError(t *testing.T) {
 		return
 	}
 
-	msg := response.ShortResponseMessage{}
+	msg := models.ShortResponseMessage{}
 	body, _ := ioutil.ReadAll(r.Body)
 
 	unmarshalError := json.Unmarshal(body, &msg)
@@ -649,7 +649,7 @@ func TestHandlerAcceptBuyError(t *testing.T) {
 	}
 }
 
-// TestHandlerAcceptBuyWrongStatusError проверяет, что если статус неверный, то вернется 400.
+// TestHandlerAcceptBuyWrongStatusError проверяет, что если статус неверный, то вернется 403.
 func TestHandlerAcceptBuyWrongStatusError(t *testing.T) {
 	var (
 		userID             int64   = 1
@@ -657,7 +657,7 @@ func TestHandlerAcceptBuyWrongStatusError(t *testing.T) {
 		serviceID          int64   = 1
 		sum                float64 = 200
 		comment                    = "Всё хорошо!"
-		expectedStatusCode         = http.StatusBadRequest
+		expectedStatusCode         = http.StatusForbidden
 	)
 
 	curTime := time.Now()
@@ -733,7 +733,7 @@ func TestHandlerAcceptBuyWrongStatusError(t *testing.T) {
 	ts := httptest.NewServer(http.HandlerFunc(serviceHandler.AcceptService))
 	defer ts.Close()
 
-	bodyParams := messages.AcceptServiceMessage{
+	bodyParams := request_models.AcceptServiceMessage{
 		UserID:    userID,
 		OrderID:   orderID,
 		ServiceID: serviceID,
@@ -750,7 +750,7 @@ func TestHandlerAcceptBuyWrongStatusError(t *testing.T) {
 		return
 	}
 
-	msg := response.ShortResponseMessage{}
+	msg := models.ShortResponseMessage{}
 	body, _ := ioutil.ReadAll(r.Body)
 
 	unmarshalError := json.Unmarshal(body, &msg)
@@ -814,7 +814,7 @@ func TestHandlerRefuseServiceSuccess(t *testing.T) {
 	accountFirstRows := sqlmock.NewRows([]string{"amount"})
 	accountFirstRows.AddRow(balance)
 
-	accountMock.ExpectExec("UPDATE balanceApp.accounts SET amount = amoumt +").
+	accountMock.ExpectExec("UPDATE balanceApp.accounts SET amount = amount +").
 		WithArgs(sum, userID).
 		WillReturnResult(sqlmock.NewResult(1, 1))
 
@@ -891,7 +891,7 @@ func TestHandlerRefuseServiceSuccess(t *testing.T) {
 	ts := httptest.NewServer(http.HandlerFunc(serviceHandler.RefuseService))
 	defer ts.Close()
 
-	bodyParams := messages.AcceptServiceMessage{
+	bodyParams := request_models.AcceptServiceMessage{
 		UserID:    userID,
 		OrderID:   orderID,
 		ServiceID: serviceID,
@@ -908,7 +908,7 @@ func TestHandlerRefuseServiceSuccess(t *testing.T) {
 		return
 	}
 
-	msg := response.ShortResponseMessage{}
+	msg := models.ShortResponseMessage{}
 	body, _ := ioutil.ReadAll(r.Body)
 
 	unmarshalError := json.Unmarshal(body, &msg)
@@ -938,7 +938,7 @@ func TestHandlerRefuseServiceSuccess(t *testing.T) {
 	}
 }
 
-// TestHandlerRefuseServiceWrongStatusError проверяет, что если у заказа неправильный статус, то вернётся 400.
+// TestHandlerRefuseServiceWrongStatusError проверяет, что если у заказа неправильный статус, то вернётся 403.
 func TestHandlerRefuseServiceWrongStatusError(t *testing.T) {
 	var (
 		userID             int64   = 1
@@ -946,7 +946,7 @@ func TestHandlerRefuseServiceWrongStatusError(t *testing.T) {
 		serviceID          int64   = 1
 		sum                float64 = 200
 		comment                    = "Всё хорошо!"
-		expectedStatusCode         = http.StatusBadRequest
+		expectedStatusCode         = http.StatusForbidden
 	)
 
 	curTime := time.Now()
@@ -1022,7 +1022,7 @@ func TestHandlerRefuseServiceWrongStatusError(t *testing.T) {
 	ts := httptest.NewServer(http.HandlerFunc(serviceHandler.RefuseService))
 	defer ts.Close()
 
-	bodyParams := messages.AcceptServiceMessage{
+	bodyParams := request_models.AcceptServiceMessage{
 		UserID:    userID,
 		OrderID:   orderID,
 		ServiceID: serviceID,
@@ -1039,7 +1039,7 @@ func TestHandlerRefuseServiceWrongStatusError(t *testing.T) {
 		return
 	}
 
-	msg := response.ShortResponseMessage{}
+	msg := models.ShortResponseMessage{}
 	body, _ := ioutil.ReadAll(r.Body)
 
 	unmarshalError := json.Unmarshal(body, &msg)
@@ -1069,13 +1069,13 @@ func TestHandlerRefuseServiceWrongStatusError(t *testing.T) {
 	}
 }
 
-// TestHandlerRefuseServiceOrderNoExistError проверяет, что если аккаунта не существует, то вернется 400.
+// TestHandlerRefuseServiceOrderNoExistError проверяет, что если аккаунта не существует, то вернется 404.
 func TestHandlerRefuseServiceOrderNoExistError(t *testing.T) {
 	var (
 		userID             int64 = 1
 		orderID            int64 = 1
 		serviceID          int64 = 1
-		expectedStatusCode       = http.StatusBadRequest
+		expectedStatusCode       = http.StatusNotFound
 	)
 
 	// Подготовка БД для таблицы с аккаунтами
@@ -1120,7 +1120,7 @@ func TestHandlerRefuseServiceOrderNoExistError(t *testing.T) {
 	ts := httptest.NewServer(http.HandlerFunc(serviceHandler.RefuseService))
 	defer ts.Close()
 
-	bodyParams := messages.AcceptServiceMessage{
+	bodyParams := request_models.AcceptServiceMessage{
 		UserID:    userID,
 		OrderID:   orderID,
 		ServiceID: serviceID,
@@ -1137,7 +1137,7 @@ func TestHandlerRefuseServiceOrderNoExistError(t *testing.T) {
 		return
 	}
 
-	msg := response.ShortResponseMessage{}
+	msg := models.ShortResponseMessage{}
 	body, _ := ioutil.ReadAll(r.Body)
 
 	unmarshalError := json.Unmarshal(body, &msg)
