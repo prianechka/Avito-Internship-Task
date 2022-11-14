@@ -1,6 +1,7 @@
 package server
 
 import (
+	"Avito-Internship-Task/configs"
 	_ "Avito-Internship-Task/docs"
 	ac "Avito-Internship-Task/internal/app/balance_service_app/account/account_controller"
 	"Avito-Internship-Task/internal/app/balance_service_app/account/account_repo"
@@ -13,7 +14,7 @@ import (
 	"Avito-Internship-Task/internal/app/balance_service_app/order/order_repo"
 	tc "Avito-Internship-Task/internal/app/balance_service_app/transaction/transaction_controller"
 	"Avito-Internship-Task/internal/app/balance_service_app/transaction/transaction_repo"
-	"database/sql"
+	"Avito-Internship-Task/internal/pkg/utils"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/gorilla/mux"
 	"github.com/sirupsen/logrus"
@@ -22,27 +23,16 @@ import (
 )
 
 type Server struct {
-	logger *logrus.Logger
+	config *configs.ServerConfig
+	logger *logrus.Entry
 }
 
-func CreateServer(logger *logrus.Logger) *Server {
-	return &Server{logger: logger}
+func CreateServer(config *configs.ServerConfig, logger *logrus.Entry) *Server {
+	return &Server{config: config, logger: logger}
 }
 
-func CreateDB(DBName string) *sql.DB {
-	dsn := "root:12345678@tcp(localhost:3306)/" + DBName + "?&charset=utf8&interpolateParams=true"
-	db, err := sql.Open("mysql", dsn)
-	if err == nil {
-		db.SetMaxOpenConns(10)
-		err = db.Ping()
-		if err != nil {
-			panic(err)
-		}
-	} else {
-		panic(err)
-	}
-	return db
-}
+// @title AvitoIntershipApp
+// @description Task for Avito-Intership.
 
 func (s *Server) Start() error {
 
@@ -50,9 +40,9 @@ func (s *Server) Start() error {
 	router := r.PathPrefix("/api/v1/").Subrouter()
 	router.PathPrefix("/swagger/").Handler(httpSwagger.WrapHandler)
 
-	accountDB := CreateDB("balanceApp")
-	orderDB := CreateDB("balanceApp")
-	transactionDB := CreateDB("balanceApp")
+	accountDB := utils.NewMySQLConnction(s.config.ConnParams)
+	orderDB := utils.NewMySQLConnction(s.config.ConnParams)
+	transactionDB := utils.NewMySQLConnction(s.config.ConnParams)
 
 	accountRepo := account_repo.NewAccountRepo(accountDB)
 	accountController := ac.CreateNewAccountController(accountRepo)
@@ -82,9 +72,9 @@ func (s *Server) Start() error {
 	router.HandleFunc("/reports/user/{id}", reportHandler.GetUserReport).Methods("GET")
 	router.HandleFunc("/reports/{year}/{month}", reportHandler.GetFinanceReport).Methods("GET")
 
-	upgradedRouter := middleware.Panic(router)
+	withLogsRouter := middleware.Log(s.logger, router)
+	upgradedRouter := middleware.Panic(withLogsRouter)
 
-	addr := ":8080"
-	s.logger.Println("server works!")
-	return http.ListenAndServe(addr, upgradedRouter)
+	s.logger.Infof("Server started to work!")
+	return http.ListenAndServe(s.config.PortToStart, upgradedRouter)
 }

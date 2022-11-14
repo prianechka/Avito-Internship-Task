@@ -76,6 +76,20 @@ func (mr *MockTransactionControllerInterfaceMockRecorder) AddNewRecordReturnServ
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AddNewRecordReturnService", reflect.TypeOf((*MockTransactionControllerInterface)(nil).AddNewRecordReturnService), userID, sum, serviceID, comments)
 }
 
+// AddNewRecordTransferFrom mocks base method.
+func (m *MockTransactionControllerInterface) AddNewRecordTransferFrom(srcUserID, dstUserID int64, sum float64, comments string) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "AddNewRecordTransferFrom", srcUserID, dstUserID, sum, comments)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// AddNewRecordTransferFrom indicates an expected call of AddNewRecordTransferFrom.
+func (mr *MockTransactionControllerInterfaceMockRecorder) AddNewRecordTransferFrom(srcUserID, dstUserID, sum, comments interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AddNewRecordTransferFrom", reflect.TypeOf((*MockTransactionControllerInterface)(nil).AddNewRecordTransferFrom), srcUserID, dstUserID, sum, comments)
+}
+
 // AddNewRecordTransferTo mocks base method.
 func (m *MockTransactionControllerInterface) AddNewRecordTransferTo(srcUserID, dstUserID int64, sum float64, comments string) error {
 	m.ctrl.T.Helper()

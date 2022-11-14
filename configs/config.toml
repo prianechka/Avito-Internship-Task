@@ -1,0 +1,7 @@
+start_port = ":8080"
+[server]
+host = "mysql"
+port = "3306"
+database = "balanceApp"
+user = "root"
+password = "12345678"

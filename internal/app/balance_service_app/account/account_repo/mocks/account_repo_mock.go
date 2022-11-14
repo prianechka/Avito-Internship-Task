@@ -61,20 +61,6 @@ func (mr *MockAccountRepoInterfaceMockRecorder) ChangeAmount(userID, delta inter
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ChangeAmount", reflect.TypeOf((*MockAccountRepoInterface)(nil).ChangeAmount), userID, delta)
 }
 
-// DeleteAccount mocks base method.
-func (m *MockAccountRepoInterface) DeleteAccount(userID int64) error {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "DeleteAccount", userID)
-	ret0, _ := ret[0].(error)
-	return ret0
-}
-
-// DeleteAccount indicates an expected call of DeleteAccount.
-func (mr *MockAccountRepoInterfaceMockRecorder) DeleteAccount(userID interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteAccount", reflect.TypeOf((*MockAccountRepoInterface)(nil).DeleteAccount), userID)
-}
-
 // GetCurrentAmount mocks base method.
 func (m *MockAccountRepoInterface) GetCurrentAmount(userID int64) (float64, error) {
 	m.ctrl.T.Helper()

@@ -35,17 +35,17 @@ func (m *MockOrderRepoInterface) EXPECT() *MockOrderRepoInterfaceMockRecorder {
 }
 
 // ChangeOrderState mocks base method.
-func (m *MockOrderRepoInterface) ChangeOrderState(orderID, orderState int64) error {
+func (m *MockOrderRepoInterface) ChangeOrderState(orderID, userID, serviceType, orderState int64) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "ChangeOrderState", orderID, orderState)
+	ret := m.ctrl.Call(m, "ChangeOrderState", orderID, userID, serviceType, orderState)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // ChangeOrderState indicates an expected call of ChangeOrderState.
-func (mr *MockOrderRepoInterfaceMockRecorder) ChangeOrderState(orderID, orderState interface{}) *gomock.Call {
+func (mr *MockOrderRepoInterfaceMockRecorder) ChangeOrderState(orderID, userID, serviceType, orderState interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ChangeOrderState", reflect.TypeOf((*MockOrderRepoInterface)(nil).ChangeOrderState), orderID, orderState)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ChangeOrderState", reflect.TypeOf((*MockOrderRepoInterface)(nil).ChangeOrderState), orderID, userID, serviceType, orderState)
 }
 
 // CreateOrder mocks base method.
@@ -78,18 +78,18 @@ func (mr *MockOrderRepoInterfaceMockRecorder) GetAllOrders() *gomock.Call {
 }
 
 // GetOrderByID mocks base method.
-func (m *MockOrderRepoInterface) GetOrderByID(orderID int64) (order.Order, error) {
+func (m *MockOrderRepoInterface) GetOrderByID(orderID, userID, serviceType int64) (order.Order, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetOrderByID", orderID)
+	ret := m.ctrl.Call(m, "GetOrderByID", orderID, userID, serviceType)
 	ret0, _ := ret[0].(order.Order)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // GetOrderByID indicates an expected call of GetOrderByID.
-func (mr *MockOrderRepoInterfaceMockRecorder) GetOrderByID(orderID interface{}) *gomock.Call {
+func (mr *MockOrderRepoInterfaceMockRecorder) GetOrderByID(orderID, userID, serviceType interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetOrderByID", reflect.TypeOf((*MockOrderRepoInterface)(nil).GetOrderByID), orderID)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetOrderByID", reflect.TypeOf((*MockOrderRepoInterface)(nil).GetOrderByID), orderID, userID, serviceType)
 }
 
 // GetServiceOrders mocks base method.

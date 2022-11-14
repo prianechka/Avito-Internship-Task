@@ -30,7 +30,7 @@ func CreateAccountHandler(newManager manager.ManagerInterface) *AccountHandler {
 // @Description users refill balance in the app
 // @Accept json
 // @Produce json
-// @Param data body request_models.RefillParams true "body for transfer money"
+// @Param data body request_models.RefillMessage true "body for transfer money"
 // @Success 200 {object} models.ShortResponseMessage "OK"
 // @Failure 400 {object} models.ShortResponseMessage "invalid body params"
 // @Failure 401 {object} models.ShortResponseMessage "account is not exist"

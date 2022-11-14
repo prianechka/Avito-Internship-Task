@@ -1,17 +1,21 @@
-generate-mock:
+run:
+	docker-compose down -v
+	service mysql stop
+	docker build --no-cache --network host -f ./docker/Dockerfile . --tag app
+	docker-compose up --build
+
+build:	generate-api
+	go build -o server.out -v ./cmd/server/main.go
+
+make-mocks:
 	go generate ./...
 
-build: go build -o server.out -v ./cmd/server
+generate-api:
+	go install github.com/swaggo/swag/cmd/swag@v1.6.5
+	swag init -g ./cmd/server/main.go -o docs
 
-
-run-coverage:
-	go test Avito-Internship-Task/... -covermode=atomic -coverprofile=cover
-	cat cover | fgrep -v "mocks" | fgrep -v "testing.go" | fgrep -v "docs"  | fgrep -v "configs" | fgrep -v "main.go" > cover2
-	go tool cover -func=cover2
-
-cover-html:
-	go test ./... -coverprofile cover.out
-	go tool cover -html=cover.out -o cover.html
-
+tests:	make-mocks
+	go test ./...
+	
 clean:
-	rm -rf cover.html cover cover2 *.out
+	rm -rf *.out *.exe *.html

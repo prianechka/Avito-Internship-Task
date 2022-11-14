@@ -1,28 +1,26 @@
 package main
 
 import (
+	"Avito-Internship-Task/configs"
 	"Avito-Internship-Task/internal/app/balance_service_app/server"
-	"flag"
+	"github.com/BurntSushi/toml"
 	"github.com/sirupsen/logrus"
 )
 
-var configPath string
+var configPath string = "configs/config.toml"
 
-func init() {
-	flag.StringVar(&configPath, "config-path", "configs/config.toml", "path to config file")
-}
-
-// @title BalanceApp
-// @version 1.0
-// @description Server for Balance application.
-
-// @BasePath /api/v1
-
-// @x-extension-openapi {"example": "value on a json format"}
 func main() {
-	logger := logrus.Logger{}
-	appServer := server.CreateServer(&logger)
-	err := appServer.Start()
+	config := configs.CreateConfigForServer()
+	_, err := toml.DecodeFile(configPath, &config)
+	if err != nil {
+		logrus.Fatal(err)
+	}
+	contextLogger := logrus.WithFields(logrus.Fields{})
+	logrus.SetReportCaller(false)
+	logrus.SetFormatter(&logrus.TextFormatter{PadLevelText: false, DisableLevelTruncation: false})
+	appServer := server.CreateServer(config, contextLogger)
+
+	err = appServer.Start()
 	if err != nil {
 		panic(err)
 	}
