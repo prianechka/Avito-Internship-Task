@@ -22,6 +22,18 @@ func CreateServiceHandler(man manager.ManagerInterface) *ServiceHandler {
 	return &ServiceHandler{manager: man}
 }
 
+// BuyService
+// @Summary user buy service
+// @Description user buy service
+// @Accept json
+// @Produce json
+// @Param data body messages.BuyServiceMessage true "body for buy service"
+// @Success 200 {object} response.ShortResponseMessage "OK"
+// @Failure 400 {object} response.ShortResponseMessage "invalid body params"
+// @Failure 401 {object} response.ShortResponseMessage "account is not exist"
+// @Failure 422 {object} response.ShortResponseMessage "not enough money"
+// @Failure 500 {object} response.ShortResponseMessage "internal server error"
+// @Router /buy [POST]
 func (h *ServiceHandler) BuyService(w http.ResponseWriter, r *http.Request) {
 	var buyParams messages.BuyServiceMessage
 	var statusCode int
@@ -29,13 +41,13 @@ func (h *ServiceHandler) BuyService(w http.ResponseWriter, r *http.Request) {
 
 	body, readErr := io.ReadAll(r.Body)
 	if readErr != nil {
-		http.Error(w, "server problems", http.StatusInternalServerError)
+		http.Error(w, "internal server error", http.StatusInternalServerError)
 		return
 	}
 
 	unmarshalError := json.Unmarshal(body, &buyParams)
 	if unmarshalError != nil {
-		http.Error(w, "unmarshal error", http.StatusInternalServerError)
+		http.Error(w, "unmarshal error", http.StatusBadRequest)
 		return
 	}
 
@@ -47,20 +59,34 @@ func (h *ServiceHandler) BuyService(w http.ResponseWriter, r *http.Request) {
 		statusCode = http.StatusOK
 		handleMessage = "OK"
 	case ac.AccountNotExistErr:
-		statusCode = http.StatusBadRequest
+		statusCode = http.StatusUnauthorized
 		handleMessage = fmt.Sprintf("%v", ac.AccountNotExistErr)
 	case ac.NotEnoughMoneyErr:
-		statusCode = http.StatusBadRequest
+		statusCode = http.StatusUnprocessableEntity
 		handleMessage = fmt.Sprintf("%v", ac.NotEnoughMoneyErr)
 	default:
 		statusCode = http.StatusInternalServerError
-		handleMessage = fmt.Sprintf("internal server error: %v", buyError)
+		handleMessage = fmt.Sprintf("internal server error")
 	}
 	response.SendShortResponse(w, statusCode, handleMessage)
-	h.logger.Infof("Request: method - %s,  url - %s, Result: status_code = %d, text = %s",
-		r.Method, r.URL.Path, statusCode, handleMessage)
+	h.logger.Infof("Request: method - %s,  url - %s, Result: status_code = %d, text = %s, err = %v",
+		r.Method, r.URL.Path, statusCode, handleMessage, buyError)
 }
 
+// AcceptService
+// @Summary service accepted
+// @Description service bought by user is accepted
+// @Accept json
+// @Produce json
+// @Param data body messages.AcceptServiceMessage true "body for accept service"
+// @Success 200 {object} response.ShortResponseMessage "OK"
+// @Failure 400 {object} response.ShortResponseMessage "invalid body params"
+// @Failure 401 {object} response.ShortResponseMessage "account is not exist"
+// @Failure 403 {object} response.ShortResponseMessage "state isn't right to change order state"
+// @Failure 404 {object} response.ShortResponseMessage "order not found"
+// @Failure 422 {object} response.ShortResponseMessage "not enough money"
+// @Failure 500 {object} response.ShortResponseMessage "internal server error"
+// @Router /accept [POST]
 func (h *ServiceHandler) AcceptService(w http.ResponseWriter, r *http.Request) {
 	var acceptParams messages.AcceptServiceMessage
 	var statusCode int
@@ -68,40 +94,54 @@ func (h *ServiceHandler) AcceptService(w http.ResponseWriter, r *http.Request) {
 
 	body, readErr := io.ReadAll(r.Body)
 	if readErr != nil {
-		http.Error(w, "server problems", http.StatusInternalServerError)
+		http.Error(w, "internal server error", http.StatusInternalServerError)
 		return
 	}
 
 	unmarshalError := json.Unmarshal(body, &acceptParams)
 	if unmarshalError != nil {
-		http.Error(w, "unmarshal error", http.StatusInternalServerError)
+		http.Error(w, "invalid body params", http.StatusBadRequest)
 		return
 	}
 
-	acceptBuy := h.manager.AcceptBuy(acceptParams.UserID, acceptParams.OrderID, acceptParams.ServiceID)
+	acceptBuyErr := h.manager.AcceptBuy(acceptParams.UserID, acceptParams.OrderID, acceptParams.ServiceID)
 
-	switch acceptBuy {
+	switch acceptBuyErr {
 	case nil:
 		statusCode = http.StatusOK
 		handleMessage = "OK"
 	case ac.AccountNotExistErr:
-		statusCode = http.StatusBadRequest
+		statusCode = http.StatusUnauthorized
 		handleMessage = fmt.Sprintf("%v", ac.AccountNotExistErr)
 	case oc.OrderNotFound:
-		statusCode = http.StatusBadRequest
+		statusCode = http.StatusNotFound
 		handleMessage = fmt.Sprintf("%v", oc.OrderNotFound)
 	case oc.WrongStateError:
-		statusCode = http.StatusBadRequest
-		handleMessage = fmt.Sprintf("%v", oc.OrderNotFound)
+		statusCode = http.StatusForbidden
+		handleMessage = fmt.Sprintf("%v", oc.WrongStateError)
 	default:
 		statusCode = http.StatusInternalServerError
-		handleMessage = fmt.Sprintf("internal server error: %v", acceptBuy)
+		handleMessage = fmt.Sprintf("internal server error")
 	}
 	response.SendShortResponse(w, statusCode, handleMessage)
-	h.logger.Infof("Request: method - %s,  url - %s, Result: status_code = %d, text = %s",
-		r.Method, r.URL.Path, statusCode, handleMessage)
+	h.logger.Infof("Request: method - %s,  url - %s, Result: status_code = %d, text = %s, err = %v",
+		r.Method, r.URL.Path, statusCode, handleMessage, acceptBuyErr)
 }
 
+// RefuseService
+// @Summary service refused
+// @Description service bought by user is refused and money returned to user
+// @Accept json
+// @Produce json
+// @Param data body messages.RefuseServiceMessage true "body for refuse service"
+// @Success 200 {object} response.ShortResponseMessage "OK"
+// @Failure 400 {object} response.ShortResponseMessage "invalid body params"
+// @Failure 401 {object} response.ShortResponseMessage "account is not exist"
+// @Failure 403 {object} response.ShortResponseMessage "state isn't right to change order state"
+// @Failure 404 {object} response.ShortResponseMessage "order not found"
+// @Failure 422 {object} response.ShortResponseMessage "not enough money"
+// @Failure 500 {object} response.ShortResponseMessage "internal server error"
+// @Router /refuse [POST]
 func (h *ServiceHandler) RefuseService(w http.ResponseWriter, r *http.Request) {
 	var refuseParams messages.RefuseServiceMessage
 	var statusCode int
@@ -109,37 +149,37 @@ func (h *ServiceHandler) RefuseService(w http.ResponseWriter, r *http.Request) {
 
 	body, readErr := io.ReadAll(r.Body)
 	if readErr != nil {
-		http.Error(w, "server problems", http.StatusInternalServerError)
+		http.Error(w, "internal server error", http.StatusInternalServerError)
 		return
 	}
 
 	unmarshalError := json.Unmarshal(body, &refuseParams)
 	if unmarshalError != nil {
-		http.Error(w, "unmarshal error", http.StatusInternalServerError)
+		http.Error(w, "invalid body params", http.StatusBadRequest)
 		return
 	}
 
-	acceptBuy := h.manager.RefuseBuy(refuseParams.UserID, refuseParams.OrderID, refuseParams.ServiceID,
+	refuseBuyErr := h.manager.RefuseBuy(refuseParams.UserID, refuseParams.OrderID, refuseParams.ServiceID,
 		refuseParams.Comment)
 
-	switch acceptBuy {
+	switch refuseBuyErr {
 	case nil:
 		statusCode = http.StatusOK
 		handleMessage = "OK"
 	case ac.AccountNotExistErr:
-		statusCode = http.StatusBadRequest
+		statusCode = http.StatusUnauthorized
 		handleMessage = fmt.Sprintf("%v", ac.AccountNotExistErr)
 	case oc.OrderNotFound:
-		statusCode = http.StatusBadRequest
+		statusCode = http.StatusNotFound
 		handleMessage = fmt.Sprintf("%v", oc.OrderNotFound)
 	case oc.WrongStateError:
-		statusCode = http.StatusBadRequest
+		statusCode = http.StatusForbidden
 		handleMessage = fmt.Sprintf("%v", oc.WrongStateError)
 	default:
 		statusCode = http.StatusInternalServerError
-		handleMessage = fmt.Sprintf("internal server error: %v", acceptBuy)
+		handleMessage = fmt.Sprintf("internal server error")
 	}
 	response.SendShortResponse(w, statusCode, handleMessage)
-	h.logger.Infof("Request: method - %s,  url - %s, Result: status_code = %d, text = %s",
-		r.Method, r.URL.Path, statusCode, handleMessage)
+	h.logger.Infof("Request: method - %s,  url - %s, Result: status_code = %d, text = %s, err = %v",
+		r.Method, r.URL.Path, statusCode, handleMessage, refuseBuyErr)
 }

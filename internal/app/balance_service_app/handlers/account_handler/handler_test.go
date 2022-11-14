@@ -353,7 +353,7 @@ func TestRefillAccountNotExist(t *testing.T) {
 		userID             int64   = 1
 		sum                float64 = 200
 		comment                    = "Всё хорошо!"
-		expectedStatusCode         = http.StatusOK
+		expectedStatusCode         = http.StatusUnauthorized
 	)
 
 	// Подготовка БД для таблицы с аккаунтами
@@ -646,7 +646,7 @@ func TestHandlerTransferAccNotExistError(t *testing.T) {
 		dstUserID          int64   = 2
 		sum                float64 = 200
 		comment                    = "Всё хорошо!"
-		expectedStatusCode         = http.StatusBadRequest
+		expectedStatusCode         = http.StatusUnauthorized
 	)
 	// Подготовка БД для таблицы с аккаунтами
 	accountDB, accountMock, createAccountDBErr := sqlmock.New()

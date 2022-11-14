@@ -1,6 +1,7 @@
 package server
 
 import (
+	_ "Avito-Internship-Task/docs"
 	ac "Avito-Internship-Task/internal/app/balance_service_app/account/account_controller"
 	"Avito-Internship-Task/internal/app/balance_service_app/account/account_repo"
 	"Avito-Internship-Task/internal/app/balance_service_app/handlers/account_handler"
@@ -13,13 +14,19 @@ import (
 	tc "Avito-Internship-Task/internal/app/balance_service_app/transaction/transaction_controller"
 	"Avito-Internship-Task/internal/app/balance_service_app/transaction/transaction_repo"
 	"database/sql"
+	_ "github.com/go-sql-driver/mysql"
 	"github.com/gorilla/mux"
 	"github.com/sirupsen/logrus"
+	httpSwagger "github.com/swaggo/http-swagger"
 	"net/http"
 )
 
 type Server struct {
-	logger logrus.Logger
+	logger *logrus.Logger
+}
+
+func CreateServer(logger *logrus.Logger) *Server {
+	return &Server{logger: logger}
 }
 
 func CreateDB(DBName string) *sql.DB {
@@ -38,8 +45,10 @@ func CreateDB(DBName string) *sql.DB {
 }
 
 func (s *Server) Start() error {
+
 	r := mux.NewRouter()
 	router := r.PathPrefix("/api/v1/").Subrouter()
+	router.PathPrefix("/swagger/").Handler(httpSwagger.WrapHandler)
 
 	accountDB := CreateDB("accounts")
 	orderDB := CreateDB("orders")
@@ -60,7 +69,9 @@ func (s *Server) Start() error {
 	serviceHandler := service_handler.CreateServiceHandler(serverManager)
 	reportHandler := report_handler.ReportHandler{Manager: serverManager}
 
-	router.HandleFunc("/accounts/{id}", accountHandler.GetBalance).Methods("GET")
+	router.PathPrefix("/swagger/").Handler(httpSwagger.WrapHandler)
+
+	router.HandleFunc("/accounts/{userID}", accountHandler.GetBalance).Methods("GET")
 	router.HandleFunc("/accounts/refill", accountHandler.RefillBalance).Methods("POST")
 	router.HandleFunc("/transfer", accountHandler.Transfer).Methods("POST")
 

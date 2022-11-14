@@ -22,6 +22,17 @@ func CreateAccountHandler(newManager manager.ManagerInterface) *AccountHandler {
 	return &AccountHandler{manager: newManager}
 }
 
+// RefillBalance
+// @Summary refill user balance
+// @Description users refill balance in the app
+// @Accept json
+// @Produce json
+// @Param user_id path int true "user_id in balanceApp"
+// @Success 200 {object} response.ShortResponseMessage "OK"
+// @Failure 400 {object} response.ShortResponseMessage "invalid body params"
+// @Failure 401 {object} response.ShortResponseMessage "account is not exist"
+// @Failure 500 {object} response.ShortResponseMessage "internal server error"
+// @Router /accounts/refill [POST]
 func (h *AccountHandler) RefillBalance(w http.ResponseWriter, r *http.Request) {
 	var statusCode int
 	var handleMessage string
@@ -30,13 +41,13 @@ func (h *AccountHandler) RefillBalance(w http.ResponseWriter, r *http.Request) {
 
 	body, readErr := io.ReadAll(r.Body)
 	if readErr != nil {
-		http.Error(w, "server problems", http.StatusInternalServerError)
+		http.Error(w, "internal server error", http.StatusInternalServerError)
 		return
 	}
 
 	unmarshalError := json.Unmarshal(body, &refillParams)
 	if unmarshalError != nil {
-		http.Error(w, "unmarshal error", http.StatusInternalServerError)
+		http.Error(w, "invalid body params", http.StatusBadRequest)
 		return
 	}
 
@@ -47,17 +58,29 @@ func (h *AccountHandler) RefillBalance(w http.ResponseWriter, r *http.Request) {
 		statusCode = http.StatusOK
 		handleMessage = "OK"
 	case ac.AccountNotExistErr:
-		statusCode = http.StatusBadRequest
+		statusCode = http.StatusUnauthorized
 		handleMessage = fmt.Sprintf("%v", ac.AccountNotExistErr)
 	default:
 		statusCode = http.StatusInternalServerError
-		handleMessage = fmt.Sprintf("internal server error: %v", refillError)
+		handleMessage = fmt.Sprintf("internal server error")
 	}
 	response.SendShortResponse(w, statusCode, handleMessage)
-	h.logger.Infof("Request: method - %s,  url - %s, Result: status_code = %d, text = %s",
-		r.Method, r.URL.Path, statusCode, handleMessage)
+	h.logger.Infof("Request: method - %s,  url - %s, Result: status_code = %d, text = %s, err = %v",
+		r.Method, r.URL.Path, statusCode, handleMessage, refillError)
 }
 
+// Transfer
+// @Summary transfer money from account to another account
+// @Description money transfer between users
+// @Accept json
+// @Produce json
+// @Param data body messages.TransferMessage true "body for transfer money"
+// @Success 200 {object} response.ShortResponseMessage "OK"
+// @Failure 400 {object} response.ShortResponseMessage "invalid body params"
+// @Failure 401 {object} response.ShortResponseMessage "account is not exist"
+// @Failure 422 {object} response.ShortResponseMessage "not enough money"
+// @Failure 500 {object} response.ShortResponseMessage "internal server error"
+// @Router /transfer [POST]
 func (h *AccountHandler) Transfer(w http.ResponseWriter, r *http.Request) {
 	var statusCode int
 	var handleMessage string
@@ -72,7 +95,7 @@ func (h *AccountHandler) Transfer(w http.ResponseWriter, r *http.Request) {
 
 	unmarshalError := json.Unmarshal(body, &transferParams)
 	if unmarshalError != nil {
-		http.Error(w, "unmarshal error", http.StatusInternalServerError)
+		http.Error(w, "invalid body params", http.StatusBadRequest)
 		return
 	}
 
@@ -84,10 +107,10 @@ func (h *AccountHandler) Transfer(w http.ResponseWriter, r *http.Request) {
 		statusCode = http.StatusOK
 		handleMessage = "OK"
 	case ac.AccountNotExistErr:
-		statusCode = http.StatusBadRequest
+		statusCode = http.StatusUnauthorized
 		handleMessage = fmt.Sprintf("%v", ac.AccountNotExistErr)
 	case ac.NotEnoughMoneyErr:
-		statusCode = http.StatusBadRequest
+		statusCode = http.StatusUnprocessableEntity
 		handleMessage = fmt.Sprintf("%v", ac.NotEnoughMoneyErr)
 	default:
 		statusCode = http.StatusInternalServerError
@@ -98,11 +121,21 @@ func (h *AccountHandler) Transfer(w http.ResponseWriter, r *http.Request) {
 		r.Method, r.URL.Path, statusCode, handleMessage)
 }
 
+// GetBalance
+// @Summary get user balance
+// @Description get user balance
+// @Produce json
+// @Param id path int true "user_id in balanceApp"
+// @Success 200 {object} response.BalanceResponseMessage
+// @Failure 400 {object} response.ShortResponseMessage "userID not found | userID isn't number"
+// @Failure 401 {object} response.ShortResponseMessage "account is not exist"
+// @Failure 500 {object} response.ShortResponseMessage "internal server error"
+// @Router /accounts/{id} [GET]
 func (h *AccountHandler) GetBalance(w http.ResponseWriter, r *http.Request) {
 	var statusCode int
 	var handleMessage string
 
-	strUserID := r.URL.Query().Get("id")
+	strUserID := r.URL.Query().Get("userID")
 
 	if strUserID == "" {
 		response.SendShortResponse(w, http.StatusBadRequest, "userID not found")
@@ -121,11 +154,11 @@ func (h *AccountHandler) GetBalance(w http.ResponseWriter, r *http.Request) {
 		response.BalanceResponse(w, balance, "OK")
 		return
 	case ac.AccountNotExistErr:
-		statusCode = http.StatusBadRequest
+		statusCode = http.StatusUnauthorized
 		handleMessage = fmt.Sprintf("%v", ac.AccountNotExistErr)
 	default:
 		statusCode = http.StatusInternalServerError
-		handleMessage = fmt.Sprintf("internal server error: %v", getBalanceErr)
+		handleMessage = fmt.Sprintf("internal server error")
 	}
 	response.SendShortResponse(w, statusCode, handleMessage)
 	h.logger.Infof("Request: method - %s,  url - %s, Result: status_code = %d, text = %s",
