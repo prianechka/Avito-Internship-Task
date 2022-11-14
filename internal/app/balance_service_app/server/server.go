@@ -30,7 +30,7 @@ func CreateServer(logger *logrus.Logger) *Server {
 }
 
 func CreateDB(DBName string) *sql.DB {
-	dsn := "root:Ghzyz28052001!@tcp(localhost:3306)/" + DBName + "?&charset=utf8&interpolateParams=true"
+	dsn := "root:12345678@tcp(localhost:3306)/" + DBName + "?&charset=utf8&interpolateParams=true"
 	db, err := sql.Open("mysql", dsn)
 	if err == nil {
 		db.SetMaxOpenConns(10)
