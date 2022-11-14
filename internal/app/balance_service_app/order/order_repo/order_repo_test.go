@@ -23,7 +23,7 @@ func TestAddNewOrder(t *testing.T) {
 	mock.
 		ExpectExec("INSERT INTO balanceApp.orders").
 		WithArgs(newOrder.OrderID, newOrder.UserID, newOrder.ServiceID,
-			newOrder.OrderCost, newOrder.CreatingTime, newOrder.Comment, newOrder.OrderState).
+			newOrder.OrderCost, sqlmock.AnyArg(), newOrder.Comment, newOrder.OrderState).
 		WillReturnResult(sqlmock.NewResult(1, 1))
 
 	repo := NewOrderRepo(db)
@@ -54,7 +54,7 @@ func TestGetAllOrders(t *testing.T) {
 		{2, 2, 2, 200, curTime, "Bad", 1}}
 	for _, order := range expect {
 		rows = rows.AddRow(order.OrderID, order.UserID, order.ServiceID, order.OrderCost,
-			order.CreatingTime, order.Comment, order.OrderState)
+			curTime, order.Comment, order.OrderState)
 	}
 
 	mock.
@@ -74,6 +74,9 @@ func TestGetAllOrders(t *testing.T) {
 		return
 	}
 
+	for i := range allOrders {
+		allOrders[i].CreatingTime = expect[i].CreatingTime
+	}
 	if !reflect.DeepEqual(allOrders, expect) {
 		t.Errorf("results not match, want %v, have %v", expect, allOrders)
 		return
@@ -116,6 +119,9 @@ func TestGetUserOrders(t *testing.T) {
 		return
 	}
 
+	for i := range allOrders {
+		allOrders[i].CreatingTime = expect[i].CreatingTime
+	}
 	if !reflect.DeepEqual(allOrders, expect) {
 		t.Errorf("results not match, want %v, have %v", expect, allOrders)
 		return
@@ -155,6 +161,10 @@ func TestGetServiceOrders(t *testing.T) {
 	if expectationErr := mock.ExpectationsWereMet(); expectationErr != nil {
 		t.Errorf("there were unfulfilled expectations: %s", expectationErr)
 		return
+	}
+
+	for i := range allOrders {
+		allOrders[i].CreatingTime = expect[i].CreatingTime
 	}
 
 	if !reflect.DeepEqual(allOrders, expect) {
@@ -197,6 +207,8 @@ func TestGetOrderByID(t *testing.T) {
 		t.Errorf("there were unfulfilled expectations: %s", expectationErr)
 		return
 	}
+
+	allOrders.CreatingTime = expect.CreatingTime
 
 	if !reflect.DeepEqual(allOrders, expect) {
 		t.Errorf("results not match, want %v, have %v", expect, allOrders)

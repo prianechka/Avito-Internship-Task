@@ -42,7 +42,7 @@ func TestRefillMoneyWithExistsAccount(t *testing.T) {
 		WithArgs(userID).
 		WillReturnRows(accountFirstRows)
 
-	accountMock.ExpectExec("UPDATE balanceApp.accounts SET amount = amoumt +").
+	accountMock.ExpectExec("UPDATE balanceApp.accounts SET amount = amount +").
 		WithArgs(sum, userID).
 		WillReturnResult(sqlmock.NewResult(1, 1))
 
@@ -162,7 +162,7 @@ func TestRefillMoneyWithNoExistsAccount(t *testing.T) {
 		WithArgs(userID).
 		WillReturnResult(sqlmock.NewResult(1, 1))
 
-	accountMock.ExpectExec("UPDATE balanceApp.accounts SET amount = amoumt +").
+	accountMock.ExpectExec("UPDATE balanceApp.accounts SET amount = amount +").
 		WithArgs(sum, userID).
 		WillReturnResult(sqlmock.NewResult(1, 1))
 
@@ -300,7 +300,7 @@ func TestBuyServiceSuccess(t *testing.T) {
 		WithArgs(userID).
 		WillReturnRows(accountThirdRows)
 
-	accountMock.ExpectExec("UPDATE balanceApp.accounts SET amount = amoumt +").
+	accountMock.ExpectExec("UPDATE balanceApp.accounts SET amount = amount +").
 		WithArgs(-sum, userID).
 		WillReturnResult(sqlmock.NewResult(1, 1))
 
@@ -959,7 +959,7 @@ func TestRefuseServiceSuccess(t *testing.T) {
 	accountFirstRows := sqlmock.NewRows([]string{"amount"})
 	accountFirstRows.AddRow(balance)
 
-	accountMock.ExpectExec("UPDATE balanceApp.accounts SET amount = amoumt +").
+	accountMock.ExpectExec("UPDATE balanceApp.accounts SET amount = amount +").
 		WithArgs(sum, userID).
 		WillReturnResult(sqlmock.NewResult(1, 1))
 
@@ -1407,11 +1407,11 @@ func TestTransferSuccess(t *testing.T) {
 		WithArgs(srcUserID).
 		WillReturnRows(accountFifthRows)
 
-	accountMock.ExpectExec("UPDATE balanceApp.accounts SET amount = amoumt +").
+	accountMock.ExpectExec("UPDATE balanceApp.accounts SET amount = amount +").
 		WithArgs(-sum, srcUserID).
 		WillReturnResult(sqlmock.NewResult(1, 1))
 
-	accountMock.ExpectExec("UPDATE balanceApp.accounts SET amount = amoumt +").
+	accountMock.ExpectExec("UPDATE balanceApp.accounts SET amount = amount +").
 		WithArgs(sum, dstUserID).
 		WillReturnResult(sqlmock.NewResult(1, 1))
 

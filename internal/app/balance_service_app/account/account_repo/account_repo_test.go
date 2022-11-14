@@ -84,7 +84,7 @@ func TestChangeAmount(t *testing.T) {
 	var delta float64 = 345
 
 	mock.
-		ExpectExec("UPDATE balanceApp.accounts SET amount = amoumt +").
+		ExpectExec("UPDATE balanceApp.accounts SET amount = amount +").
 		WithArgs(delta, changeAccID).
 		WillReturnResult(sqlmock.NewResult(1, 1))
 

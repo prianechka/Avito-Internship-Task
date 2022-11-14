@@ -282,7 +282,7 @@ func TestUpdateMoney(t *testing.T) {
 	var checkUserID int64 = 1
 	var sum float64 = 100
 
-	mock.ExpectExec("UPDATE balanceApp.accounts SET amount = amoumt +").
+	mock.ExpectExec("UPDATE balanceApp.accounts SET amount = amount +").
 		WithArgs(sum, checkUserID).
 		WillReturnResult(sqlmock.NewResult(1, 1))
 
@@ -342,7 +342,7 @@ func TestSpendMoneySuccess(t *testing.T) {
 		WithArgs(checkUserID).
 		WillReturnRows(rows)
 
-	mock.ExpectExec("UPDATE balanceApp.accounts SET amount = amoumt +").
+	mock.ExpectExec("UPDATE balanceApp.accounts SET amount = amount +").
 		WithArgs(-sum, checkUserID).
 		WillReturnResult(sqlmock.NewResult(1, 1))
 

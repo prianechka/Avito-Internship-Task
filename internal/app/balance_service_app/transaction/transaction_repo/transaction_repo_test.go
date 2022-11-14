@@ -20,7 +20,7 @@ func TestAddNewTransaction(t *testing.T) {
 	mock.
 		ExpectExec("INSERT INTO balanceApp.transactions").
 		WithArgs(newTransaction.TransactionID, newTransaction.UserID, newTransaction.TransactionType,
-			newTransaction.Sum, newTransaction.Time, newTransaction.ActionComments, newTransaction.AddComments).
+			newTransaction.Sum, sqlmock.AnyArg(), newTransaction.ActionComments, newTransaction.AddComments).
 		WillReturnResult(sqlmock.NewResult(1, 1))
 
 	repo := NewTransactionRepo(db)
@@ -71,6 +71,10 @@ func TestGetAllTransactions(t *testing.T) {
 		return
 	}
 
+	for i := range transact {
+		transact[i].Time = expect[i].Time
+	}
+
 	if !reflect.DeepEqual(transact, expect) {
 		t.Errorf("results not match, want %v, have %v", expect, transact)
 		return
@@ -114,6 +118,10 @@ func TestGetUserTransactions(t *testing.T) {
 		return
 	}
 
+	for i := range transact {
+		transact[i].Time = expect[i].Time
+	}
+
 	if !reflect.DeepEqual(transact, expect) {
 		t.Errorf("results not match, want %v, have %v", expect, transact)
 		return
@@ -154,6 +162,8 @@ func TestGetTransactionByID(t *testing.T) {
 		t.Errorf("there were unfulfilled expectations: %s", expectationErr)
 		return
 	}
+
+	transact.Time = expect.Time
 
 	if !reflect.DeepEqual(transact, expect) {
 		t.Errorf("results not match, want %v, have %v", expect, transact)

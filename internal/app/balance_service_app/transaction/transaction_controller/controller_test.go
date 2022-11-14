@@ -77,6 +77,8 @@ func TestAddNewRecordBuyService(t *testing.T) {
 		return
 	}
 
+	getTransact.Time = newTransaction.Time
+
 	if !reflect.DeepEqual(getTransact, newTransaction) {
 		t.Errorf("results not match, want %v, have %v", getTransact, newTransaction)
 		return
@@ -149,6 +151,8 @@ func TestAddNewRecordReturnService(t *testing.T) {
 		return
 	}
 
+	newTransaction.Time = getTransact.Time
+
 	if !reflect.DeepEqual(getTransact, newTransaction) {
 		t.Errorf("results not match, want %v, have %v", getTransact, newTransaction)
 		return
@@ -219,6 +223,8 @@ func TestAddNewRecordRefillBalance(t *testing.T) {
 		t.Errorf("there were unfulfilled expectations: %s", expectationErr)
 		return
 	}
+
+	newTransaction.Time = getTransact.Time
 
 	if !reflect.DeepEqual(getTransact, newTransaction) {
 		t.Errorf("results not match, want %v, have %v", getTransact, newTransaction)
@@ -292,6 +298,8 @@ func TestAddNewRecordTransferTo(t *testing.T) {
 		return
 	}
 
+	newTransaction.Time = getTransact.Time
+
 	if !reflect.DeepEqual(getTransact, newTransaction) {
 		t.Errorf("results not match, want %v, have %v", getTransact, newTransaction)
 		return
@@ -353,6 +361,10 @@ func TestGetUserTransactions(t *testing.T) {
 	if expectationErr := mock.ExpectationsWereMet(); expectationErr != nil {
 		t.Errorf("there were unfulfilled expectations: %s", expectationErr)
 		return
+	}
+
+	for i := range userTransacts {
+		userTransacts[i].Time = newTransactions[i].Time
 	}
 
 	if !reflect.DeepEqual(userTransacts, newTransactions) {
