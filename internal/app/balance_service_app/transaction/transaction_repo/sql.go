@@ -12,7 +12,7 @@ func (sql MySQLAddNewTransaction) GetString() string {
 
 func (sql MySQLGetAllTransactions) GetString() string {
 	return "SELECT transactionID, userID, transactionType, sum, time," +
-		" actionComments, addComments FROM balanceApp.transaction"
+		" actionComments, addComments FROM balanceApp.transactions"
 }
 
 func (sql MySQLGetUserTransactions) GetString() string {
@@ -22,5 +22,5 @@ func (sql MySQLGetUserTransactions) GetString() string {
 
 func (sql MySQLGetTransactionByID) GetString() string {
 	return "SELECT transactionID, userID, transactionType, sum, time," +
-		" actionComments, addComments FROM balanceApp.transaction WHERE transactionID = ?"
+		" actionComments, addComments FROM balanceApp.transactions WHERE transactionID = ?"
 }
