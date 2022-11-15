@@ -14,12 +14,14 @@ generate-api:
 	go install github.com/swaggo/swag/cmd/swag@v1.6.5
 	swag init -g ./cmd/server/main.go -o docs
 
-tests:	make-mocks
+tests:	make-mocks generate-api
 	go test ./...
+	make clean
 	
 coverage:
 	go test ./... -coverprofile cover.out
 	go tool cover -html=cover.out -o cover.html
+	make clean
 	
 clean:
 	rm -rf *.out *.exe *.html *.csv

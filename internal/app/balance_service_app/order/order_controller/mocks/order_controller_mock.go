@@ -6,6 +6,7 @@ package mocks
 
 import (
 	order "Avito-Internship-Task/internal/app/balance_service_app/order"
+	report "Avito-Internship-Task/internal/app/balance_service_app/report"
 	reflect "reflect"
 
 	gomock "github.com/golang/mock/gomock"
@@ -75,6 +76,21 @@ func (m *MockOrderControllerInterface) FinishOrder(orderID, userID, serviceID in
 func (mr *MockOrderControllerInterfaceMockRecorder) FinishOrder(orderID, userID, serviceID interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FinishOrder", reflect.TypeOf((*MockOrderControllerInterface)(nil).FinishOrder), orderID, userID, serviceID)
+}
+
+// GetFinanceReports mocks base method.
+func (m *MockOrderControllerInterface) GetFinanceReports(month, year int64) ([]report.FinanceReport, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetFinanceReports", month, year)
+	ret0, _ := ret[0].([]report.FinanceReport)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetFinanceReports indicates an expected call of GetFinanceReports.
+func (mr *MockOrderControllerInterfaceMockRecorder) GetFinanceReports(month, year interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetFinanceReports", reflect.TypeOf((*MockOrderControllerInterface)(nil).GetFinanceReports), month, year)
 }
 
 // GetOrder mocks base method.

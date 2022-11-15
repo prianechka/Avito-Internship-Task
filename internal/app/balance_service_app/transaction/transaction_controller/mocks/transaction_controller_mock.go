@@ -120,16 +120,16 @@ func (mr *MockTransactionControllerInterfaceMockRecorder) GetTransactionByID(tra
 }
 
 // GetUserTransactions mocks base method.
-func (m *MockTransactionControllerInterface) GetUserTransactions(userID int64) ([]transaction.Transaction, error) {
+func (m *MockTransactionControllerInterface) GetUserTransactions(userID int64, orderBy string, limit, offset int) ([]transaction.Transaction, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetUserTransactions", userID)
+	ret := m.ctrl.Call(m, "GetUserTransactions", userID, orderBy, limit, offset)
 	ret0, _ := ret[0].([]transaction.Transaction)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // GetUserTransactions indicates an expected call of GetUserTransactions.
-func (mr *MockTransactionControllerInterfaceMockRecorder) GetUserTransactions(userID interface{}) *gomock.Call {
+func (mr *MockTransactionControllerInterfaceMockRecorder) GetUserTransactions(userID, orderBy, limit, offset interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetUserTransactions", reflect.TypeOf((*MockTransactionControllerInterface)(nil).GetUserTransactions), userID)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetUserTransactions", reflect.TypeOf((*MockTransactionControllerInterface)(nil).GetUserTransactions), userID, orderBy, limit, offset)
 }

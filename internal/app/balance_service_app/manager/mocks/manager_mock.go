@@ -5,6 +5,7 @@
 package mocks
 
 import (
+	transaction "Avito-Internship-Task/internal/app/balance_service_app/transaction"
 	reflect "reflect"
 
 	gomock "github.com/golang/mock/gomock"
@@ -61,18 +62,18 @@ func (mr *MockManagerInterfaceMockRecorder) BuyService(userID, orderID, serviceI
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "BuyService", reflect.TypeOf((*MockManagerInterface)(nil).BuyService), userID, orderID, serviceID, sum, comment)
 }
 
-// GetReport mocks base method.
-func (m *MockManagerInterface) GetReport() error {
+// GetFinanceReport mocks base method.
+func (m *MockManagerInterface) GetFinanceReport(month, year int64, url string) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetReport")
+	ret := m.ctrl.Call(m, "GetFinanceReport", month, year, url)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
-// GetReport indicates an expected call of GetReport.
-func (mr *MockManagerInterfaceMockRecorder) GetReport() *gomock.Call {
+// GetFinanceReport indicates an expected call of GetFinanceReport.
+func (mr *MockManagerInterfaceMockRecorder) GetFinanceReport(month, year, url interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetReport", reflect.TypeOf((*MockManagerInterface)(nil).GetReport))
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetFinanceReport", reflect.TypeOf((*MockManagerInterface)(nil).GetFinanceReport), month, year, url)
 }
 
 // GetUserBalance mocks base method.
@@ -91,17 +92,18 @@ func (mr *MockManagerInterfaceMockRecorder) GetUserBalance(userID interface{}) *
 }
 
 // GetUserReport mocks base method.
-func (m *MockManagerInterface) GetUserReport() error {
+func (m *MockManagerInterface) GetUserReport(userID int64, orderBy string, limit, offset int) ([]transaction.Transaction, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetUserReport")
-	ret0, _ := ret[0].(error)
-	return ret0
+	ret := m.ctrl.Call(m, "GetUserReport", userID, orderBy, limit, offset)
+	ret0, _ := ret[0].([]transaction.Transaction)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
 }
 
 // GetUserReport indicates an expected call of GetUserReport.
-func (mr *MockManagerInterfaceMockRecorder) GetUserReport() *gomock.Call {
+func (mr *MockManagerInterfaceMockRecorder) GetUserReport(userID, orderBy, limit, offset interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetUserReport", reflect.TypeOf((*MockManagerInterface)(nil).GetUserReport))
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetUserReport", reflect.TypeOf((*MockManagerInterface)(nil).GetUserReport), userID, orderBy, limit, offset)
 }
 
 // RefillBalance mocks base method.

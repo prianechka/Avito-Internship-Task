@@ -6,6 +6,7 @@ package mocks
 
 import (
 	order "Avito-Internship-Task/internal/app/balance_service_app/order"
+	report "Avito-Internship-Task/internal/app/balance_service_app/report"
 	reflect "reflect"
 
 	gomock "github.com/golang/mock/gomock"
@@ -105,6 +106,21 @@ func (m *MockOrderRepoInterface) GetServiceOrders(serviceType int64) ([]order.Or
 func (mr *MockOrderRepoInterfaceMockRecorder) GetServiceOrders(serviceType interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetServiceOrders", reflect.TypeOf((*MockOrderRepoInterface)(nil).GetServiceOrders), serviceType)
+}
+
+// GetSumOfFinishedServices mocks base method.
+func (m *MockOrderRepoInterface) GetSumOfFinishedServices(month, year int64) ([]report.FinanceReport, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetSumOfFinishedServices", month, year)
+	ret0, _ := ret[0].([]report.FinanceReport)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetSumOfFinishedServices indicates an expected call of GetSumOfFinishedServices.
+func (mr *MockOrderRepoInterfaceMockRecorder) GetSumOfFinishedServices(month, year interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetSumOfFinishedServices", reflect.TypeOf((*MockOrderRepoInterface)(nil).GetSumOfFinishedServices), month, year)
 }
 
 // GetUserOrders mocks base method.

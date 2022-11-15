@@ -1821,6 +1821,7 @@ func TestGetUserReportSuccess(t *testing.T) {
 		userID    int64   = 1
 		serviceID int64   = 1
 		sum       float64 = 100
+		balance           = 100
 		comment           = "Хорошо"
 		orderBy           = "id"
 		limit             = 2
@@ -1833,6 +1834,13 @@ func TestGetUserReportSuccess(t *testing.T) {
 		t.Fatalf("cant create mock: %s", createAccountDBErr)
 	}
 	defer accountDB.Close()
+
+	accountFirstRows := sqlmock.NewRows([]string{"amount"})
+	accountFirstRows.AddRow(balance)
+
+	accountMock.ExpectQuery("SELECT amount FROM balanceApp.accounts WHERE userID").
+		WithArgs(userID).
+		WillReturnRows(accountFirstRows)
 
 	// Подготовка БД для таблицы с транзакциями
 	transactionDB, transactionMock, createTransactDBErr := sqlmock.New()
@@ -1867,7 +1875,7 @@ func TestGetUserReportSuccess(t *testing.T) {
 	}
 
 	transactionMock.ExpectQuery("SELECT transactionID, userID, transactionType, sum, time," +
-		" actionComments, addComments FROM balanceApp.transaction WHERE userID").
+		" actionComments, addComments FROM balanceApp.transactions WHERE userID").
 		WillReturnRows(rows).WillReturnError(nil)
 
 	// Подготовка БД для таблицы с заказами

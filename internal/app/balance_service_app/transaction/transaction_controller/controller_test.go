@@ -63,7 +63,7 @@ func TestAddNewRecordBuyService(t *testing.T) {
 
 	mock.
 		ExpectQuery("SELECT transactionID, userID, transactionType, sum, time," +
-			" actionComments, addComments FROM balanceApp.transaction WHERE transactionID").
+			" actionComments, addComments FROM balanceApp.transactions WHERE transactionID").
 		WillReturnRows(rows).WillReturnError(nil)
 
 	getTransact, getError := controller.GetTransactionByID(newTransaction.TransactionID)
@@ -137,7 +137,7 @@ func TestAddNewRecordReturnService(t *testing.T) {
 
 	mock.
 		ExpectQuery("SELECT transactionID, userID, transactionType, sum, time," +
-			" actionComments, addComments FROM balanceApp.transaction WHERE transactionID").
+			" actionComments, addComments FROM balanceApp.transactions WHERE transactionID").
 		WillReturnRows(rows).WillReturnError(nil)
 
 	getTransact, getError := controller.GetTransactionByID(newTransaction.TransactionID)
@@ -210,7 +210,7 @@ func TestAddNewRecordRefillBalance(t *testing.T) {
 
 	mock.
 		ExpectQuery("SELECT transactionID, userID, transactionType, sum, time," +
-			" actionComments, addComments FROM balanceApp.transaction WHERE transactionID").
+			" actionComments, addComments FROM balanceApp.transactions WHERE transactionID").
 		WillReturnRows(rows).WillReturnError(nil)
 
 	getTransact, getError := controller.GetTransactionByID(newTransaction.TransactionID)
@@ -284,7 +284,7 @@ func TestAddNewRecordTransferTo(t *testing.T) {
 
 	mock.
 		ExpectQuery("SELECT transactionID, userID, transactionType, sum, time," +
-			" actionComments, addComments FROM balanceApp.transaction WHERE transactionID").
+			" actionComments, addComments FROM balanceApp.transactions WHERE transactionID").
 		WillReturnRows(rows).WillReturnError(nil)
 
 	getTransact, getError := controller.GetTransactionByID(newTransaction.TransactionID)
@@ -350,7 +350,7 @@ func TestGetUserTransactions(t *testing.T) {
 	}
 
 	mock.ExpectQuery("SELECT transactionID, userID, transactionType, sum, time," +
-		" actionComments, addComments FROM balanceApp.transaction WHERE userID").
+		" actionComments, addComments FROM balanceApp.transactions WHERE userID").
 		WillReturnRows(rows).WillReturnError(nil)
 
 	repo := transaction_repo.NewTransactionRepo(db)

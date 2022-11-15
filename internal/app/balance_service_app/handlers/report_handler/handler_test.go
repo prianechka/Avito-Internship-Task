@@ -176,7 +176,7 @@ func TestHandlerGetUserReport(t *testing.T) {
 	}
 
 	transactionMock.ExpectQuery("SELECT transactionID, userID, transactionType, sum, time," +
-		" actionComments, addComments FROM balanceApp.transaction WHERE userID").
+		" actionComments, addComments FROM balanceApp.transactions WHERE userID").
 		WillReturnRows(rows).WillReturnError(nil)
 
 	// Подготовка БД для таблицы с заказами
