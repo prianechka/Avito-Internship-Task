@@ -1,6 +1,7 @@
 package models
 
 import (
+	"Avito-Internship-Task/internal/app/balance_service_app/transaction"
 	"encoding/json"
 	"net/http"
 )
@@ -16,6 +17,10 @@ type BalanceResponseMessage struct {
 
 type FinanceReportResponseMessage struct {
 	FileURL string `json:"fileURL"`
+}
+
+type UserReportResponseMessage struct {
+	AllTransactions []transaction.Transaction `json:"transactions"`
 }
 
 func SendShortResponse(w http.ResponseWriter, code int, comment string) {
@@ -42,6 +47,17 @@ func BalanceResponse(w http.ResponseWriter, balance float64, comment string) {
 
 func FinanceReportResponse(w http.ResponseWriter, fileURL string) {
 	var msg = FinanceReportResponseMessage{fileURL}
+	result, err := json.Marshal(msg)
+	if err == nil {
+		w.WriteHeader(http.StatusOK)
+		_, _ = w.Write(result)
+	} else {
+		SendShortResponse(w, http.StatusInternalServerError, "internal server problems")
+	}
+}
+
+func UserReportResponse(w http.ResponseWriter, allTransactions []transaction.Transaction) {
+	var msg = UserReportResponseMessage{allTransactions}
 	result, err := json.Marshal(msg)
 	if err == nil {
 		w.WriteHeader(http.StatusOK)

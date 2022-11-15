@@ -116,6 +116,7 @@ func (c *TransactionController) AddNewRecordTransferFrom(srcUserID, dstUserID in
 	return err
 }
 
-func (c *TransactionController) GetUserTransactions(userID int64) ([]transaction.Transaction, error) {
-	return c.repo.GetUserTransactions(userID)
+func (c *TransactionController) GetUserTransactions(userID int64, orderBy string,
+	limit, offset int) ([]transaction.Transaction, error) {
+	return c.repo.GetUserTransactions(userID, orderBy, limit, offset)
 }

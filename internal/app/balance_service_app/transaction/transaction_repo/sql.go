@@ -17,7 +17,7 @@ func (sql MySQLGetAllTransactions) GetString() string {
 
 func (sql MySQLGetUserTransactions) GetString() string {
 	return "SELECT transactionID, userID, transactionType, sum, time," +
-		" actionComments, addComments FROM balanceApp.transaction WHERE userID = ?"
+		" actionComments, addComments FROM balanceApp.transactions WHERE userID = ? ORDER BY ? DESC LIMIT ? OFFSET ?"
 }
 
 func (sql MySQLGetTransactionByID) GetString() string {

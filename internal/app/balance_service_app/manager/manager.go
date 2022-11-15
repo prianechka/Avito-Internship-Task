@@ -4,7 +4,9 @@ import (
 	ac "Avito-Internship-Task/internal/app/balance_service_app/account/account_controller"
 	oc "Avito-Internship-Task/internal/app/balance_service_app/order/order_controller"
 	"Avito-Internship-Task/internal/app/balance_service_app/report/report_controller"
+	"Avito-Internship-Task/internal/app/balance_service_app/transaction"
 	tc "Avito-Internship-Task/internal/app/balance_service_app/transaction/transaction_controller"
+	"Avito-Internship-Task/internal/pkg/utils"
 	"fmt"
 )
 
@@ -198,6 +200,26 @@ func (m *Manager) GetFinanceReport(month, year int64, url string) error {
 	return err
 }
 
-func (m *Manager) GetUserReport() error {
-	return nil
+func (m *Manager) GetUserReport(userID int64, orderBy string, limit, offset int) ([]transaction.Transaction, error) {
+	var allTransactions = make([]transaction.Transaction, utils.EMPTY)
+	var err error
+
+	if limit == utils.NotInQuery {
+		limit = utils.DefaultLimit
+	}
+	if offset == utils.NotInQuery {
+		offset = utils.DefaultOffset
+	}
+	if orderBy == utils.EmptyString {
+		orderBy = utils.DefaultOrderBy
+	}
+
+	_, checkAccountError := m.accountController.CheckAccountIsExist(userID)
+	if checkAccountError == nil {
+		allTransactions, err = m.transactionController.GetUserTransactions(userID, orderBy, limit, offset)
+	} else {
+		err = checkAccountError
+	}
+
+	return allTransactions, err
 }

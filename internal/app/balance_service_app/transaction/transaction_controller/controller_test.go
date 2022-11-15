@@ -319,6 +319,9 @@ func TestGetUserTransactions(t *testing.T) {
 		serviceID int64   = 1
 		sum       float64 = 100
 		comment           = "Хорошо"
+		orderBy           = "id"
+		limit             = 2
+		offset            = 0
 	)
 
 	newTransactions := []transaction.Transaction{{
@@ -353,7 +356,7 @@ func TestGetUserTransactions(t *testing.T) {
 	repo := transaction_repo.NewTransactionRepo(db)
 	controller := CreateNewTransactionController(repo)
 
-	userTransacts, execErr := controller.GetUserTransactions(userID)
+	userTransacts, execErr := controller.GetUserTransactions(userID, orderBy, limit, offset)
 	if execErr != nil {
 		t.Errorf("unexpected err: %v", execErr)
 		return

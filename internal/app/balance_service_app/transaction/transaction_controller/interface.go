@@ -10,5 +10,5 @@ type TransactionControllerInterface interface {
 	AddNewRecordReturnService(userID int64, sum float64, serviceID int64, comments string) error
 	AddNewRecordTransferTo(srcUserID, dstUserID int64, sum float64, comments string) error
 	AddNewRecordTransferFrom(srcUserID, dstUserID int64, sum float64, comments string) error
-	GetUserTransactions(userID int64) ([]transaction.Transaction, error)
+	GetUserTransactions(userID int64, orderBy string, limit, offset int) ([]transaction.Transaction, error)
 }

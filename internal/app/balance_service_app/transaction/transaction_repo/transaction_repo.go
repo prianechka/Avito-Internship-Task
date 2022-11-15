@@ -53,12 +53,12 @@ func (repo *TransactionRepo) GetAllTransactions() ([]transaction.Transaction, er
 	return allTransactions, err
 }
 
-func (repo *TransactionRepo) GetUserTransactions(userID int64) ([]transaction.Transaction, error) {
+func (repo *TransactionRepo) GetUserTransactions(userID int64, orderBy string, limit, offset int) ([]transaction.Transaction, error) {
 	allTransactions := make([]transaction.Transaction, utils.EMPTY)
 
 	repo.mutex.Lock()
 	query := MySQLGetUserTransactions{}.GetString()
-	rows, err := repo.conn.Query(query, userID)
+	rows, err := repo.conn.Query(query, userID, orderBy, limit, offset)
 	repo.mutex.Unlock()
 
 	if err == nil {

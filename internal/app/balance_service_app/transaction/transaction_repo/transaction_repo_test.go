@@ -89,7 +89,12 @@ func TestGetUserTransactions(t *testing.T) {
 	defer db.Close()
 
 	curTime := time.Now()
-	var userID int64 = 1
+	var (
+		userID  int64 = 1
+		limit         = 2
+		offset        = 0
+		orderBy       = "id"
+	)
 
 	rows := sqlmock.NewRows([]string{"transactionID", "userID", "transactionType", "sum",
 		"time", "actionComment", "addComment"})
@@ -107,7 +112,7 @@ func TestGetUserTransactions(t *testing.T) {
 
 	repo := NewTransactionRepo(db)
 
-	transact, execErr := repo.GetUserTransactions(userID)
+	transact, execErr := repo.GetUserTransactions(userID, orderBy, limit, offset)
 	if execErr != nil {
 		t.Errorf("unexpected err: %v", execErr)
 		return

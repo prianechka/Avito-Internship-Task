@@ -8,7 +8,7 @@ services:
     ports:
       - '3306:3306'
     volumes:
-      - ./scripts/sql/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./scripts/sql:/docker-entrypoint-initdb.d
   app:
     image: app
     expose:

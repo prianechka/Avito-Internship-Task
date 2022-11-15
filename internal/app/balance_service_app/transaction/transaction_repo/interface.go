@@ -6,6 +6,6 @@ import "Avito-Internship-Task/internal/app/balance_service_app/transaction"
 type TransactionRepoInterface interface {
 	AddNewTransaction(newTransaction transaction.Transaction) error
 	GetAllTransactions() ([]transaction.Transaction, error)
-	GetUserTransactions(userID int64) ([]transaction.Transaction, error)
+	GetUserTransactions(userID int64, orderBy string, limit int, offset int) ([]transaction.Transaction, error)
 	GetTransactionByID(transactionID int64) (transaction.Transaction, error)
 }
