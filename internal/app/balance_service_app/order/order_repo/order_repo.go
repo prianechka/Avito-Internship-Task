@@ -21,9 +21,9 @@ func NewOrderRepo(conn *sql.DB) *OrderRepo {
 func (repo *OrderRepo) CreateOrder(order order.Order) error {
 	repo.mutex.Lock()
 	query := MySQLAddNewOrder{}.GetString()
-	time := order.CreatingTime.Format(utils.TimeLayout)
+	curTime := order.CreatingTime.Format(utils.TimeLayout)
 	_, err := repo.conn.Exec(query, order.OrderID, order.UserID, order.ServiceID,
-		order.OrderCost, time, order.Comment, order.OrderState)
+		order.OrderCost, curTime, order.Comment, order.OrderState)
 	repo.mutex.Unlock()
 	return err
 }
@@ -54,7 +54,7 @@ func (repo *OrderRepo) GetAllOrders() ([]order.Order, error) {
 }
 
 func (repo *OrderRepo) GetOrderByID(orderID, userID, serviceType int) (order.Order, error) {
-	order := order.Order{}
+	foundOrder := order.Order{}
 
 	repo.mutex.Lock()
 	query := MySQLGetOrderByID{}.GetString()
@@ -63,12 +63,12 @@ func (repo *OrderRepo) GetOrderByID(orderID, userID, serviceType int) (order.Ord
 
 	var orderTime string
 
-	err := row.Scan(&order.OrderID, &order.UserID, &order.ServiceID,
-		&order.OrderCost, &orderTime, &order.Comment, &order.OrderState)
+	err := row.Scan(&foundOrder.OrderID, &foundOrder.UserID, &foundOrder.ServiceID,
+		&foundOrder.OrderCost, &orderTime, &foundOrder.Comment, &foundOrder.OrderState)
 
-	order.CreatingTime, _ = time.Parse(utils.TimeLayout, orderTime)
+	foundOrder.CreatingTime, _ = time.Parse(utils.TimeLayout, orderTime)
 
-	return order, err
+	return foundOrder, err
 }
 
 func (repo *OrderRepo) GetUserOrders(userID int) ([]order.Order, error) {

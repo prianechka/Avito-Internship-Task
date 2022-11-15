@@ -16,7 +16,7 @@ import (
 // TestRefillMoney проверяет, что сценарий пополнения денег отрабатывает без ошибок
 func TestRefillMoneyWithExistsAccount(t *testing.T) {
 	var (
-		userID  int     = 1
+		userID          = 1
 		sum     float64 = 200
 		comment         = "Всё хорошо!"
 	)
@@ -117,7 +117,7 @@ func TestRefillMoneyWithExistsAccount(t *testing.T) {
 // TestRefillMoney проверяет, что сценарий пополнения денег отрабатывает без ошибок, если аккаунта не существует
 func TestRefillMoneyWithNoExistsAccount(t *testing.T) {
 	var (
-		userID  int     = 1
+		userID          = 1
 		sum     float64 = 200
 		comment         = "Всё хорошо!"
 	)
@@ -221,7 +221,7 @@ func TestRefillMoneyWithNoExistsAccount(t *testing.T) {
 // TestGetBalance проверяет, что проверка баланса работает корректно.
 func TestGetBalance(t *testing.T) {
 	var (
-		userID  int     = 1
+		userID          = 1
 		balance float64 = 200
 	)
 
@@ -289,8 +289,8 @@ func TestGetBalance(t *testing.T) {
 // TestTransferSuccess проверяет, что перевод средств между двумя аккаунтами прошёл успешно
 func TestTransferSuccess(t *testing.T) {
 	var (
-		srcUserID     int     = 1
-		dstUserID     int     = 2
+		srcUserID             = 1
+		dstUserID             = 2
 		sum           float64 = 200
 		balanceFirst  float64 = 400
 		balanceSecond float64 = 200
@@ -450,8 +450,8 @@ func TestTransferSuccess(t *testing.T) {
 // TestTransferAccNotExistError проверяет, что если передан несуществующий аккаунт, то вернётся ошибка
 func TestTransferAccNotExistError(t *testing.T) {
 	var (
-		srcUserID int     = 1
-		dstUserID int     = 2
+		srcUserID         = 1
+		dstUserID         = 2
 		sum       float64 = 200
 		comment           = "Всё хорошо!"
 	)
@@ -508,8 +508,8 @@ func TestTransferAccNotExistError(t *testing.T) {
 // TestTransferNotEnoughMoneyError проверяет, что если недостаточно денег, то перевод не произойдёт
 func TestTransferNotEnoughMoneyError(t *testing.T) {
 	var (
-		srcUserID     int     = 1
-		dstUserID     int     = 2
+		srcUserID             = 1
+		dstUserID             = 2
 		sum           float64 = 500
 		balanceFirst  float64 = 400
 		balanceSecond float64 = 200

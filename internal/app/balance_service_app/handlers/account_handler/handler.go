@@ -5,6 +5,7 @@ import (
 	"Avito-Internship-Task/internal/app/balance_service_app/handlers/account_handler/request_models"
 	"Avito-Internship-Task/internal/app/balance_service_app/handlers/models"
 	"Avito-Internship-Task/internal/app/balance_service_app/managers/account_manager"
+	"Avito-Internship-Task/internal/pkg/utils"
 	"encoding/json"
 	"fmt"
 	"github.com/sirupsen/logrus"
@@ -138,14 +139,14 @@ func (h *AccountHandler) GetBalance(w http.ResponseWriter, r *http.Request) {
 	var statusCode int
 	var handleMessage string
 
-	strUserID := r.URL.Query().Get("userID")
+	userIDFromQuery := r.URL.Query().Get("userID")
 
-	if strUserID == "" {
+	if userIDFromQuery == utils.EmptyString {
 		models.SendShortResponse(w, http.StatusBadRequest, "userID not found")
 		return
 	}
 
-	userID, err := strconv.Atoi(strUserID)
+	userID, err := strconv.Atoi(userIDFromQuery)
 	if err != nil {
 		models.SendShortResponse(w, http.StatusBadRequest, "userID isn't number")
 		return

@@ -27,7 +27,7 @@ func (c *OrderController) CreateNewOrder(orderID, userID, serviceID int, sum flo
 	isExist, err := c.CheckOrderIsExist(orderID, userID, serviceID)
 	if err == nil {
 		if !isExist {
-			order := order.Order{
+			newOrder := order.Order{
 				OrderID:      orderID,
 				UserID:       userID,
 				ServiceID:    serviceID,
@@ -38,7 +38,7 @@ func (c *OrderController) CreateNewOrder(orderID, userID, serviceID int, sum flo
 			}
 
 			c.mutex.Lock()
-			err = c.repo.CreateOrder(order)
+			err = c.repo.CreateOrder(newOrder)
 			c.mutex.Unlock()
 		} else {
 			err = OrderIsAlreadyExist

@@ -38,27 +38,27 @@ func (h *ReportHandler) GetFinanceReport(w http.ResponseWriter, r *http.Request)
 	var statusCode int
 	var handleMessage string
 
-	strMonth := r.URL.Query().Get("month")
+	monthFromQuery := r.URL.Query().Get("month")
 
-	if strMonth == "" {
+	if monthFromQuery == utils.EmptyString {
 		models.SendShortResponse(w, http.StatusBadRequest, "month not found")
 		return
 	}
 
-	strYear := r.URL.Query().Get("year")
+	yearFromQuery := r.URL.Query().Get("year")
 
-	if strYear == "" {
+	if yearFromQuery == utils.EmptyString {
 		models.SendShortResponse(w, http.StatusBadRequest, "year not found")
 		return
 	}
 
-	month, castMonthErr := strconv.Atoi(strMonth)
+	month, castMonthErr := strconv.Atoi(monthFromQuery)
 	if castMonthErr != nil {
 		models.SendShortResponse(w, http.StatusBadRequest, "incorrect month")
 		return
 	}
 
-	year, castYearErr := strconv.Atoi(strYear)
+	year, castYearErr := strconv.Atoi(yearFromQuery)
 	if castYearErr != nil {
 		models.SendShortResponse(w, http.StatusBadRequest, "incorrect year")
 		return
@@ -66,8 +66,8 @@ func (h *ReportHandler) GetFinanceReport(w http.ResponseWriter, r *http.Request)
 
 	fileURL := utils.FileURL
 
-	getFinanceReportError := h.manager.GetFinanceReport(month, year, fileURL)
-	switch getFinanceReportError {
+	getFinanceReportErr := h.manager.GetFinanceReport(month, year, fileURL)
+	switch getFinanceReportErr {
 	case nil:
 		models.FinanceReportResponse(w, utils.FileURL)
 		return
@@ -83,7 +83,7 @@ func (h *ReportHandler) GetFinanceReport(w http.ResponseWriter, r *http.Request)
 	}
 	models.SendShortResponse(w, statusCode, handleMessage)
 	h.logger.Infof("Request: method - %s,  url - %s, Result: status_code = %d, text = %s, err = %v",
-		r.Method, r.URL.Path, statusCode, handleMessage, getFinanceReportError)
+		r.Method, r.URL.Path, statusCode, handleMessage, getFinanceReportErr)
 }
 
 // GetUserReport
@@ -103,14 +103,14 @@ func (h *ReportHandler) GetUserReport(w http.ResponseWriter, r *http.Request) {
 	var statusCode int
 	var handleMessage string
 
-	strUserID := r.URL.Query().Get("userID")
+	userIDFromQuery := r.URL.Query().Get("userID")
 
-	if strUserID == utils.EmptyString {
+	if userIDFromQuery == utils.EmptyString {
 		models.SendShortResponse(w, http.StatusBadRequest, "userID not found")
 		return
 	}
 
-	userID, err := strconv.Atoi(strUserID)
+	userID, err := strconv.Atoi(userIDFromQuery)
 	if err != nil {
 		models.SendShortResponse(w, http.StatusBadRequest, "userID isn't number")
 		return
@@ -138,10 +138,10 @@ func (h *ReportHandler) GetUserReport(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	allTransactions, getReportErr := h.manager.GetUserReport(userID, orderBy, limit, offset)
+	userReport, getReportErr := h.manager.GetUserReport(userID, orderBy, limit, offset)
 	switch getReportErr {
 	case nil:
-		models.UserReportResponse(w, allTransactions)
+		models.UserReportResponse(w, userReport)
 		return
 	case ac.AccountNotExistErr:
 		statusCode = http.StatusUnauthorized

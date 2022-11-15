@@ -20,9 +20,9 @@ func NewTransactionRepo(conn *sql.DB) *TransactionRepo {
 func (repo *TransactionRepo) AddNewTransaction(newTransaction transaction.Transaction) error {
 	repo.mutex.Lock()
 	query := MySQLAddNewTransaction{}.GetString()
-	time := newTransaction.Time.Format(utils.TimeLayout)
+	curTime := newTransaction.Time.Format(utils.TimeLayout)
 	_, err := repo.conn.Exec(query, newTransaction.TransactionID, newTransaction.UserID,
-		newTransaction.TransactionType, newTransaction.Sum, time,
+		newTransaction.TransactionType, newTransaction.Sum, curTime,
 		newTransaction.ActionComments, newTransaction.AddComments)
 	repo.mutex.Unlock()
 	return err
@@ -79,7 +79,7 @@ func (repo *TransactionRepo) GetUserTransactions(userID int, orderBy string, lim
 }
 
 func (repo *TransactionRepo) GetTransactionByID(transactionID int) (transaction.Transaction, error) {
-	newTransact := transaction.Transaction{}
+	curTransact := transaction.Transaction{}
 
 	repo.mutex.Lock()
 	query := MySQLGetTransactionByID{}.GetString()
@@ -87,9 +87,9 @@ func (repo *TransactionRepo) GetTransactionByID(transactionID int) (transaction.
 	repo.mutex.Unlock()
 
 	var transactTime string
-	err := row.Scan(&newTransact.TransactionID, &newTransact.UserID, &newTransact.TransactionType,
-		&newTransact.Sum, &transactTime, &newTransact.ActionComments, &newTransact.AddComments)
-	newTransact.Time, _ = time.Parse(utils.TimeLayout, transactTime)
+	err := row.Scan(&curTransact.TransactionID, &curTransact.UserID, &curTransact.TransactionType,
+		&curTransact.Sum, &transactTime, &curTransact.ActionComments, &curTransact.AddComments)
+	curTransact.Time, _ = time.Parse(utils.TimeLayout, transactTime)
 
-	return newTransact, err
+	return curTransact, err
 }

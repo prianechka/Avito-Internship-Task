@@ -20,7 +20,7 @@ func (c *ReportController) CreateFinancialReportCSV(serviceReport []report.Finan
 	if err == nil {
 		defer csvFile.Close()
 		writer := csv.NewWriter(csvFile)
-		// writer.Comma = utils.DefaultSeparator
+		writer.Comma = utils.DefaultSeparator
 		for _, record := range serviceReport {
 			serviceName := order.Types[record.ServiceType]
 			if serviceName == utils.EmptyString {
