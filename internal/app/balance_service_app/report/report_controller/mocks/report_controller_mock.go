@@ -35,16 +35,15 @@ func (m *MockReportControllerInterface) EXPECT() *MockReportControllerInterfaceM
 }
 
 // CreateFinancialReportCSV mocks base method.
-func (m *MockReportControllerInterface) CreateFinancialReportCSV(arg0 []report.FinanceReport) (string, error) {
+func (m *MockReportControllerInterface) CreateFinancialReportCSV(arg0 []report.FinanceReport, arg1 string) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "CreateFinancialReportCSV", arg0)
-	ret0, _ := ret[0].(string)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
+	ret := m.ctrl.Call(m, "CreateFinancialReportCSV", arg0, arg1)
+	ret0, _ := ret[0].(error)
+	return ret0
 }
 
 // CreateFinancialReportCSV indicates an expected call of CreateFinancialReportCSV.
-func (mr *MockReportControllerInterfaceMockRecorder) CreateFinancialReportCSV(arg0 interface{}) *gomock.Call {
+func (mr *MockReportControllerInterfaceMockRecorder) CreateFinancialReportCSV(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateFinancialReportCSV", reflect.TypeOf((*MockReportControllerInterface)(nil).CreateFinancialReportCSV), arg0)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateFinancialReportCSV", reflect.TypeOf((*MockReportControllerInterface)(nil).CreateFinancialReportCSV), arg0, arg1)
 }

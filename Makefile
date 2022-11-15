@@ -17,5 +17,9 @@ generate-api:
 tests:	make-mocks
 	go test ./...
 	
+coverage:
+	go test ./... -coverprofile cover.out
+	go tool cover -html=cover.out -o cover.html
+	
 clean:
-	rm -rf *.out *.exe *.html
+	rm -rf *.out *.exe *.html *.csv

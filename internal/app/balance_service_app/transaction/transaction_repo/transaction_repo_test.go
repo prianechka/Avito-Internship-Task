@@ -107,7 +107,7 @@ func TestGetUserTransactions(t *testing.T) {
 
 	mock.
 		ExpectQuery("SELECT transactionID, userID, transactionType, sum, time," +
-			" actionComments, addComments FROM balanceApp.transaction WHERE userID").
+			" actionComments, addComments FROM balanceApp.transaction").
 		WillReturnRows(rows).WillReturnError(nil)
 
 	repo := NewTransactionRepo(db)
@@ -152,7 +152,7 @@ func TestGetTransactionByID(t *testing.T) {
 
 	mock.
 		ExpectQuery("SELECT transactionID, userID, transactionType, sum, time," +
-			" actionComments, addComments FROM balanceApp.transaction WHERE transactionID").
+			" actionComments, addComments FROM balanceApp.transactions").
 		WillReturnRows(rows).WillReturnError(nil)
 
 	repo := NewTransactionRepo(db)
