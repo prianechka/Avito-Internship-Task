@@ -34,6 +34,7 @@ func CreateAccountHandler(newManager manager.ManagerInterface) *AccountHandler {
 // @Success 200 {object} models.ShortResponseMessage "OK"
 // @Failure 400 {object} models.ShortResponseMessage "invalid body params"
 // @Failure 401 {object} models.ShortResponseMessage "account is not exist"
+// @Failure 422 {object} models.ShortResponseMessage "sum must be > 0"
 // @Failure 500 {object} models.ShortResponseMessage "internal server error"
 // @Router /api/v1/accounts/refill [POST]
 func (h *AccountHandler) RefillBalance(w http.ResponseWriter, r *http.Request) {

@@ -87,7 +87,6 @@ func (h *ServiceHandler) BuyService(w http.ResponseWriter, r *http.Request) {
 // @Failure 401 {object} models.ShortResponseMessage "account is not exist"
 // @Failure 403 {object} models.ShortResponseMessage "state isn't right to change order state"
 // @Failure 404 {object} models.ShortResponseMessage "order not found"
-// @Failure 422 {object} models.ShortResponseMessage "not enough money"
 // @Failure 500 {object} models.ShortResponseMessage "internal server error"
 // @Router /api/v1/services/accept [POST]
 func (h *ServiceHandler) AcceptService(w http.ResponseWriter, r *http.Request) {
@@ -142,7 +141,6 @@ func (h *ServiceHandler) AcceptService(w http.ResponseWriter, r *http.Request) {
 // @Failure 401 {object} models.ShortResponseMessage "account is not exist"
 // @Failure 403 {object} models.ShortResponseMessage "state isn't right to change order state"
 // @Failure 404 {object} models.ShortResponseMessage "order not found"
-// @Failure 422 {object} models.ShortResponseMessage "not enough money"
 // @Failure 500 {object} models.ShortResponseMessage "internal server error"
 // @Router /api/v1/services/refuse [POST]
 func (h *ServiceHandler) RefuseService(w http.ResponseWriter, r *http.Request) {
