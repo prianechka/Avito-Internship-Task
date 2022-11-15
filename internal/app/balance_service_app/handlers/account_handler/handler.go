@@ -33,7 +33,6 @@ func CreateAccountHandler(newManager account_manager.AccountManagerInterface) *A
 // @Param data body request_models.RefillMessage true "body for transfer money"
 // @Success 200 {object} models.ShortResponseMessage "OK"
 // @Failure 400 {object} models.ShortResponseMessage "invalid body params"
-// @Failure 401 {object} models.ShortResponseMessage "account is not exist"
 // @Failure 422 {object} models.ShortResponseMessage "sum must be > 0"
 // @Failure 500 {object} models.ShortResponseMessage "internal server error"
 // @Router /api/v1/accounts/refill [POST]
@@ -61,9 +60,6 @@ func (h *AccountHandler) RefillBalance(w http.ResponseWriter, r *http.Request) {
 	case nil:
 		statusCode = http.StatusOK
 		handleMessage = "OK"
-	case ac.AccountNotExistErr:
-		statusCode = http.StatusUnauthorized
-		handleMessage = fmt.Sprintf("%v", ac.AccountNotExistErr)
 	case ac.NegSumError:
 		statusCode = http.StatusUnprocessableEntity
 		handleMessage = fmt.Sprintf("%v", ac.NegSumError)

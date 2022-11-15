@@ -66,7 +66,7 @@ func (h *ReportHandler) GetFinanceReport(w http.ResponseWriter, r *http.Request)
 
 	fileURL := utils.FileURL
 
-	getFinanceReportError := h.manager.GetFinanceReport(int(month), int(year), fileURL)
+	getFinanceReportError := h.manager.GetFinanceReport(month, year, fileURL)
 	switch getFinanceReportError {
 	case nil:
 		models.FinanceReportResponse(w, utils.FileURL)
@@ -82,8 +82,8 @@ func (h *ReportHandler) GetFinanceReport(w http.ResponseWriter, r *http.Request)
 		handleMessage = fmt.Sprintf("internal server error")
 	}
 	models.SendShortResponse(w, statusCode, handleMessage)
-	h.logger.Infof("Request: method - %s,  url - %s, Result: status_code = %d, text = %s",
-		r.Method, r.URL.Path, statusCode, handleMessage)
+	h.logger.Infof("Request: method - %s,  url - %s, Result: status_code = %d, text = %s, err = %v",
+		r.Method, r.URL.Path, statusCode, handleMessage, getFinanceReportError)
 }
 
 // GetUserReport
@@ -138,7 +138,7 @@ func (h *ReportHandler) GetUserReport(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	allTransactions, getReportErr := h.manager.GetUserReport(int(userID), orderBy, limit, offset)
+	allTransactions, getReportErr := h.manager.GetUserReport(userID, orderBy, limit, offset)
 	switch getReportErr {
 	case nil:
 		models.UserReportResponse(w, allTransactions)

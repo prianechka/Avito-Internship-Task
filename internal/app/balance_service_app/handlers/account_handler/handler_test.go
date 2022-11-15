@@ -109,7 +109,7 @@ func TestGetAccountBalance(t *testing.T) {
 	}
 }
 
-// TestGetAccountBalance проверяет, что аккаунт неправильный, то выдаст 400
+// TestGetAccountBalance проверяет, что аккаунт неправильный, то выдаст 401
 func TestGetAccountBalanceBadAccount(t *testing.T) {
 
 	// Подготовка БД к тестам
@@ -413,6 +413,93 @@ func TestRefillAccountNotExist(t *testing.T) {
 
 	if !reflect.DeepEqual(msg.Comment, "OK") {
 		t.Errorf("results not match, want %v, have %v", "OK", msg.Comment)
+		return
+	}
+}
+
+// TestRefillAccountBadMoneySum проверяет, что если сумма отрицательная, то вернется ошибка.
+func TestRefillAccountBadMoneySum(t *testing.T) {
+	var (
+		userID                     = 1
+		sum                float64 = -200
+		balance                    = 100
+		comment                    = "Всё хорошо!"
+		expectedStatusCode         = http.StatusUnprocessableEntity
+	)
+
+	// Подготовка БД для таблицы с аккаунтами
+	accountDB, accountMock, createAccountDBErr := sqlmock.New()
+	if createAccountDBErr != nil {
+		t.Fatalf("cant create mock: %s", createAccountDBErr)
+	}
+	defer accountDB.Close()
+
+	accountFirstRows := sqlmock.NewRows([]string{"amount"})
+	accountFirstRows.AddRow(balance)
+
+	accountMock.ExpectQuery("SELECT amount FROM balanceApp.accounts WHERE userID").
+		WithArgs(userID).
+		WillReturnRows(accountFirstRows)
+
+	// Подготовка БД для таблицы с транзакциями
+	transactionDB, transactionMock, createTransactDBErr := sqlmock.New()
+	if createTransactDBErr != nil {
+		t.Fatalf("cant create mock: %s", createTransactDBErr)
+	}
+	defer transactionDB.Close()
+
+	// Создание объектов
+	accountRepo := account_repo.NewAccountRepo(accountDB)
+	accountController := ac.CreateNewAccountController(accountRepo)
+
+	transactionRepo := transaction_repo.NewTransactionRepo(transactionDB)
+	transactionController := tc.CreateNewTransactionController(transactionRepo)
+
+	serverManager := account_manager.CreateNewAccountManager(accountController, transactionController)
+
+	accountHandler := CreateAccountHandler(serverManager)
+	ts := httptest.NewServer(http.HandlerFunc(accountHandler.RefillBalance))
+	defer ts.Close()
+
+	bodyParams := request_models.RefillMessage{
+		UserID:  userID,
+		Sum:     sum,
+		Comment: comment,
+	}
+
+	reqBody, _ := json.Marshal(bodyParams)
+
+	searcherReq, err := http.NewRequest("POST", ts.URL, bytes.NewBuffer(reqBody))
+
+	r, _ := ts.Client().Do(searcherReq)
+
+	// Проверка
+	if err != nil {
+		t.Errorf("unexpected err: %v", err)
+		return
+	}
+
+	msg := models.ShortResponseMessage{}
+	body, _ := ioutil.ReadAll(r.Body)
+
+	unmarshalError := json.Unmarshal(body, &msg)
+	if unmarshalError != nil {
+		t.Errorf("unexpected error: %v", unmarshalError)
+		return
+	}
+
+	if r.StatusCode != expectedStatusCode {
+		t.Errorf("unexpected status code: %d %v", r.StatusCode, msg.Comment)
+		return
+	}
+
+	if expectationAccErr := accountMock.ExpectationsWereMet(); expectationAccErr != nil {
+		t.Errorf("there were unfulfilled expectations: %s", expectationAccErr)
+		return
+	}
+
+	if expectationTransactionsErr := transactionMock.ExpectationsWereMet(); expectationTransactionsErr != nil {
+		t.Errorf("there were unfulfilled expectations: %s", expectationTransactionsErr)
 		return
 	}
 }

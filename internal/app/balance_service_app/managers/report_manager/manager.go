@@ -47,9 +47,13 @@ func (m *ReportManager) GetUserReport(userID int, orderBy string, limit, offset 
 		orderBy = utils.DefaultOrderBy
 	}
 
-	_, checkAccountError := m.accountController.CheckAccountIsExist(userID)
+	isAccExist, checkAccountError := m.accountController.CheckAccountIsExist(userID)
 	if checkAccountError == nil {
-		allTransactions, err = m.transactionController.GetUserTransactions(userID, orderBy, limit, offset)
+		if isAccExist {
+			allTransactions, err = m.transactionController.GetUserTransactions(userID, orderBy, limit, offset)
+		} else {
+			err = ac.AccountNotExistErr
+		}
 	} else {
 		err = checkAccountError
 	}

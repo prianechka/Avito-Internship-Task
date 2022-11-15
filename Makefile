@@ -1,7 +1,7 @@
 run:
 	docker-compose down -v
 	service mysql stop
-	docker build --no-cache --network host -f ./docker/Dockerfile . --tag app
+	docker build --no-cache --network host -f ./docker/app/Dockerfile . --tag app
 	docker-compose up --build
 
 build:	generate-api
@@ -21,7 +21,6 @@ tests:	make-mocks generate-api
 coverage:
 	go test ./... -coverprofile cover.out
 	go tool cover -html=cover.out -o cover.html
-	make clean
 	
 clean:
 	rm -rf *.out *.exe *.html *.csv
