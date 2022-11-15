@@ -118,6 +118,14 @@ func (h *ReportHandler) GetUserReport(w http.ResponseWriter, r *http.Request) {
 
 	orderBy := r.URL.Query().Get("orderBy")
 
+	switch orderBy {
+	case utils.DefaultOrderBy:
+	case utils.FieldOrderTime:
+	case utils.FieldOrderSum:
+	default:
+		orderBy = utils.DefaultOrderBy
+	}
+
 	limit, getLimitErr := utils.GetOptionalIntParam(r, "limit")
 	if getLimitErr != nil {
 		models.SendShortResponse(w, http.StatusBadRequest, "limit isn't number")

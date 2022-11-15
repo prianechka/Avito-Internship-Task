@@ -22,7 +22,11 @@ func (c *ReportController) CreateFinancialReportCSV(serviceReport []report.Finan
 		writer := csv.NewWriter(csvFile)
 		writer.Comma = utils.DefaultSeparator
 		for _, record := range serviceReport {
-			err = writer.Write([]string{order.Types[record.ServiceType], fmt.Sprintf("%f", record.Sum)})
+			serviceName := order.Types[record.ServiceType]
+			if serviceName == utils.EmptyString {
+				serviceName = fmt.Sprintf("Service with id %d", record.ServiceType)
+			}
+			err = writer.Write([]string{serviceName, fmt.Sprintf("%f", record.Sum)})
 			if err != nil {
 				break
 			}

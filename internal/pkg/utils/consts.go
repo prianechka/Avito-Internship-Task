@@ -15,4 +15,6 @@ const (
 	DefaultOffset    = 0
 	DefaultOrderBy   = "id"
 	DefaultSeparator = ';'
+	FieldOrderTime   = "time"
+	FieldOrderSum    = "sum"
 )

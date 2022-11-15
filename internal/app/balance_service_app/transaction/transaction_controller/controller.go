@@ -4,6 +4,7 @@ import (
 	"Avito-Internship-Task/internal/app/balance_service_app/order"
 	"Avito-Internship-Task/internal/app/balance_service_app/transaction"
 	"Avito-Internship-Task/internal/app/balance_service_app/transaction/transaction_repo"
+	"Avito-Internship-Task/internal/pkg/utils"
 	"fmt"
 	"sync"
 	"sync/atomic"
@@ -45,13 +46,18 @@ func (c *TransactionController) AddNewRecordRefillBalance(userID int64, sum floa
 }
 
 func (c *TransactionController) AddNewRecordBuyService(userID int64, sum float64, serviceID int64, comments string) error {
+	serviceName := order.Types[serviceID]
+	if serviceName == utils.EmptyString {
+		serviceName = fmt.Sprintf("Service with id %d", serviceID)
+	}
+
 	newTransact := transaction.Transaction{
 		TransactionID:   c.transactCount,
 		UserID:          userID,
 		TransactionType: transaction.Buy,
 		Sum:             sum,
 		Time:            time.Now(),
-		ActionComments:  "куплена услуга: " + order.Types[serviceID],
+		ActionComments:  "куплена услуга: " + serviceName,
 		AddComments:     comments,
 	}
 
@@ -64,6 +70,11 @@ func (c *TransactionController) AddNewRecordBuyService(userID int64, sum float64
 }
 
 func (c *TransactionController) AddNewRecordReturnService(userID int64, sum float64, serviceID int64, comments string) error {
+	serviceName := order.Types[serviceID]
+	if serviceName == utils.EmptyString {
+		serviceName = fmt.Sprintf("Service with id %d", serviceID)
+	}
+
 	newTransact := transaction.Transaction{
 		TransactionID:   c.transactCount,
 		UserID:          userID,
