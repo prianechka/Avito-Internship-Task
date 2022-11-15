@@ -45,3 +45,15 @@ func (mr *MockReportHandlerInterfaceMockRecorder) GetFinanceReport(w, r interfac
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetFinanceReport", reflect.TypeOf((*MockReportHandlerInterface)(nil).GetFinanceReport), w, r)
 }
+
+// GetUserReport mocks base method.
+func (m *MockReportHandlerInterface) GetUserReport(w http.ResponseWriter, r *http.Request) {
+	m.ctrl.T.Helper()
+	m.ctrl.Call(m, "GetUserReport", w, r)
+}
+
+// GetUserReport indicates an expected call of GetUserReport.
+func (mr *MockReportHandlerInterfaceMockRecorder) GetUserReport(w, r interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetUserReport", reflect.TypeOf((*MockReportHandlerInterface)(nil).GetUserReport), w, r)
+}
