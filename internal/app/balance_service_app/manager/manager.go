@@ -79,10 +79,12 @@ func (m *Manager) checkUserCanBuyService(userID int64, sum float64) (bool, error
 	var canBuy bool
 	isAccExist, err := m.accountController.CheckAccountIsExist(userID)
 	if err == nil {
-		if isAccExist {
-			canBuy, err = m.accountController.CheckAbleToBuyService(userID, sum)
-		} else {
+		if sum <= 0 {
+			err = ac.NegSumError
+		} else if !isAccExist {
 			err = ac.AccountNotExistErr
+		} else {
+			canBuy, err = m.accountController.CheckAbleToBuyService(userID, sum)
 		}
 	}
 	return canBuy, err

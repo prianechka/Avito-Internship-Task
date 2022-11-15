@@ -1,6 +1,7 @@
 package utils
 
 const (
+	Null             = 0
 	EMPTY            = 0
 	January          = 1
 	December         = 12

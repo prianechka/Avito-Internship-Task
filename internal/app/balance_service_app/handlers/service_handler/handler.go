@@ -34,7 +34,7 @@ func CreateServiceHandler(man manager.ManagerInterface) *ServiceHandler {
 // @Success 200 {object} models.ShortResponseMessage "OK"
 // @Failure 400 {object} models.ShortResponseMessage "invalid body params"
 // @Failure 401 {object} models.ShortResponseMessage "account is not exist"
-// @Failure 422 {object} models.ShortResponseMessage "not enough money"
+// @Failure 422 {object} models.ShortResponseMessage "not enough money | sum must be > 0"
 // @Failure 500 {object} models.ShortResponseMessage "internal server error"
 // @Router /api/v1/services/buy [POST]
 func (h *ServiceHandler) BuyService(w http.ResponseWriter, r *http.Request) {
@@ -67,6 +67,9 @@ func (h *ServiceHandler) BuyService(w http.ResponseWriter, r *http.Request) {
 	case ac.NotEnoughMoneyErr:
 		statusCode = http.StatusUnprocessableEntity
 		handleMessage = fmt.Sprintf("%v", ac.NotEnoughMoneyErr)
+	case ac.NegSumError:
+		statusCode = http.StatusUnprocessableEntity
+		handleMessage = fmt.Sprintf("%v", ac.NegSumError)
 	default:
 		statusCode = http.StatusInternalServerError
 		handleMessage = fmt.Sprintf("internal server error")
