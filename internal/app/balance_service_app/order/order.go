@@ -3,11 +3,11 @@ package order
 import "time"
 
 type Order struct {
-	OrderID      int64
-	UserID       int64
-	ServiceID    int64
+	OrderID      int
+	UserID       int
+	ServiceID    int
 	OrderCost    float64
 	CreatingTime time.Time
 	Comment      string
-	OrderState   int64
+	OrderState   int
 }

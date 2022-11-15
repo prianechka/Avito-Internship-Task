@@ -25,7 +25,7 @@ func CreateNewManager(accController ac.AccountControllerInterface, orderControll
 	}
 }
 
-func (m *Manager) RefillBalance(userID int64, sum float64, comments string) error {
+func (m *Manager) RefillBalance(userID int, sum float64, comments string) error {
 	isAccExist, err := m.accountController.CheckAccountIsExist(userID)
 	if err == nil {
 		if !isAccExist {
@@ -41,7 +41,7 @@ func (m *Manager) RefillBalance(userID int64, sum float64, comments string) erro
 	return err
 }
 
-func (m *Manager) GetUserBalance(userID int64) (float64, error) {
+func (m *Manager) GetUserBalance(userID int) (float64, error) {
 	isAccExist, err := m.accountController.CheckAccountIsExist(userID)
 	if err == nil {
 		if isAccExist {
@@ -54,7 +54,7 @@ func (m *Manager) GetUserBalance(userID int64) (float64, error) {
 	}
 }
 
-func (m *Manager) BuyService(userID, orderID, serviceID int64, sum float64, comment string) error {
+func (m *Manager) BuyService(userID, orderID, serviceID int, sum float64, comment string) error {
 	canUserBuy, err := m.checkUserCanBuyService(userID, sum)
 	if err == nil {
 		if canUserBuy {
@@ -75,7 +75,7 @@ func (m *Manager) BuyService(userID, orderID, serviceID int64, sum float64, comm
 	return err
 }
 
-func (m *Manager) checkUserCanBuyService(userID int64, sum float64) (bool, error) {
+func (m *Manager) checkUserCanBuyService(userID int, sum float64) (bool, error) {
 	var canBuy bool
 	isAccExist, err := m.accountController.CheckAccountIsExist(userID)
 	if err == nil {
@@ -90,7 +90,7 @@ func (m *Manager) checkUserCanBuyService(userID int64, sum float64) (bool, error
 	return canBuy, err
 }
 
-func (m *Manager) createOrder(userID, orderID, serviceID int64, sum float64, comment string) error {
+func (m *Manager) createOrder(userID, orderID, serviceID int, sum float64, comment string) error {
 	isOrderExist, err := m.orderController.CheckOrderIsExist(orderID, userID, serviceID)
 	if err == nil {
 		if !isOrderExist {
@@ -102,7 +102,7 @@ func (m *Manager) createOrder(userID, orderID, serviceID int64, sum float64, com
 	return err
 }
 
-func (m *Manager) AcceptBuy(userID, orderID, serviceID int64) error {
+func (m *Manager) AcceptBuy(userID, orderID, serviceID int) error {
 	isOrderExist, err := m.orderController.CheckOrderIsExist(orderID, userID, serviceID)
 	if err == nil {
 		if isOrderExist {
@@ -119,7 +119,7 @@ func (m *Manager) AcceptBuy(userID, orderID, serviceID int64) error {
 
 func (*Manager) transferMoneyToCompanyAccount() {}
 
-func (m *Manager) RefuseBuy(userID, orderID, serviceID int64, comment string) error {
+func (m *Manager) RefuseBuy(userID, orderID, serviceID int, comment string) error {
 	isOrderExist, err := m.orderController.CheckOrderIsExist(orderID, userID, serviceID)
 	if err == nil {
 		if isOrderExist {
@@ -139,7 +139,7 @@ func (m *Manager) RefuseBuy(userID, orderID, serviceID int64, comment string) er
 	return err
 }
 
-func (m *Manager) Transfer(srcUserID, dstUserID int64, sum float64, comment string) error {
+func (m *Manager) Transfer(srcUserID, dstUserID int, sum float64, comment string) error {
 	isAccExists, err := m.checkAllAccountsAreExists(srcUserID, dstUserID)
 	if err == nil {
 		if isAccExists {
@@ -164,7 +164,7 @@ func (m *Manager) Transfer(srcUserID, dstUserID int64, sum float64, comment stri
 	return err
 }
 
-func (m *Manager) checkAllAccountsAreExists(srcUserID, dstUserID int64) (bool, error) {
+func (m *Manager) checkAllAccountsAreExists(srcUserID, dstUserID int) (bool, error) {
 	var result bool
 	var err error
 	isAccExist, firstCheck := m.accountController.CheckAccountIsExist(srcUserID)
@@ -185,7 +185,7 @@ func (m *Manager) checkAllAccountsAreExists(srcUserID, dstUserID int64) (bool, e
 	return result, err
 }
 
-func (m *Manager) makeReportsForAllUsers(srcUserID, dstUserID int64, sum float64, comment string) error {
+func (m *Manager) makeReportsForAllUsers(srcUserID, dstUserID int, sum float64, comment string) error {
 	err := m.transactionController.AddNewRecordTransferTo(srcUserID, dstUserID, sum, comment)
 	if err == nil {
 		err = m.transactionController.AddNewRecordTransferFrom(dstUserID, srcUserID, sum, comment)
@@ -193,7 +193,7 @@ func (m *Manager) makeReportsForAllUsers(srcUserID, dstUserID int64, sum float64
 	return err
 }
 
-func (m *Manager) GetFinanceReport(month, year int64, url string) error {
+func (m *Manager) GetFinanceReport(month, year int, url string) error {
 	dataToReport, err := m.orderController.GetFinanceReports(month, year)
 	if err == nil {
 		reportController := report_controller.CreateNewReportController()
@@ -202,7 +202,7 @@ func (m *Manager) GetFinanceReport(month, year int64, url string) error {
 	return err
 }
 
-func (m *Manager) GetUserReport(userID int64, orderBy string, limit, offset int) ([]transaction.Transaction, error) {
+func (m *Manager) GetUserReport(userID int, orderBy string, limit, offset int) ([]transaction.Transaction, error) {
 	var allTransactions = make([]transaction.Transaction, utils.EMPTY)
 	var err error
 

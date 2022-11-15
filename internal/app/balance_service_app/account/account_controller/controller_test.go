@@ -15,7 +15,7 @@ func TestCheckAccountIsExist(t *testing.T) {
 	}
 	defer db.Close()
 
-	var checkUserID int64 = 1
+	var checkUserID int = 1
 
 	rows := sqlmock.NewRows([]string{"amount"})
 	expect := 293.46
@@ -55,7 +55,7 @@ func TestCheckAccountIsNotExist(t *testing.T) {
 	}
 	defer db.Close()
 
-	var checkUserID int64 = 1
+	var checkUserID int = 1
 	expectResult := false
 
 	rows := sqlmock.NewRows([]string{"amount"})
@@ -93,7 +93,7 @@ func TestCreateNewAccount(t *testing.T) {
 	}
 	defer db.Close()
 
-	var checkUserID int64 = 1
+	var checkUserID int = 1
 
 	rows := sqlmock.NewRows([]string{"amount"})
 
@@ -128,7 +128,7 @@ func TestCreateNewAccountWithErrorItExists(t *testing.T) {
 	}
 	defer db.Close()
 
-	var checkUserID int64 = 1
+	var checkUserID int = 1
 
 	rows := sqlmock.NewRows([]string{"amount"})
 	expect := 293.46
@@ -161,7 +161,7 @@ func TestCheckBalance(t *testing.T) {
 	}
 	defer db.Close()
 
-	var checkUserID int64 = 1
+	var checkUserID int = 1
 
 	rows := sqlmock.NewRows([]string{"amount"})
 	expect := 293.46
@@ -199,7 +199,7 @@ func TestCheckCanAbleToBuy(t *testing.T) {
 	}
 	defer db.Close()
 
-	var checkUserID int64 = 1
+	var checkUserID int = 1
 	var sum float64 = 250
 	var expectCanBuy = true
 
@@ -239,7 +239,7 @@ func TestCheckCanNotAbleToBuy(t *testing.T) {
 	}
 	defer db.Close()
 
-	var checkUserID int64 = 1
+	var checkUserID int = 1
 	var sum float64 = 350
 	var expectCanBuy = false
 
@@ -279,7 +279,7 @@ func TestUpdateMoney(t *testing.T) {
 	}
 	defer db.Close()
 
-	var checkUserID int64 = 1
+	var checkUserID int = 1
 	var sum float64 = 100
 
 	mock.ExpectExec("UPDATE balanceApp.accounts SET amount = amount +").
@@ -331,7 +331,7 @@ func TestSpendMoneySuccess(t *testing.T) {
 	}
 	defer db.Close()
 
-	var checkUserID int64 = 1
+	var checkUserID int = 1
 	var sum float64 = 100
 
 	rows := sqlmock.NewRows([]string{"amount"})
@@ -392,7 +392,7 @@ func TestSpendMoneyWithNotEnoughMoney(t *testing.T) {
 	}
 	defer db.Close()
 
-	var checkUserID int64 = 1
+	var checkUserID int = 1
 	var sum float64 = 300
 
 	rows := sqlmock.NewRows([]string{"amount"})

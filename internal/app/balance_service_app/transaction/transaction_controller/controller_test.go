@@ -20,9 +20,9 @@ func TestAddNewRecordBuyService(t *testing.T) {
 	defer db.Close()
 
 	var (
-		userID    int64   = 1
+		userID    int     = 1
 		sum       float64 = 100
-		serviceID int64   = 1
+		serviceID int     = 1
 		comment           = "Все успешно!"
 	)
 
@@ -94,9 +94,9 @@ func TestAddNewRecordReturnService(t *testing.T) {
 	defer db.Close()
 
 	var (
-		userID    int64   = 1
+		userID    int     = 1
 		sum       float64 = 100
-		serviceID int64   = 1
+		serviceID int     = 1
 		comment           = "Все успешно!"
 	)
 
@@ -168,7 +168,7 @@ func TestAddNewRecordRefillBalance(t *testing.T) {
 	defer db.Close()
 
 	var (
-		userID  int64   = 1
+		userID  int     = 1
 		sum     float64 = 100
 		comment         = "Все успешно!"
 	)
@@ -241,8 +241,8 @@ func TestAddNewRecordTransferTo(t *testing.T) {
 	defer db.Close()
 
 	var (
-		srcUserID int64   = 1
-		dstUserID int64   = 2
+		srcUserID int     = 1
+		dstUserID int     = 2
 		sum       float64 = 100
 		comment           = "Все успешно!"
 	)
@@ -315,8 +315,8 @@ func TestGetUserTransactions(t *testing.T) {
 	defer db.Close()
 
 	var (
-		userID    int64   = 1
-		serviceID int64   = 1
+		userID    int     = 1
+		serviceID int     = 1
 		sum       float64 = 100
 		comment           = "Хорошо"
 		orderBy           = "id"

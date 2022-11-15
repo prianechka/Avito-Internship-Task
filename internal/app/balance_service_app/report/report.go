@@ -1,6 +1,6 @@
 package report
 
 type FinanceReport struct {
-	ServiceType int64
+	ServiceType int
 	Sum         float64
 }

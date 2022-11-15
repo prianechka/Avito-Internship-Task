@@ -14,7 +14,7 @@ func CreateNewAccountController(repo account_repo.AccountRepoInterface) *Account
 	return &AccountController{mutex: sync.RWMutex{}, repo: repo}
 }
 
-func (m *AccountController) CheckAccountIsExist(userID int64) (result bool, err error) {
+func (m *AccountController) CheckAccountIsExist(userID int) (result bool, err error) {
 	_, isAccExistErr := m.repo.GetCurrentAmount(userID)
 	switch isAccExistErr {
 	case account_repo.AccountNotExist:
@@ -27,7 +27,7 @@ func (m *AccountController) CheckAccountIsExist(userID int64) (result bool, err 
 	return result, err
 }
 
-func (m *AccountController) CreateNewAccount(userID int64) error {
+func (m *AccountController) CreateNewAccount(userID int) error {
 	m.mutex.Lock()
 	isAccExist, err := m.CheckAccountIsExist(userID)
 	if err == nil {
@@ -41,11 +41,11 @@ func (m *AccountController) CreateNewAccount(userID int64) error {
 	return err
 }
 
-func (m *AccountController) CheckBalance(userID int64) (float64, error) {
+func (m *AccountController) CheckBalance(userID int) (float64, error) {
 	return m.repo.GetCurrentAmount(userID)
 }
 
-func (m *AccountController) CheckAbleToBuyService(userID int64, servicePrice float64) (bool, error) {
+func (m *AccountController) CheckAbleToBuyService(userID int, servicePrice float64) (bool, error) {
 	var result bool
 	balance, err := m.repo.GetCurrentAmount(userID)
 	if err == nil {
@@ -56,7 +56,7 @@ func (m *AccountController) CheckAbleToBuyService(userID int64, servicePrice flo
 	return result, err
 }
 
-func (m *AccountController) DonateMoney(userID int64, sum float64) (err error) {
+func (m *AccountController) DonateMoney(userID int, sum float64) (err error) {
 	m.mutex.Lock()
 	if sum >= 0 {
 		err = m.repo.ChangeAmount(userID, sum)
@@ -67,7 +67,7 @@ func (m *AccountController) DonateMoney(userID int64, sum float64) (err error) {
 	return err
 }
 
-func (m *AccountController) SpendMoney(userID int64, sum float64) error {
+func (m *AccountController) SpendMoney(userID int, sum float64) error {
 	m.mutex.Lock()
 	canSpendMoney, err := m.CheckAbleToBuyService(userID, sum)
 	if err == nil && canSpendMoney {

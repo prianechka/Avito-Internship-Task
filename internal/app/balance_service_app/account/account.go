@@ -1,6 +1,6 @@
 package account
 
 type Account struct {
-	UserID        int64
+	UserID        int
 	CurrentAmount float64
 }

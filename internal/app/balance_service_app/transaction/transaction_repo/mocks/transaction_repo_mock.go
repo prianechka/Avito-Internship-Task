@@ -64,7 +64,7 @@ func (mr *MockTransactionRepoInterfaceMockRecorder) GetAllTransactions() *gomock
 }
 
 // GetTransactionByID mocks base method.
-func (m *MockTransactionRepoInterface) GetTransactionByID(transactionID int64) (transaction.Transaction, error) {
+func (m *MockTransactionRepoInterface) GetTransactionByID(transactionID int) (transaction.Transaction, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetTransactionByID", transactionID)
 	ret0, _ := ret[0].(transaction.Transaction)
@@ -79,7 +79,7 @@ func (mr *MockTransactionRepoInterfaceMockRecorder) GetTransactionByID(transacti
 }
 
 // GetUserTransactions mocks base method.
-func (m *MockTransactionRepoInterface) GetUserTransactions(userID int64, orderBy string, limit, offset int) ([]transaction.Transaction, error) {
+func (m *MockTransactionRepoInterface) GetUserTransactions(userID int, orderBy string, limit, offset int) ([]transaction.Transaction, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetUserTransactions", userID, orderBy, limit, offset)
 	ret0, _ := ret[0].([]transaction.Transaction)

@@ -19,9 +19,9 @@ func TestCheckOrderIsExist(t *testing.T) {
 	defer db.Close()
 
 	curTime := time.Now()
-	var orderID int64 = 1
-	var userID int64 = 1
-	var serviceID int64 = 1
+	var orderID int = 1
+	var userID int = 1
+	var serviceID int = 1
 	var expectResult = true
 
 	rows := sqlmock.NewRows([]string{"orderID", "userID", "serviceType", "orderCost",
@@ -62,9 +62,9 @@ func TestCheckOrderIsNotExist(t *testing.T) {
 	}
 	defer db.Close()
 
-	var orderID int64 = 1
-	var userID int64 = 1
-	var serviceID int64 = 1
+	var orderID int = 1
+	var userID int = 1
+	var serviceID int = 1
 	var expectResult = false
 
 	rows := sqlmock.NewRows([]string{"orderID", "userID", "serviceType", "orderCost",
@@ -102,9 +102,9 @@ func TestCreateOrderSuccess(t *testing.T) {
 	}
 	defer db.Close()
 
-	var orderID int64 = 1
-	var userID int64 = 1
-	var serviceID int64 = 1
+	var orderID int = 1
+	var userID int = 1
+	var serviceID int = 1
 	var sum float64 = 100
 	var comment = ""
 
@@ -143,9 +143,9 @@ func TestCreateOrderError(t *testing.T) {
 	defer db.Close()
 
 	curTime := time.Now()
-	var orderID int64 = 1
-	var userID int64 = 1
-	var serviceID int64 = 1
+	var orderID int = 1
+	var userID int = 1
+	var serviceID int = 1
 	var sum float64 = 100
 	var comment = ""
 
@@ -181,9 +181,9 @@ func TestReserveOrderSuccess(t *testing.T) {
 	}
 	defer db.Close()
 
-	var orderID int64 = 1
-	var userID int64 = 1
-	var serviceID int64 = 1
+	var orderID int = 1
+	var userID int = 1
+	var serviceID int = 1
 	curTime := time.Now()
 
 	rows := sqlmock.NewRows([]string{"orderID", "userID", "serviceType", "orderCost",
@@ -230,9 +230,9 @@ func TestReserveOrderWrongStateError(t *testing.T) {
 	}
 	defer db.Close()
 
-	var orderID int64 = 1
-	var userID int64 = 1
-	var serviceID int64 = 1
+	var orderID int = 1
+	var userID int = 1
+	var serviceID int = 1
 	curTime := time.Now()
 
 	rows := sqlmock.NewRows([]string{"orderID", "userID", "serviceType", "orderCost",
@@ -275,9 +275,9 @@ func TestFinishOrderSuccess(t *testing.T) {
 	}
 	defer db.Close()
 
-	var orderID int64 = 1
-	var userID int64 = 1
-	var serviceID int64 = 1
+	var orderID int = 1
+	var userID int = 1
+	var serviceID int = 1
 	curTime := time.Now()
 
 	rows := sqlmock.NewRows([]string{"orderID", "userID", "serviceType", "orderCost",
@@ -324,9 +324,9 @@ func TestFinishOrderWrongStateError(t *testing.T) {
 	}
 	defer db.Close()
 
-	var orderID int64 = 1
-	var userID int64 = 1
-	var serviceID int64 = 1
+	var orderID int = 1
+	var userID int = 1
+	var serviceID int = 1
 	curTime := time.Now()
 
 	rows := sqlmock.NewRows([]string{"orderID", "userID", "serviceType", "orderCost",
@@ -369,9 +369,9 @@ func TestReturnOrderSuccess(t *testing.T) {
 	}
 	defer db.Close()
 
-	var orderID int64 = 1
-	var userID int64 = 1
-	var serviceID int64 = 1
+	var orderID int = 1
+	var userID int = 1
+	var serviceID int = 1
 	var orderCost float64 = 100
 	curTime := time.Now()
 
@@ -425,9 +425,9 @@ func TestReturnOrderWrongStateError(t *testing.T) {
 	defer db.Close()
 
 	var orderCost float64 = 100
-	var orderID int64 = 1
-	var userID int64 = 1
-	var serviceID int64 = 1
+	var orderID int = 1
+	var userID int = 1
+	var serviceID int = 1
 	curTime := time.Now()
 
 	rows := sqlmock.NewRows([]string{"orderID", "userID", "serviceType", "orderCost",
@@ -470,8 +470,8 @@ func TestGetFinancialReportSuccess(t *testing.T) {
 	}
 	defer db.Close()
 
-	var month int64 = 2
-	var year int64 = 2022
+	var month int = 2
+	var year int = 2022
 
 	rows := sqlmock.NewRows([]string{"serviceType", "sum"})
 	allServicesReport := []report.FinanceReport{{1, 100}, {2, 150}}
@@ -509,8 +509,8 @@ func TestGetFinancialReportBadMonth(t *testing.T) {
 	}
 	defer db.Close()
 
-	var month int64 = 13
-	var year int64 = 2022
+	var month int = 13
+	var year int = 2022
 
 	repo := order_repo.NewOrderRepo(db)
 	controller := CreateNewOrderController(repo)
@@ -534,8 +534,8 @@ func TestGetFinancialReportBadYear(t *testing.T) {
 	}
 	defer db.Close()
 
-	var month int64 = 13
-	var year int64 = 2024
+	var month int = 13
+	var year int = 2024
 
 	repo := order_repo.NewOrderRepo(db)
 	controller := CreateNewOrderController(repo)

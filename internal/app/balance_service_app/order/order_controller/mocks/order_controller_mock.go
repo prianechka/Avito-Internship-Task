@@ -36,7 +36,7 @@ func (m *MockOrderControllerInterface) EXPECT() *MockOrderControllerInterfaceMoc
 }
 
 // CheckOrderIsExist mocks base method.
-func (m *MockOrderControllerInterface) CheckOrderIsExist(orderID, userID, serviceID int64) (bool, error) {
+func (m *MockOrderControllerInterface) CheckOrderIsExist(orderID, userID, serviceID int) (bool, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "CheckOrderIsExist", orderID, userID, serviceID)
 	ret0, _ := ret[0].(bool)
@@ -51,7 +51,7 @@ func (mr *MockOrderControllerInterfaceMockRecorder) CheckOrderIsExist(orderID, u
 }
 
 // CreateNewOrder mocks base method.
-func (m *MockOrderControllerInterface) CreateNewOrder(orderID, userID, serviceID int64, sum float64, comment string) error {
+func (m *MockOrderControllerInterface) CreateNewOrder(orderID, userID, serviceID int, sum float64, comment string) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "CreateNewOrder", orderID, userID, serviceID, sum, comment)
 	ret0, _ := ret[0].(error)
@@ -65,7 +65,7 @@ func (mr *MockOrderControllerInterfaceMockRecorder) CreateNewOrder(orderID, user
 }
 
 // FinishOrder mocks base method.
-func (m *MockOrderControllerInterface) FinishOrder(orderID, userID, serviceID int64) error {
+func (m *MockOrderControllerInterface) FinishOrder(orderID, userID, serviceID int) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "FinishOrder", orderID, userID, serviceID)
 	ret0, _ := ret[0].(error)
@@ -79,7 +79,7 @@ func (mr *MockOrderControllerInterfaceMockRecorder) FinishOrder(orderID, userID,
 }
 
 // GetFinanceReports mocks base method.
-func (m *MockOrderControllerInterface) GetFinanceReports(month, year int64) ([]report.FinanceReport, error) {
+func (m *MockOrderControllerInterface) GetFinanceReports(month, year int) ([]report.FinanceReport, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetFinanceReports", month, year)
 	ret0, _ := ret[0].([]report.FinanceReport)
@@ -94,7 +94,7 @@ func (mr *MockOrderControllerInterfaceMockRecorder) GetFinanceReports(month, yea
 }
 
 // GetOrder mocks base method.
-func (m *MockOrderControllerInterface) GetOrder(orderID, userID, serviceID int64) (order.Order, error) {
+func (m *MockOrderControllerInterface) GetOrder(orderID, userID, serviceID int) (order.Order, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetOrder", orderID, userID, serviceID)
 	ret0, _ := ret[0].(order.Order)
@@ -109,7 +109,7 @@ func (mr *MockOrderControllerInterfaceMockRecorder) GetOrder(orderID, userID, se
 }
 
 // ReserveOrder mocks base method.
-func (m *MockOrderControllerInterface) ReserveOrder(orderID, userID, serviceID int64) error {
+func (m *MockOrderControllerInterface) ReserveOrder(orderID, userID, serviceID int) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "ReserveOrder", orderID, userID, serviceID)
 	ret0, _ := ret[0].(error)
@@ -123,7 +123,7 @@ func (mr *MockOrderControllerInterfaceMockRecorder) ReserveOrder(orderID, userID
 }
 
 // ReturnOrder mocks base method.
-func (m *MockOrderControllerInterface) ReturnOrder(orderID, userID, serviceID int64) (float64, error) {
+func (m *MockOrderControllerInterface) ReturnOrder(orderID, userID, serviceID int) (float64, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "ReturnOrder", orderID, userID, serviceID)
 	ret0, _ := ret[0].(float64)

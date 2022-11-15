@@ -90,10 +90,10 @@ func TestGetUserTransactions(t *testing.T) {
 
 	curTime := time.Now()
 	var (
-		userID  int64 = 1
-		limit         = 2
-		offset        = 0
-		orderBy       = "id"
+		userID  int = 1
+		limit       = 2
+		offset      = 0
+		orderBy     = "id"
 	)
 
 	rows := sqlmock.NewRows([]string{"transactionID", "userID", "transactionType", "sum",
@@ -141,7 +141,7 @@ func TestGetTransactionByID(t *testing.T) {
 	defer db.Close()
 
 	curTime := time.Now()
-	var orderID int64 = 1
+	var orderID int = 1
 
 	rows := sqlmock.NewRows([]string{"transactionID", "userID", "transactionType", "sum",
 		"time", "actionComment", "addComment"})

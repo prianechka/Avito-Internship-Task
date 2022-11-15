@@ -25,9 +25,9 @@ import (
 // TestHandlerGetAccountBalance проверяет, что сервер правильно отвечает на запрос по количеству денег на балансе
 func TestHandlerBuyServiceSuccess(t *testing.T) {
 	var (
-		userID             int64   = 1
-		orderID            int64   = 1
-		serviceID          int64   = 1
+		userID             int     = 1
+		orderID            int     = 1
+		serviceID          int     = 1
 		sum                float64 = 200
 		balance            float64 = 400
 		comment                    = "Всё хорошо!"
@@ -208,9 +208,9 @@ func TestHandlerBuyServiceSuccess(t *testing.T) {
 // TestHandlerBuyServiceNotAccExist проверяет, что покупки не произойдёт, если аккаунта не существует, и сервер вернет 400
 func TestHandlerBuyServiceNotAccExist(t *testing.T) {
 	var (
-		userID             int64   = 1
-		orderID            int64   = 1
-		serviceID          int64   = 1
+		userID             int     = 1
+		orderID            int     = 1
+		serviceID          int     = 1
 		sum                float64 = 200
 		comment                    = "Всё хорошо!"
 		expectedStatusCode         = http.StatusUnauthorized
@@ -310,9 +310,9 @@ func TestHandlerBuyServiceNotAccExist(t *testing.T) {
 // TestHandlerBuyServiceNotEnoughMoneyErr проверяет, что покупки не произойдёт, если аккаунта не существует, и сервер вернет 400
 func TestHandlerBuyServiceNotEnoughMoneyErr(t *testing.T) {
 	var (
-		userID             int64   = 1
-		orderID            int64   = 1
-		serviceID          int64   = 1
+		userID             int     = 1
+		orderID            int     = 1
+		serviceID          int     = 1
 		sum                float64 = 400
 		balance            float64 = 200
 		comment                    = "Всё хорошо!"
@@ -419,9 +419,9 @@ func TestHandlerBuyServiceNotEnoughMoneyErr(t *testing.T) {
 // TestHandlerAcceptBuySuccess проверяет, что подтверждение покупки осуществлено корректно
 func TestHandlerAcceptBuySuccess(t *testing.T) {
 	var (
-		userID             int64   = 1
-		orderID            int64   = 1
-		serviceID          int64   = 1
+		userID             int     = 1
+		orderID            int     = 1
+		serviceID          int     = 1
 		sum                float64 = 200
 		comment                    = "Всё хорошо!"
 		expectedStatusCode         = http.StatusOK
@@ -554,10 +554,10 @@ func TestHandlerAcceptBuySuccess(t *testing.T) {
 // TestHandlerAcceptBuyError проверяет, что если заказа не существует, то вернется 404.
 func TestHandlerAcceptBuyError(t *testing.T) {
 	var (
-		userID             int64 = 1
-		orderID            int64 = 1
-		serviceID          int64 = 1
-		expectedStatusCode       = http.StatusNotFound
+		userID             int = 1
+		orderID            int = 1
+		serviceID          int = 1
+		expectedStatusCode     = http.StatusNotFound
 	)
 
 	// Подготовка БД для таблицы с аккаунтами
@@ -652,9 +652,9 @@ func TestHandlerAcceptBuyError(t *testing.T) {
 // TestHandlerAcceptBuyWrongStatusError проверяет, что если статус неверный, то вернется 403.
 func TestHandlerAcceptBuyWrongStatusError(t *testing.T) {
 	var (
-		userID             int64   = 1
-		orderID            int64   = 1
-		serviceID          int64   = 1
+		userID             int     = 1
+		orderID            int     = 1
+		serviceID          int     = 1
 		sum                float64 = 200
 		comment                    = "Всё хорошо!"
 		expectedStatusCode         = http.StatusForbidden
@@ -783,9 +783,9 @@ func TestHandlerAcceptBuyWrongStatusError(t *testing.T) {
 // TestHandlerRefuseServiceSuccess проверяет, что возврат произойдёт успешно и вернется 200.
 func TestHandlerRefuseServiceSuccess(t *testing.T) {
 	var (
-		userID             int64   = 1
-		orderID            int64   = 1
-		serviceID          int64   = 1
+		userID             int     = 1
+		orderID            int     = 1
+		serviceID          int     = 1
 		sum                float64 = 200
 		balance            float64 = 400
 		comment                    = "Всё хорошо!"
@@ -941,9 +941,9 @@ func TestHandlerRefuseServiceSuccess(t *testing.T) {
 // TestHandlerRefuseServiceWrongStatusError проверяет, что если у заказа неправильный статус, то вернётся 403.
 func TestHandlerRefuseServiceWrongStatusError(t *testing.T) {
 	var (
-		userID             int64   = 1
-		orderID            int64   = 1
-		serviceID          int64   = 1
+		userID             int     = 1
+		orderID            int     = 1
+		serviceID          int     = 1
 		sum                float64 = 200
 		comment                    = "Всё хорошо!"
 		expectedStatusCode         = http.StatusForbidden
@@ -1072,10 +1072,10 @@ func TestHandlerRefuseServiceWrongStatusError(t *testing.T) {
 // TestHandlerRefuseServiceOrderNoExistError проверяет, что если аккаунта не существует, то вернется 404.
 func TestHandlerRefuseServiceOrderNoExistError(t *testing.T) {
 	var (
-		userID             int64 = 1
-		orderID            int64 = 1
-		serviceID          int64 = 1
-		expectedStatusCode       = http.StatusNotFound
+		userID             int = 1
+		orderID            int = 1
+		serviceID          int = 1
+		expectedStatusCode     = http.StatusNotFound
 	)
 
 	// Подготовка БД для таблицы с аккаунтами

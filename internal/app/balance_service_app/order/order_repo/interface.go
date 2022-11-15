@@ -9,9 +9,9 @@ import (
 type OrderRepoInterface interface {
 	CreateOrder(order order.Order) error
 	GetAllOrders() ([]order.Order, error)
-	GetOrderByID(orderID, userID, serviceType int64) (order.Order, error)
-	GetUserOrders(userID int64) ([]order.Order, error)
-	GetServiceOrders(serviceType int64) ([]order.Order, error)
-	ChangeOrderState(orderID, userID, serviceType int64, orderState int64) error
-	GetSumOfFinishedServices(month, year int64) ([]report.FinanceReport, error)
+	GetOrderByID(orderID, userID, serviceType int) (order.Order, error)
+	GetUserOrders(userID int) ([]order.Order, error)
+	GetServiceOrders(serviceType int) ([]order.Order, error)
+	ChangeOrderState(orderID, userID, serviceType int, orderState int) error
+	GetSumOfFinishedServices(month, year int) ([]report.FinanceReport, error)
 }

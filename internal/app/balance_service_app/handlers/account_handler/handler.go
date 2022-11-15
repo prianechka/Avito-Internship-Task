@@ -155,7 +155,7 @@ func (h *AccountHandler) GetBalance(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	balance, getBalanceErr := h.manager.GetUserBalance(int64(userID))
+	balance, getBalanceErr := h.manager.GetUserBalance(int(userID))
 	switch getBalanceErr {
 	case nil:
 		models.BalanceResponse(w, balance, "OK")

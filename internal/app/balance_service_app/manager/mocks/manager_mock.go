@@ -35,7 +35,7 @@ func (m *MockManagerInterface) EXPECT() *MockManagerInterfaceMockRecorder {
 }
 
 // AcceptBuy mocks base method.
-func (m *MockManagerInterface) AcceptBuy(userID, orderID, serviceID int64) error {
+func (m *MockManagerInterface) AcceptBuy(userID, orderID, serviceID int) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "AcceptBuy", userID, orderID, serviceID)
 	ret0, _ := ret[0].(error)
@@ -49,7 +49,7 @@ func (mr *MockManagerInterfaceMockRecorder) AcceptBuy(userID, orderID, serviceID
 }
 
 // BuyService mocks base method.
-func (m *MockManagerInterface) BuyService(userID, orderID, serviceID int64, sum float64, comment string) error {
+func (m *MockManagerInterface) BuyService(userID, orderID, serviceID int, sum float64, comment string) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "BuyService", userID, orderID, serviceID, sum, comment)
 	ret0, _ := ret[0].(error)
@@ -63,7 +63,7 @@ func (mr *MockManagerInterfaceMockRecorder) BuyService(userID, orderID, serviceI
 }
 
 // GetFinanceReport mocks base method.
-func (m *MockManagerInterface) GetFinanceReport(month, year int64, url string) error {
+func (m *MockManagerInterface) GetFinanceReport(month, year int, url string) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetFinanceReport", month, year, url)
 	ret0, _ := ret[0].(error)
@@ -77,7 +77,7 @@ func (mr *MockManagerInterfaceMockRecorder) GetFinanceReport(month, year, url in
 }
 
 // GetUserBalance mocks base method.
-func (m *MockManagerInterface) GetUserBalance(userID int64) (float64, error) {
+func (m *MockManagerInterface) GetUserBalance(userID int) (float64, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetUserBalance", userID)
 	ret0, _ := ret[0].(float64)
@@ -92,7 +92,7 @@ func (mr *MockManagerInterfaceMockRecorder) GetUserBalance(userID interface{}) *
 }
 
 // GetUserReport mocks base method.
-func (m *MockManagerInterface) GetUserReport(userID int64, orderBy string, limit, offset int) ([]transaction.Transaction, error) {
+func (m *MockManagerInterface) GetUserReport(userID int, orderBy string, limit, offset int) ([]transaction.Transaction, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetUserReport", userID, orderBy, limit, offset)
 	ret0, _ := ret[0].([]transaction.Transaction)
@@ -107,7 +107,7 @@ func (mr *MockManagerInterfaceMockRecorder) GetUserReport(userID, orderBy, limit
 }
 
 // RefillBalance mocks base method.
-func (m *MockManagerInterface) RefillBalance(userID int64, sum float64, comments string) error {
+func (m *MockManagerInterface) RefillBalance(userID int, sum float64, comments string) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "RefillBalance", userID, sum, comments)
 	ret0, _ := ret[0].(error)
@@ -121,7 +121,7 @@ func (mr *MockManagerInterfaceMockRecorder) RefillBalance(userID, sum, comments 
 }
 
 // RefuseBuy mocks base method.
-func (m *MockManagerInterface) RefuseBuy(userID, orderID, serviceID int64, comment string) error {
+func (m *MockManagerInterface) RefuseBuy(userID, orderID, serviceID int, comment string) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "RefuseBuy", userID, orderID, serviceID, comment)
 	ret0, _ := ret[0].(error)
@@ -135,7 +135,7 @@ func (mr *MockManagerInterfaceMockRecorder) RefuseBuy(userID, orderID, serviceID
 }
 
 // Transfer mocks base method.
-func (m *MockManagerInterface) Transfer(srcUserID, dstUserID int64, sum float64, comment string) error {
+func (m *MockManagerInterface) Transfer(srcUserID, dstUserID int, sum float64, comment string) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Transfer", srcUserID, dstUserID, sum, comment)
 	ret0, _ := ret[0].(error)

@@ -28,7 +28,7 @@ func TestGetAccountBalance(t *testing.T) {
 
 	// Подготовка БД к тестам
 	var (
-		userID             int64   = 1
+		userID             int     = 1
 		balance            float64 = 200
 		expectedStatusCode         = http.StatusOK
 	)
@@ -131,8 +131,8 @@ func TestGetAccountBalanceBadAccount(t *testing.T) {
 
 	// Подготовка БД к тестам
 	var (
-		userID             int64 = 1
-		expectedStatusCode       = http.StatusUnauthorized
+		userID             int = 1
+		expectedStatusCode     = http.StatusUnauthorized
 	)
 
 	// Подготовка БД для таблицы с аккаунтами
@@ -220,7 +220,7 @@ func TestGetAccountBalanceBadAccount(t *testing.T) {
 // TestRefillAccountSuccess проверяет, что сервер правильно отвечает на запрос по пополнению счёта
 func TestRefillAccountSuccess(t *testing.T) {
 	var (
-		userID             int64   = 1
+		userID             int     = 1
 		sum                float64 = 200
 		comment                    = "Всё хорошо!"
 		expectedStatusCode         = http.StatusOK
@@ -349,7 +349,7 @@ func TestRefillAccountSuccess(t *testing.T) {
 // TestRefillAccountNotExistError проверяет, что если аккаунта не существует, он будет создан, и вернётся 200
 func TestRefillAccountNotExist(t *testing.T) {
 	var (
-		userID             int64   = 1
+		userID             int     = 1
 		sum                float64 = 200
 		comment                    = "Всё хорошо!"
 		expectedStatusCode         = http.StatusOK
@@ -482,8 +482,8 @@ func TestRefillAccountNotExist(t *testing.T) {
 // TestHandlerTransferSuccess проверяет, что перевод средств между двумя аккаунтами прошёл успешно и вернулось 200
 func TestHandlerTransferSuccess(t *testing.T) {
 	var (
-		srcUserID          int64   = 1
-		dstUserID          int64   = 2
+		srcUserID          int     = 1
+		dstUserID          int     = 2
 		sum                float64 = 200
 		balanceFirst       float64 = 400
 		balanceSecond      float64 = 200
@@ -641,8 +641,8 @@ func TestHandlerTransferSuccess(t *testing.T) {
 // TestHandlerTransferAccNotExistError проверяет, что если аккаунта не существует, вернется 400
 func TestHandlerTransferAccNotExistError(t *testing.T) {
 	var (
-		srcUserID          int64   = 1
-		dstUserID          int64   = 2
+		srcUserID          int     = 1
+		dstUserID          int     = 2
 		sum                float64 = 200
 		comment                    = "Всё хорошо!"
 		expectedStatusCode         = http.StatusUnauthorized
@@ -734,8 +734,8 @@ func TestHandlerTransferAccNotExistError(t *testing.T) {
 // TestHandlerTransferNotEnoughMoneyError проверяет, что если не хватает денег для перевода, вернется 400
 func TestHandlerTransferNotEnoughMoneyError(t *testing.T) {
 	var (
-		srcUserID          int64   = 1
-		dstUserID          int64   = 2
+		srcUserID          int     = 1
+		dstUserID          int     = 2
 		sum                float64 = 500
 		balanceFirst       float64 = 400
 		balanceSecond      float64 = 200

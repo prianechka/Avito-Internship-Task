@@ -34,7 +34,7 @@ func (m *MockAccountRepoInterface) EXPECT() *MockAccountRepoInterfaceMockRecorde
 }
 
 // AddNewAccount mocks base method.
-func (m *MockAccountRepoInterface) AddNewAccount(userID int64) error {
+func (m *MockAccountRepoInterface) AddNewAccount(userID int) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "AddNewAccount", userID)
 	ret0, _ := ret[0].(error)
@@ -48,7 +48,7 @@ func (mr *MockAccountRepoInterfaceMockRecorder) AddNewAccount(userID interface{}
 }
 
 // ChangeAmount mocks base method.
-func (m *MockAccountRepoInterface) ChangeAmount(userID int64, delta float64) error {
+func (m *MockAccountRepoInterface) ChangeAmount(userID int, delta float64) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "ChangeAmount", userID, delta)
 	ret0, _ := ret[0].(error)
@@ -62,7 +62,7 @@ func (mr *MockAccountRepoInterfaceMockRecorder) ChangeAmount(userID, delta inter
 }
 
 // GetCurrentAmount mocks base method.
-func (m *MockAccountRepoInterface) GetCurrentAmount(userID int64) (float64, error) {
+func (m *MockAccountRepoInterface) GetCurrentAmount(userID int) (float64, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetCurrentAmount", userID)
 	ret0, _ := ret[0].(float64)

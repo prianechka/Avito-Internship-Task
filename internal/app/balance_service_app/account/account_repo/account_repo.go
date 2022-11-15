@@ -14,7 +14,7 @@ func NewAccountRepo(conn *sql.DB) *AccountRepo {
 	return &AccountRepo{conn: conn}
 }
 
-func (repo *AccountRepo) AddNewAccount(userID int64) error {
+func (repo *AccountRepo) AddNewAccount(userID int) error {
 	repo.mutex.Lock()
 	query := MySQLAddNewAccount{}.GetString()
 	_, err := repo.conn.Exec(query, userID)
@@ -22,7 +22,7 @@ func (repo *AccountRepo) AddNewAccount(userID int64) error {
 	return err
 }
 
-func (repo *AccountRepo) GetCurrentAmount(userID int64) (amount float64, err error) {
+func (repo *AccountRepo) GetCurrentAmount(userID int) (amount float64, err error) {
 	repo.mutex.Lock()
 	query := MySQLGetCurrentAmount{}.GetString()
 	row := repo.conn.QueryRow(query, userID)
@@ -36,7 +36,7 @@ func (repo *AccountRepo) GetCurrentAmount(userID int64) (amount float64, err err
 	return amount, err
 }
 
-func (repo *AccountRepo) ChangeAmount(accountID int64, delta float64) error {
+func (repo *AccountRepo) ChangeAmount(accountID int, delta float64) error {
 	repo.mutex.Lock()
 	query := MySQLChangeAmount{}.GetString()
 	_, err := repo.conn.Exec(query, delta, accountID)

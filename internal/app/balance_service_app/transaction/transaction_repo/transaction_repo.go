@@ -53,7 +53,7 @@ func (repo *TransactionRepo) GetAllTransactions() ([]transaction.Transaction, er
 	return allTransactions, err
 }
 
-func (repo *TransactionRepo) GetUserTransactions(userID int64, orderBy string, limit, offset int) ([]transaction.Transaction, error) {
+func (repo *TransactionRepo) GetUserTransactions(userID int, orderBy string, limit, offset int) ([]transaction.Transaction, error) {
 	allTransactions := make([]transaction.Transaction, utils.EMPTY)
 
 	repo.mutex.Lock()
@@ -78,7 +78,7 @@ func (repo *TransactionRepo) GetUserTransactions(userID int64, orderBy string, l
 	return allTransactions, err
 }
 
-func (repo *TransactionRepo) GetTransactionByID(transactionID int64) (transaction.Transaction, error) {
+func (repo *TransactionRepo) GetTransactionByID(transactionID int) (transaction.Transaction, error) {
 	newTransact := transaction.Transaction{}
 
 	repo.mutex.Lock()

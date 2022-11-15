@@ -92,7 +92,7 @@ func TestGetUserOrders(t *testing.T) {
 	defer db.Close()
 
 	curTime := time.Now()
-	var userID int64 = 1
+	var userID int = 1
 
 	rows := sqlmock.NewRows([]string{"orderID", "userID", "serviceType", "orderCost",
 		"creatingTime", "comment", "orderState"})
@@ -137,7 +137,7 @@ func TestGetServiceOrders(t *testing.T) {
 	defer db.Close()
 
 	curTime := time.Now()
-	var serviceType int64 = 2
+	var serviceType int = 2
 	rows := sqlmock.NewRows([]string{"orderID", "userID", "serviceType", "orderCost",
 		"creatingTime", "comment", "orderState"})
 	expect := []order.Order{{1, 1, 2, 100, curTime, "Good", 1},
@@ -182,9 +182,9 @@ func TestGetOrderByID(t *testing.T) {
 	defer db.Close()
 
 	curTime := time.Now()
-	var orderID int64 = 1
-	var userID int64 = 1
-	var serviceType int64 = 1
+	var orderID int = 1
+	var userID int = 1
+	var serviceType int = 1
 
 	rows := sqlmock.NewRows([]string{"orderID", "userID", "serviceType", "orderCost",
 		"creatingTime", "comment", "orderState"})
@@ -224,10 +224,10 @@ func TestChangeState(t *testing.T) {
 	}
 	defer db.Close()
 
-	var orderID int64 = 1
-	var userID int64 = 1
-	var serviceType int64 = order.REGISTRATED
-	var orderState int64 = 2
+	var orderID int = 1
+	var userID int = 1
+	var serviceType int = order.REGISTRATED
+	var orderState int = 2
 
 	mock.
 		ExpectExec("UPDATE balanceApp.orders SET orderState = ").
@@ -254,8 +254,8 @@ func TestGetFinanceReport(t *testing.T) {
 	}
 	defer db.Close()
 
-	var month int64 = 2
-	var year int64 = 3
+	var month int = 2
+	var year int = 3
 
 	rows := sqlmock.NewRows([]string{"serviceType", "sum"})
 	allServicesReport := []report.FinanceReport{{1, 100}, {2, 150}}

@@ -34,7 +34,7 @@ func (m *MockAccountControllerInterface) EXPECT() *MockAccountControllerInterfac
 }
 
 // CheckAbleToBuyService mocks base method.
-func (m *MockAccountControllerInterface) CheckAbleToBuyService(userID int64, servicePrice float64) (bool, error) {
+func (m *MockAccountControllerInterface) CheckAbleToBuyService(userID int, servicePrice float64) (bool, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "CheckAbleToBuyService", userID, servicePrice)
 	ret0, _ := ret[0].(bool)
@@ -49,7 +49,7 @@ func (mr *MockAccountControllerInterfaceMockRecorder) CheckAbleToBuyService(user
 }
 
 // CheckAccountIsExist mocks base method.
-func (m *MockAccountControllerInterface) CheckAccountIsExist(userID int64) (bool, error) {
+func (m *MockAccountControllerInterface) CheckAccountIsExist(userID int) (bool, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "CheckAccountIsExist", userID)
 	ret0, _ := ret[0].(bool)
@@ -64,7 +64,7 @@ func (mr *MockAccountControllerInterfaceMockRecorder) CheckAccountIsExist(userID
 }
 
 // CheckBalance mocks base method.
-func (m *MockAccountControllerInterface) CheckBalance(userID int64) (float64, error) {
+func (m *MockAccountControllerInterface) CheckBalance(userID int) (float64, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "CheckBalance", userID)
 	ret0, _ := ret[0].(float64)
@@ -79,7 +79,7 @@ func (mr *MockAccountControllerInterfaceMockRecorder) CheckBalance(userID interf
 }
 
 // CreateNewAccount mocks base method.
-func (m *MockAccountControllerInterface) CreateNewAccount(userID int64) error {
+func (m *MockAccountControllerInterface) CreateNewAccount(userID int) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "CreateNewAccount", userID)
 	ret0, _ := ret[0].(error)
@@ -93,7 +93,7 @@ func (mr *MockAccountControllerInterfaceMockRecorder) CreateNewAccount(userID in
 }
 
 // DonateMoney mocks base method.
-func (m *MockAccountControllerInterface) DonateMoney(userID int64, sum float64) error {
+func (m *MockAccountControllerInterface) DonateMoney(userID int, sum float64) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "DonateMoney", userID, sum)
 	ret0, _ := ret[0].(error)
@@ -107,7 +107,7 @@ func (mr *MockAccountControllerInterfaceMockRecorder) DonateMoney(userID, sum in
 }
 
 // SpendMoney mocks base method.
-func (m *MockAccountControllerInterface) SpendMoney(userID int64, sum float64) error {
+func (m *MockAccountControllerInterface) SpendMoney(userID int, sum float64) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "SpendMoney", userID, sum)
 	ret0, _ := ret[0].(error)

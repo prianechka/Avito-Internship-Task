@@ -66,7 +66,7 @@ func (h *ReportHandler) GetFinanceReport(w http.ResponseWriter, r *http.Request)
 
 	fileURL := utils.FileURL
 
-	getFinanceReportError := h.manager.GetFinanceReport(int64(month), int64(year), fileURL)
+	getFinanceReportError := h.manager.GetFinanceReport(int(month), int(year), fileURL)
 	switch getFinanceReportError {
 	case nil:
 		models.FinanceReportResponse(w, utils.FileURL)
@@ -138,7 +138,7 @@ func (h *ReportHandler) GetUserReport(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	allTransactions, getReportErr := h.manager.GetUserReport(int64(userID), orderBy, limit, offset)
+	allTransactions, getReportErr := h.manager.GetUserReport(int(userID), orderBy, limit, offset)
 	switch getReportErr {
 	case nil:
 		models.UserReportResponse(w, allTransactions)

@@ -16,7 +16,7 @@ func TestAddNewAccount(t *testing.T) {
 	}
 	defer db.Close()
 
-	var newUserID int64 = 1
+	var newUserID int = 1
 
 	mock.
 		ExpectExec("INSERT INTO").
@@ -43,7 +43,7 @@ func TestGetAccountAmount(t *testing.T) {
 	}
 	defer db.Close()
 
-	var checkAccID int64 = 1
+	var checkAccID int = 1
 
 	rows := sqlmock.NewRows([]string{"amount"})
 	expect := 293.46
@@ -80,7 +80,7 @@ func TestChangeAmount(t *testing.T) {
 	}
 	defer db.Close()
 
-	var changeAccID int64 = 1
+	var changeAccID int = 1
 	var delta float64 = 345
 
 	mock.

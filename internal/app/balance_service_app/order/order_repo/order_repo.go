@@ -53,7 +53,7 @@ func (repo *OrderRepo) GetAllOrders() ([]order.Order, error) {
 	return allOrders, err
 }
 
-func (repo *OrderRepo) GetOrderByID(orderID, userID, serviceType int64) (order.Order, error) {
+func (repo *OrderRepo) GetOrderByID(orderID, userID, serviceType int) (order.Order, error) {
 	order := order.Order{}
 
 	repo.mutex.Lock()
@@ -71,7 +71,7 @@ func (repo *OrderRepo) GetOrderByID(orderID, userID, serviceType int64) (order.O
 	return order, err
 }
 
-func (repo *OrderRepo) GetUserOrders(userID int64) ([]order.Order, error) {
+func (repo *OrderRepo) GetUserOrders(userID int) ([]order.Order, error) {
 	allOrders := make([]order.Order, utils.EMPTY)
 
 	repo.mutex.Lock()
@@ -97,7 +97,7 @@ func (repo *OrderRepo) GetUserOrders(userID int64) ([]order.Order, error) {
 	return allOrders, err
 }
 
-func (repo *OrderRepo) GetServiceOrders(serviceType int64) ([]order.Order, error) {
+func (repo *OrderRepo) GetServiceOrders(serviceType int) ([]order.Order, error) {
 	allOrders := make([]order.Order, utils.EMPTY)
 
 	repo.mutex.Lock()
@@ -122,7 +122,7 @@ func (repo *OrderRepo) GetServiceOrders(serviceType int64) ([]order.Order, error
 	return allOrders, err
 }
 
-func (repo *OrderRepo) ChangeOrderState(orderID, userID, serviceType int64, orderState int64) error {
+func (repo *OrderRepo) ChangeOrderState(orderID, userID, serviceType int, orderState int) error {
 	repo.mutex.Lock()
 	query := MySQLChangeOrderState{}.GetString()
 	_, err := repo.conn.Exec(query, orderState, orderID, userID, serviceType)
@@ -130,7 +130,7 @@ func (repo *OrderRepo) ChangeOrderState(orderID, userID, serviceType int64, orde
 	return err
 }
 
-func (repo *OrderRepo) GetSumOfFinishedServices(month, year int64) ([]report.FinanceReport, error) {
+func (repo *OrderRepo) GetSumOfFinishedServices(month, year int) ([]report.FinanceReport, error) {
 	allServices := make([]report.FinanceReport, utils.EMPTY)
 
 	repo.mutex.Lock()

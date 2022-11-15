@@ -25,9 +25,9 @@ import (
 // TestHandlerGetFinanceReportSuccess показывает, что программа вернёт ссылку на отчёт при верных данных.
 func TestHandlerGetFinanceReportSuccess(t *testing.T) {
 	var (
-		year               int64 = 2022
-		month              int64 = 2
-		expectedStatusCode       = http.StatusOK
+		year               int = 2022
+		month              int = 2
+		expectedStatusCode     = http.StatusOK
 	)
 
 	// Подготовка БД для таблицы с аккаунтами
@@ -118,8 +118,8 @@ func TestHandlerGetFinanceReportSuccess(t *testing.T) {
 // TestHandlerGetUserReport показывает, что программа вернёт отчёт по пользователю при правильном вводе данных.
 func TestHandlerGetUserReport(t *testing.T) {
 	var (
-		userID             int64   = 1
-		serviceID          int64   = 1
+		userID             int     = 1
+		serviceID          int     = 1
 		sum                float64 = 100
 		balance            float64 = 100
 		comment                    = "Хорошо"

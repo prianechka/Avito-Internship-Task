@@ -19,11 +19,11 @@ func CreateNewOrderController(repo order_repo.OrderRepoInterface) *OrderControll
 	return &OrderController{mutex: sync.RWMutex{}, repo: repo}
 }
 
-func (c *OrderController) GetOrder(orderID, userID, serviceID int64) (order.Order, error) {
+func (c *OrderController) GetOrder(orderID, userID, serviceID int) (order.Order, error) {
 	return c.repo.GetOrderByID(orderID, userID, serviceID)
 }
 
-func (c *OrderController) CreateNewOrder(orderID, userID, serviceID int64, sum float64, comment string) error {
+func (c *OrderController) CreateNewOrder(orderID, userID, serviceID int, sum float64, comment string) error {
 	isExist, err := c.CheckOrderIsExist(orderID, userID, serviceID)
 	if err == nil {
 		if !isExist {
@@ -47,7 +47,7 @@ func (c *OrderController) CreateNewOrder(orderID, userID, serviceID int64, sum f
 	return err
 }
 
-func (c *OrderController) CheckOrderIsExist(orderID, userID, serviceID int64) (bool, error) {
+func (c *OrderController) CheckOrderIsExist(orderID, userID, serviceID int) (bool, error) {
 	var result bool
 
 	c.mutex.Lock()
@@ -67,7 +67,7 @@ func (c *OrderController) CheckOrderIsExist(orderID, userID, serviceID int64) (b
 	return result, err
 }
 
-func (c *OrderController) ReserveOrder(orderID, userID, serviceID int64) error {
+func (c *OrderController) ReserveOrder(orderID, userID, serviceID int) error {
 	isOrderExist, err := c.CheckOrderIsExist(orderID, userID, serviceID)
 
 	if err == nil {
@@ -87,7 +87,7 @@ func (c *OrderController) ReserveOrder(orderID, userID, serviceID int64) error {
 	return err
 }
 
-func (c *OrderController) FinishOrder(orderID, userID, serviceID int64) error {
+func (c *OrderController) FinishOrder(orderID, userID, serviceID int) error {
 	isOrderExist, err := c.CheckOrderIsExist(orderID, userID, serviceID)
 
 	if err == nil {
@@ -107,7 +107,7 @@ func (c *OrderController) FinishOrder(orderID, userID, serviceID int64) error {
 	return err
 }
 
-func (c *OrderController) ReturnOrder(orderID, userID, serviceID int64) (float64, error) {
+func (c *OrderController) ReturnOrder(orderID, userID, serviceID int) (float64, error) {
 	var sum float64
 	isOrderExist, err := c.CheckOrderIsExist(orderID, userID, serviceID)
 
@@ -131,7 +131,7 @@ func (c *OrderController) ReturnOrder(orderID, userID, serviceID int64) (float64
 	return sum, err
 }
 
-func (c *OrderController) GetFinanceReports(month, year int64) ([]report.FinanceReport, error) {
+func (c *OrderController) GetFinanceReports(month, year int) ([]report.FinanceReport, error) {
 	var report = make([]report.FinanceReport, utils.EMPTY)
 	var err error = nil
 	if month < utils.January || month > utils.December {

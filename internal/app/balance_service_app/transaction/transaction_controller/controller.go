@@ -24,13 +24,13 @@ func CreateNewTransactionController(repo transaction_repo.TransactionRepoInterfa
 	}
 }
 
-func (c *TransactionController) GetTransactionByID(transactionID int64) (transaction.Transaction, error) {
+func (c *TransactionController) GetTransactionByID(transactionID int) (transaction.Transaction, error) {
 	return c.repo.GetTransactionByID(transactionID)
 }
 
-func (c *TransactionController) AddNewRecordRefillBalance(userID int64, sum float64, comments string) error {
+func (c *TransactionController) AddNewRecordRefillBalance(userID int, sum float64, comments string) error {
 	newTransact := transaction.Transaction{
-		TransactionID:   c.transactCount,
+		TransactionID:   int(c.transactCount),
 		UserID:          userID,
 		TransactionType: transaction.Refill,
 		Sum:             sum,
@@ -45,14 +45,14 @@ func (c *TransactionController) AddNewRecordRefillBalance(userID int64, sum floa
 	return err
 }
 
-func (c *TransactionController) AddNewRecordBuyService(userID int64, sum float64, serviceID int64, comments string) error {
+func (c *TransactionController) AddNewRecordBuyService(userID int, sum float64, serviceID int, comments string) error {
 	serviceName := order.Types[serviceID]
 	if serviceName == utils.EmptyString {
 		serviceName = fmt.Sprintf("Service with id %d", serviceID)
 	}
 
 	newTransact := transaction.Transaction{
-		TransactionID:   c.transactCount,
+		TransactionID:   int(c.transactCount),
 		UserID:          userID,
 		TransactionType: transaction.Buy,
 		Sum:             sum,
@@ -69,14 +69,14 @@ func (c *TransactionController) AddNewRecordBuyService(userID int64, sum float64
 	return err
 }
 
-func (c *TransactionController) AddNewRecordReturnService(userID int64, sum float64, serviceID int64, comments string) error {
+func (c *TransactionController) AddNewRecordReturnService(userID int, sum float64, serviceID int, comments string) error {
 	serviceName := order.Types[serviceID]
 	if serviceName == utils.EmptyString {
 		serviceName = fmt.Sprintf("Service with id %d", serviceID)
 	}
 
 	newTransact := transaction.Transaction{
-		TransactionID:   c.transactCount,
+		TransactionID:   int(c.transactCount),
 		UserID:          userID,
 		TransactionType: transaction.Return,
 		Sum:             sum,
@@ -92,9 +92,9 @@ func (c *TransactionController) AddNewRecordReturnService(userID int64, sum floa
 	return err
 }
 
-func (c *TransactionController) AddNewRecordTransferTo(srcUserID, dstUserID int64, sum float64, comments string) error {
+func (c *TransactionController) AddNewRecordTransferTo(srcUserID, dstUserID int, sum float64, comments string) error {
 	newTransact := transaction.Transaction{
-		TransactionID:   c.transactCount,
+		TransactionID:   int(c.transactCount),
 		UserID:          srcUserID,
 		TransactionType: transaction.Transfer,
 		Sum:             sum,
@@ -109,9 +109,9 @@ func (c *TransactionController) AddNewRecordTransferTo(srcUserID, dstUserID int6
 	return err
 }
 
-func (c *TransactionController) AddNewRecordTransferFrom(srcUserID, dstUserID int64, sum float64, comments string) error {
+func (c *TransactionController) AddNewRecordTransferFrom(srcUserID, dstUserID int, sum float64, comments string) error {
 	newTransact := transaction.Transaction{
-		TransactionID:   c.transactCount,
+		TransactionID:   int(c.transactCount),
 		UserID:          srcUserID,
 		TransactionType: transaction.Transfer,
 		Sum:             sum,
@@ -127,7 +127,7 @@ func (c *TransactionController) AddNewRecordTransferFrom(srcUserID, dstUserID in
 	return err
 }
 
-func (c *TransactionController) GetUserTransactions(userID int64, orderBy string,
+func (c *TransactionController) GetUserTransactions(userID int, orderBy string,
 	limit, offset int) ([]transaction.Transaction, error) {
 	return c.repo.GetUserTransactions(userID, orderBy, limit, offset)
 }

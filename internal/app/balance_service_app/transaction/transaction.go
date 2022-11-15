@@ -3,9 +3,9 @@ package transaction
 import "time"
 
 type Transaction struct {
-	TransactionID   int64
-	UserID          int64
-	TransactionType int64
+	TransactionID   int
+	UserID          int
+	TransactionType int
 	Sum             float64
 	Time            time.Time
 	ActionComments  string

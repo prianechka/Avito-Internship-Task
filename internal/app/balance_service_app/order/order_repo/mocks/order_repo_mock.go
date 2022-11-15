@@ -36,7 +36,7 @@ func (m *MockOrderRepoInterface) EXPECT() *MockOrderRepoInterfaceMockRecorder {
 }
 
 // ChangeOrderState mocks base method.
-func (m *MockOrderRepoInterface) ChangeOrderState(orderID, userID, serviceType, orderState int64) error {
+func (m *MockOrderRepoInterface) ChangeOrderState(orderID, userID, serviceType, orderState int) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "ChangeOrderState", orderID, userID, serviceType, orderState)
 	ret0, _ := ret[0].(error)
@@ -79,7 +79,7 @@ func (mr *MockOrderRepoInterfaceMockRecorder) GetAllOrders() *gomock.Call {
 }
 
 // GetOrderByID mocks base method.
-func (m *MockOrderRepoInterface) GetOrderByID(orderID, userID, serviceType int64) (order.Order, error) {
+func (m *MockOrderRepoInterface) GetOrderByID(orderID, userID, serviceType int) (order.Order, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetOrderByID", orderID, userID, serviceType)
 	ret0, _ := ret[0].(order.Order)
@@ -94,7 +94,7 @@ func (mr *MockOrderRepoInterfaceMockRecorder) GetOrderByID(orderID, userID, serv
 }
 
 // GetServiceOrders mocks base method.
-func (m *MockOrderRepoInterface) GetServiceOrders(serviceType int64) ([]order.Order, error) {
+func (m *MockOrderRepoInterface) GetServiceOrders(serviceType int) ([]order.Order, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetServiceOrders", serviceType)
 	ret0, _ := ret[0].([]order.Order)
@@ -109,7 +109,7 @@ func (mr *MockOrderRepoInterfaceMockRecorder) GetServiceOrders(serviceType inter
 }
 
 // GetSumOfFinishedServices mocks base method.
-func (m *MockOrderRepoInterface) GetSumOfFinishedServices(month, year int64) ([]report.FinanceReport, error) {
+func (m *MockOrderRepoInterface) GetSumOfFinishedServices(month, year int) ([]report.FinanceReport, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetSumOfFinishedServices", month, year)
 	ret0, _ := ret[0].([]report.FinanceReport)
@@ -124,7 +124,7 @@ func (mr *MockOrderRepoInterfaceMockRecorder) GetSumOfFinishedServices(month, ye
 }
 
 // GetUserOrders mocks base method.
-func (m *MockOrderRepoInterface) GetUserOrders(userID int64) ([]order.Order, error) {
+func (m *MockOrderRepoInterface) GetUserOrders(userID int) ([]order.Order, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetUserOrders", userID)
 	ret0, _ := ret[0].([]order.Order)

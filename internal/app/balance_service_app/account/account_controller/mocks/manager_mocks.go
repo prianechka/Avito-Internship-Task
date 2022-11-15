@@ -34,7 +34,7 @@ func (m *MockAccountManagerInterface) EXPECT() *MockAccountManagerInterfaceMockR
 }
 
 // CheckAbleToBuyService mocks base method.
-func (m *MockAccountManagerInterface) CheckAbleToBuyService(userID int64, servicePrice float64) (bool, error) {
+func (m *MockAccountManagerInterface) CheckAbleToBuyService(userID int, servicePrice float64) (bool, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "CheckAbleToBuyService", userID, servicePrice)
 	ret0, _ := ret[0].(bool)
@@ -49,7 +49,7 @@ func (mr *MockAccountManagerInterfaceMockRecorder) CheckAbleToBuyService(userID,
 }
 
 // CheckAccountIsExist mocks base method.
-func (m *MockAccountManagerInterface) CheckAccountIsExist(userID int64) (bool, error) {
+func (m *MockAccountManagerInterface) CheckAccountIsExist(userID int) (bool, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "CheckAccountIsExist", userID)
 	ret0, _ := ret[0].(bool)
@@ -64,7 +64,7 @@ func (mr *MockAccountManagerInterfaceMockRecorder) CheckAccountIsExist(userID in
 }
 
 // CheckBalance mocks base method.
-func (m *MockAccountManagerInterface) CheckBalance(userID int64) (float64, error) {
+func (m *MockAccountManagerInterface) CheckBalance(userID int) (float64, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "CheckBalance", userID)
 	ret0, _ := ret[0].(float64)
@@ -79,7 +79,7 @@ func (mr *MockAccountManagerInterfaceMockRecorder) CheckBalance(userID interface
 }
 
 // CreateNewAccount mocks base method.
-func (m *MockAccountManagerInterface) CreateNewAccount(userID int64) error {
+func (m *MockAccountManagerInterface) CreateNewAccount(userID int) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "CreateNewAccount", userID)
 	ret0, _ := ret[0].(error)
@@ -93,7 +93,7 @@ func (mr *MockAccountManagerInterfaceMockRecorder) CreateNewAccount(userID inter
 }
 
 // DonateMoney mocks base method.
-func (m *MockAccountManagerInterface) DonateMoney(userID int64, sum float64) error {
+func (m *MockAccountManagerInterface) DonateMoney(userID int, sum float64) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "DonateMoney", userID, sum)
 	ret0, _ := ret[0].(error)
@@ -107,7 +107,7 @@ func (mr *MockAccountManagerInterfaceMockRecorder) DonateMoney(userID, sum inter
 }
 
 // SpendMoney mocks base method.
-func (m *MockAccountManagerInterface) SpendMoney(userID int64, sum float64) error {
+func (m *MockAccountManagerInterface) SpendMoney(userID int, sum float64) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "SpendMoney", userID, sum)
 	ret0, _ := ret[0].(error)

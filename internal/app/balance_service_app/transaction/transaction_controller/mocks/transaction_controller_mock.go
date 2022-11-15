@@ -35,7 +35,7 @@ func (m *MockTransactionControllerInterface) EXPECT() *MockTransactionController
 }
 
 // AddNewRecordBuyService mocks base method.
-func (m *MockTransactionControllerInterface) AddNewRecordBuyService(userID int64, sum float64, serviceID int64, comments string) error {
+func (m *MockTransactionControllerInterface) AddNewRecordBuyService(userID int, sum float64, serviceID int, comments string) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "AddNewRecordBuyService", userID, sum, serviceID, comments)
 	ret0, _ := ret[0].(error)
@@ -49,7 +49,7 @@ func (mr *MockTransactionControllerInterfaceMockRecorder) AddNewRecordBuyService
 }
 
 // AddNewRecordRefillBalance mocks base method.
-func (m *MockTransactionControllerInterface) AddNewRecordRefillBalance(userID int64, sum float64, comments string) error {
+func (m *MockTransactionControllerInterface) AddNewRecordRefillBalance(userID int, sum float64, comments string) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "AddNewRecordRefillBalance", userID, sum, comments)
 	ret0, _ := ret[0].(error)
@@ -63,7 +63,7 @@ func (mr *MockTransactionControllerInterfaceMockRecorder) AddNewRecordRefillBala
 }
 
 // AddNewRecordReturnService mocks base method.
-func (m *MockTransactionControllerInterface) AddNewRecordReturnService(userID int64, sum float64, serviceID int64, comments string) error {
+func (m *MockTransactionControllerInterface) AddNewRecordReturnService(userID int, sum float64, serviceID int, comments string) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "AddNewRecordReturnService", userID, sum, serviceID, comments)
 	ret0, _ := ret[0].(error)
@@ -77,7 +77,7 @@ func (mr *MockTransactionControllerInterfaceMockRecorder) AddNewRecordReturnServ
 }
 
 // AddNewRecordTransferFrom mocks base method.
-func (m *MockTransactionControllerInterface) AddNewRecordTransferFrom(srcUserID, dstUserID int64, sum float64, comments string) error {
+func (m *MockTransactionControllerInterface) AddNewRecordTransferFrom(srcUserID, dstUserID int, sum float64, comments string) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "AddNewRecordTransferFrom", srcUserID, dstUserID, sum, comments)
 	ret0, _ := ret[0].(error)
@@ -91,7 +91,7 @@ func (mr *MockTransactionControllerInterfaceMockRecorder) AddNewRecordTransferFr
 }
 
 // AddNewRecordTransferTo mocks base method.
-func (m *MockTransactionControllerInterface) AddNewRecordTransferTo(srcUserID, dstUserID int64, sum float64, comments string) error {
+func (m *MockTransactionControllerInterface) AddNewRecordTransferTo(srcUserID, dstUserID int, sum float64, comments string) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "AddNewRecordTransferTo", srcUserID, dstUserID, sum, comments)
 	ret0, _ := ret[0].(error)
@@ -105,7 +105,7 @@ func (mr *MockTransactionControllerInterfaceMockRecorder) AddNewRecordTransferTo
 }
 
 // GetTransactionByID mocks base method.
-func (m *MockTransactionControllerInterface) GetTransactionByID(transactionID int64) (transaction.Transaction, error) {
+func (m *MockTransactionControllerInterface) GetTransactionByID(transactionID int) (transaction.Transaction, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetTransactionByID", transactionID)
 	ret0, _ := ret[0].(transaction.Transaction)
@@ -120,7 +120,7 @@ func (mr *MockTransactionControllerInterfaceMockRecorder) GetTransactionByID(tra
 }
 
 // GetUserTransactions mocks base method.
-func (m *MockTransactionControllerInterface) GetUserTransactions(userID int64, orderBy string, limit, offset int) ([]transaction.Transaction, error) {
+func (m *MockTransactionControllerInterface) GetUserTransactions(userID int, orderBy string, limit, offset int) ([]transaction.Transaction, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetUserTransactions", userID, orderBy, limit, offset)
 	ret0, _ := ret[0].([]transaction.Transaction)

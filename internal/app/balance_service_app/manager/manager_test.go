@@ -20,7 +20,7 @@ import (
 // TestRefillMoney проверяет, что сценарий пополнения денег отрабатывает без ошибок
 func TestRefillMoneyWithExistsAccount(t *testing.T) {
 	var (
-		userID  int64   = 1
+		userID  int     = 1
 		sum     float64 = 200
 		comment         = "Всё хорошо!"
 	)
@@ -136,7 +136,7 @@ func TestRefillMoneyWithExistsAccount(t *testing.T) {
 // TestRefillMoney проверяет, что сценарий пополнения денег отрабатывает без ошибок, если аккаунта не существует
 func TestRefillMoneyWithNoExistsAccount(t *testing.T) {
 	var (
-		userID  int64   = 1
+		userID  int     = 1
 		sum     float64 = 200
 		comment         = "Всё хорошо!"
 	)
@@ -255,9 +255,9 @@ func TestRefillMoneyWithNoExistsAccount(t *testing.T) {
 // TestBuyServiceSuccess проверяет, что сценарий покупки сервиса проходит успешно.
 func TestBuyServiceSuccess(t *testing.T) {
 	var (
-		userID    int64   = 1
-		orderID   int64   = 1
-		serviceID int64   = 1
+		userID    int     = 1
+		orderID   int     = 1
+		serviceID int     = 1
 		sum       float64 = 200
 		balance   float64 = 400
 		comment           = "Всё хорошо!"
@@ -429,9 +429,9 @@ func TestBuyServiceSuccess(t *testing.T) {
 // TestBuyServiceNotAccExist проверяет, что покупки не произойдёт, если аккаунта не существует.
 func TestBuyServiceNotAccExist(t *testing.T) {
 	var (
-		userID    int64   = 1
-		orderID   int64   = 1
-		serviceID int64   = 1
+		userID    int     = 1
+		orderID   int     = 1
+		serviceID int     = 1
 		sum       float64 = 200
 		comment           = "Всё хорошо!"
 	)
@@ -503,9 +503,9 @@ func TestBuyServiceNotAccExist(t *testing.T) {
 // TestBuyServiceNotEnoughMoneyErr проверяет, что покупка не произойдёт, если баланс пользователя меньше нужного.
 func TestBuyServiceNotEnoughMoneyErr(t *testing.T) {
 	var (
-		userID    int64   = 1
-		orderID   int64   = 1
-		serviceID int64   = 1
+		userID    int     = 1
+		orderID   int     = 1
+		serviceID int     = 1
 		sum       float64 = 400
 		balance   float64 = 200
 		comment           = "Всё хорошо!"
@@ -604,9 +604,9 @@ func TestBuyServiceNotEnoughMoneyErr(t *testing.T) {
 // TestAcceptBuySuccess проверяет, что подтверждение покупки услуги проходит успешно.
 func TestAcceptBuySuccess(t *testing.T) {
 	var (
-		userID    int64   = 1
-		orderID   int64   = 1
-		serviceID int64   = 1
+		userID    int     = 1
+		orderID   int     = 1
+		serviceID int     = 1
 		sum       float64 = 200
 		comment           = "Всё хорошо!"
 	)
@@ -724,7 +724,7 @@ func TestAcceptBuySuccess(t *testing.T) {
 		return
 	}
 
-	if !reflect.DeepEqual(curOrder.OrderState, int64(order.FINISHED)) {
+	if !reflect.DeepEqual(curOrder.OrderState, int(order.FINISHED)) {
 		t.Errorf("results not match, want %v, have %v", order.FINISHED, curOrder.OrderState)
 		return
 	}
@@ -733,9 +733,9 @@ func TestAcceptBuySuccess(t *testing.T) {
 // TestAcceptBuyError проверяет, что если заказа не существует, то не получится подтвердить покупку.
 func TestAcceptBuyError(t *testing.T) {
 	var (
-		userID    int64 = 1
-		orderID   int64 = 1
-		serviceID int64 = 1
+		userID    int = 1
+		orderID   int = 1
+		serviceID int = 1
 	)
 
 	// Подготовка БД для таблицы с аккаунтами
@@ -805,9 +805,9 @@ func TestAcceptBuyError(t *testing.T) {
 // TestAcceptBuyWrongStatusError проверяет, что если статус неверный, подтвердить покупку не получится.
 func TestAcceptBuyWrongStatusError(t *testing.T) {
 	var (
-		userID    int64   = 1
-		orderID   int64   = 1
-		serviceID int64   = 1
+		userID    int     = 1
+		orderID   int     = 1
+		serviceID int     = 1
 		sum       float64 = 200
 		comment           = "Всё хорошо!"
 	)
@@ -930,9 +930,9 @@ func TestAcceptBuyWrongStatusError(t *testing.T) {
 // TestRefuseServiceSuccess проверяет, что возврат произойдёт успешно.
 func TestRefuseServiceSuccess(t *testing.T) {
 	var (
-		userID    int64   = 1
-		orderID   int64   = 1
-		serviceID int64   = 1
+		userID    int     = 1
+		orderID   int     = 1
+		serviceID int     = 1
 		sum       float64 = 200
 		balance   float64 = 400
 		comment           = "Всё хорошо!"
@@ -1081,9 +1081,9 @@ func TestRefuseServiceSuccess(t *testing.T) {
 // TestRefuseServiceWrongStatusError проверяет, что возврат не произойдёт, если статус неправильный.
 func TestRefuseServiceWrongStatusError(t *testing.T) {
 	var (
-		userID    int64   = 1
-		orderID   int64   = 1
-		serviceID int64   = 1
+		userID    int     = 1
+		orderID   int     = 1
+		serviceID int     = 1
 		sum       float64 = 200
 		balance   float64 = 400
 		comment           = "Всё хорошо!"
@@ -1206,10 +1206,10 @@ func TestRefuseServiceWrongStatusError(t *testing.T) {
 // TestRefuseServiceOrderNoExistError проверяет, что возврат не произойдёт, если заказа не существует.
 func TestRefuseServiceOrderNoExistError(t *testing.T) {
 	var (
-		userID    int64 = 1
-		orderID   int64 = 1
-		serviceID int64 = 1
-		comment         = "Всё хорошо!"
+		userID    int = 1
+		orderID   int = 1
+		serviceID int = 1
+		comment       = "Всё хорошо!"
 	)
 
 	// Подготовка БД для таблицы с аккаунтами
@@ -1279,7 +1279,7 @@ func TestRefuseServiceOrderNoExistError(t *testing.T) {
 // TestGetBalance проверяет, что проверка баланса работает корректно.
 func TestGetBalance(t *testing.T) {
 	var (
-		userID  int64   = 1
+		userID  int     = 1
 		balance float64 = 200
 	)
 
@@ -1362,8 +1362,8 @@ func TestGetBalance(t *testing.T) {
 // TestTransferSuccess проверяет, что перевод средств между двумя аккаунтами прошёл успешно
 func TestTransferSuccess(t *testing.T) {
 	var (
-		srcUserID     int64   = 1
-		dstUserID     int64   = 2
+		srcUserID     int     = 1
+		dstUserID     int     = 2
 		sum           float64 = 200
 		balanceFirst  float64 = 400
 		balanceSecond float64 = 200
@@ -1538,8 +1538,8 @@ func TestTransferSuccess(t *testing.T) {
 // TestTransferAccNotExistError проверяет, что если передан несуществующий аккаунт, то вернётся ошибка
 func TestTransferAccNotExistError(t *testing.T) {
 	var (
-		srcUserID int64   = 1
-		dstUserID int64   = 2
+		srcUserID int     = 1
+		dstUserID int     = 2
 		sum       float64 = 200
 		comment           = "Всё хорошо!"
 	)
@@ -1611,8 +1611,8 @@ func TestTransferAccNotExistError(t *testing.T) {
 // TestTransferNotEnoughMoneyError проверяет, что если недостаточно денег, то перевод не произойдёт
 func TestTransferNotEnoughMoneyError(t *testing.T) {
 	var (
-		srcUserID     int64   = 1
-		dstUserID     int64   = 2
+		srcUserID     int     = 1
+		dstUserID     int     = 2
 		sum           float64 = 500
 		balanceFirst  float64 = 400
 		balanceSecond float64 = 200
@@ -1743,9 +1743,9 @@ func TestTransferNotEnoughMoneyError(t *testing.T) {
 // TestGetFinanceReportSuccess показывает, что программа способна сделать финансовый отчёт по заданию.
 func TestGetFinanceReportSuccess(t *testing.T) {
 	var (
-		year  int64 = 2022
-		month int64 = 2
-		url         = "report.csv"
+		year  int = 2022
+		month int = 2
+		url       = "report.csv"
 	)
 
 	// Подготовка БД для таблицы с аккаунтами
@@ -1818,8 +1818,8 @@ func TestGetFinanceReportSuccess(t *testing.T) {
 // TestGetUserReportSuccess показывает, что программа способна сделать отчёт по пользователю.
 func TestGetUserReportSuccess(t *testing.T) {
 	var (
-		userID    int64   = 1
-		serviceID int64   = 1
+		userID    int     = 1
+		serviceID int     = 1
 		sum       float64 = 100
 		balance           = 100
 		comment           = "Хорошо"
