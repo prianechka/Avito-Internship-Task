@@ -5,9 +5,7 @@ import (
 	"Avito-Internship-Task/internal/app/balance_service_app/account/account_repo"
 	"Avito-Internship-Task/internal/app/balance_service_app/handlers/account_handler/request_models"
 	"Avito-Internship-Task/internal/app/balance_service_app/handlers/models"
-	"Avito-Internship-Task/internal/app/balance_service_app/manager"
-	oc "Avito-Internship-Task/internal/app/balance_service_app/order/order_controller"
-	"Avito-Internship-Task/internal/app/balance_service_app/order/order_repo"
+	"Avito-Internship-Task/internal/app/balance_service_app/managers/account_manager"
 	"Avito-Internship-Task/internal/app/balance_service_app/transaction"
 	tc "Avito-Internship-Task/internal/app/balance_service_app/transaction/transaction_controller"
 	"Avito-Internship-Task/internal/app/balance_service_app/transaction/transaction_repo"
@@ -60,23 +58,13 @@ func TestGetAccountBalance(t *testing.T) {
 	}
 	defer transactionDB.Close()
 
-	// Подготовка БД для таблицы с заказами
-	orderDB, orderMock, createOrderErr := sqlmock.New()
-	if createOrderErr != nil {
-		t.Fatalf("cant create mock: %s", createOrderErr)
-	}
-	defer orderDB.Close()
-
 	accountRepo := account_repo.NewAccountRepo(accountDB)
 	accountController := ac.CreateNewAccountController(accountRepo)
-
-	orderRepo := order_repo.NewOrderRepo(orderDB)
-	orderController := oc.CreateNewOrderController(orderRepo)
 
 	transactionRepo := transaction_repo.NewTransactionRepo(transactionDB)
 	transactionController := tc.CreateNewTransactionController(transactionRepo)
 
-	serverManager := manager.CreateNewManager(accountController, orderController, transactionController)
+	serverManager := account_manager.CreateNewAccountManager(accountController, transactionController)
 
 	accountHandler := CreateAccountHandler(serverManager)
 	ts := httptest.NewServer(http.HandlerFunc(accountHandler.GetBalance))
@@ -107,11 +95,6 @@ func TestGetAccountBalance(t *testing.T) {
 
 	if expectationAccErr := accountMock.ExpectationsWereMet(); expectationAccErr != nil {
 		t.Errorf("there were unfulfilled expectations: %s", expectationAccErr)
-		return
-	}
-
-	if expectationOrderErr := orderMock.ExpectationsWereMet(); expectationOrderErr != nil {
-		t.Errorf("there were unfulfilled expectations: %s", expectationOrderErr)
 		return
 	}
 
@@ -155,23 +138,13 @@ func TestGetAccountBalanceBadAccount(t *testing.T) {
 	}
 	defer transactionDB.Close()
 
-	// Подготовка БД для таблицы с заказами
-	orderDB, orderMock, createOrderErr := sqlmock.New()
-	if createOrderErr != nil {
-		t.Fatalf("cant create mock: %s", createOrderErr)
-	}
-	defer orderDB.Close()
-
 	accountRepo := account_repo.NewAccountRepo(accountDB)
 	accountController := ac.CreateNewAccountController(accountRepo)
-
-	orderRepo := order_repo.NewOrderRepo(orderDB)
-	orderController := oc.CreateNewOrderController(orderRepo)
 
 	transactionRepo := transaction_repo.NewTransactionRepo(transactionDB)
 	transactionController := tc.CreateNewTransactionController(transactionRepo)
 
-	serverManager := manager.CreateNewManager(accountController, orderController, transactionController)
+	serverManager := account_manager.CreateNewAccountManager(accountController, transactionController)
 
 	accountHandler := CreateAccountHandler(serverManager)
 	ts := httptest.NewServer(http.HandlerFunc(accountHandler.GetBalance))
@@ -203,11 +176,6 @@ func TestGetAccountBalanceBadAccount(t *testing.T) {
 
 	if expectationAccErr := accountMock.ExpectationsWereMet(); expectationAccErr != nil {
 		t.Errorf("there were unfulfilled expectations: %s", expectationAccErr)
-		return
-	}
-
-	if expectationOrderErr := orderMock.ExpectationsWereMet(); expectationOrderErr != nil {
-		t.Errorf("there were unfulfilled expectations: %s", expectationOrderErr)
 		return
 	}
 
@@ -270,24 +238,14 @@ func TestRefillAccountSuccess(t *testing.T) {
 			newTransaction.Sum, sqlmock.AnyArg(), newTransaction.ActionComments, newTransaction.AddComments).
 		WillReturnResult(sqlmock.NewResult(1, 1))
 
-	// Подготовка БД для таблицы с заказами
-	orderDB, orderMock, createOrderErr := sqlmock.New()
-	if createOrderErr != nil {
-		t.Fatalf("cant create mock: %s", createOrderErr)
-	}
-	defer orderDB.Close()
-
 	// Создание объектов
 	accountRepo := account_repo.NewAccountRepo(accountDB)
 	accountController := ac.CreateNewAccountController(accountRepo)
 
-	orderRepo := order_repo.NewOrderRepo(orderDB)
-	orderController := oc.CreateNewOrderController(orderRepo)
-
 	transactionRepo := transaction_repo.NewTransactionRepo(transactionDB)
 	transactionController := tc.CreateNewTransactionController(transactionRepo)
 
-	serverManager := manager.CreateNewManager(accountController, orderController, transactionController)
+	serverManager := account_manager.CreateNewAccountManager(accountController, transactionController)
 
 	accountHandler := CreateAccountHandler(serverManager)
 	ts := httptest.NewServer(http.HandlerFunc(accountHandler.RefillBalance))
@@ -327,11 +285,6 @@ func TestRefillAccountSuccess(t *testing.T) {
 
 	if expectationAccErr := accountMock.ExpectationsWereMet(); expectationAccErr != nil {
 		t.Errorf("there were unfulfilled expectations: %s", expectationAccErr)
-		return
-	}
-
-	if expectationOrderErr := orderMock.ExpectationsWereMet(); expectationOrderErr != nil {
-		t.Errorf("there were unfulfilled expectations: %s", expectationOrderErr)
 		return
 	}
 
@@ -403,24 +356,14 @@ func TestRefillAccountNotExist(t *testing.T) {
 			newTransaction.Sum, sqlmock.AnyArg(), newTransaction.ActionComments, newTransaction.AddComments).
 		WillReturnResult(sqlmock.NewResult(1, 1))
 
-	// Подготовка БД для таблицы с заказами
-	orderDB, orderMock, createOrderErr := sqlmock.New()
-	if createOrderErr != nil {
-		t.Fatalf("cant create mock: %s", createOrderErr)
-	}
-	defer orderDB.Close()
-
 	// Создание объектов
 	accountRepo := account_repo.NewAccountRepo(accountDB)
 	accountController := ac.CreateNewAccountController(accountRepo)
 
-	orderRepo := order_repo.NewOrderRepo(orderDB)
-	orderController := oc.CreateNewOrderController(orderRepo)
-
 	transactionRepo := transaction_repo.NewTransactionRepo(transactionDB)
 	transactionController := tc.CreateNewTransactionController(transactionRepo)
 
-	serverManager := manager.CreateNewManager(accountController, orderController, transactionController)
+	serverManager := account_manager.CreateNewAccountManager(accountController, transactionController)
 
 	accountHandler := CreateAccountHandler(serverManager)
 	ts := httptest.NewServer(http.HandlerFunc(accountHandler.RefillBalance))
@@ -460,11 +403,6 @@ func TestRefillAccountNotExist(t *testing.T) {
 
 	if expectationAccErr := accountMock.ExpectationsWereMet(); expectationAccErr != nil {
 		t.Errorf("there were unfulfilled expectations: %s", expectationAccErr)
-		return
-	}
-
-	if expectationOrderErr := orderMock.ExpectationsWereMet(); expectationOrderErr != nil {
-		t.Errorf("there were unfulfilled expectations: %s", expectationOrderErr)
 		return
 	}
 
@@ -574,24 +512,14 @@ func TestHandlerTransferSuccess(t *testing.T) {
 			newTransaction1.Sum, sqlmock.AnyArg(), newTransaction1.ActionComments, newTransaction1.AddComments).
 		WillReturnResult(sqlmock.NewResult(1, 1))
 
-	// Подготовка БД для таблицы с заказами
-	orderDB, orderMock, createOrderErr := sqlmock.New()
-	if createOrderErr != nil {
-		t.Fatalf("cant create mock: %s", createOrderErr)
-	}
-	defer orderDB.Close()
-
 	// Создание объектов
 	accountRepo := account_repo.NewAccountRepo(accountDB)
 	accountController := ac.CreateNewAccountController(accountRepo)
 
-	orderRepo := order_repo.NewOrderRepo(orderDB)
-	orderController := oc.CreateNewOrderController(orderRepo)
-
 	transactionRepo := transaction_repo.NewTransactionRepo(transactionDB)
 	transactionController := tc.CreateNewTransactionController(transactionRepo)
 
-	serverManager := manager.CreateNewManager(accountController, orderController, transactionController)
+	serverManager := account_manager.CreateNewAccountManager(accountController, transactionController)
 
 	accountHandler := CreateAccountHandler(serverManager)
 	ts := httptest.NewServer(http.HandlerFunc(accountHandler.Transfer))
@@ -624,11 +552,6 @@ func TestHandlerTransferSuccess(t *testing.T) {
 
 	if expectationAccErr := accountMock.ExpectationsWereMet(); expectationAccErr != nil {
 		t.Errorf("there were unfulfilled expectations: %s", expectationAccErr)
-		return
-	}
-
-	if expectationOrderErr := orderMock.ExpectationsWereMet(); expectationOrderErr != nil {
-		t.Errorf("there were unfulfilled expectations: %s", expectationOrderErr)
 		return
 	}
 
@@ -667,24 +590,14 @@ func TestHandlerTransferAccNotExistError(t *testing.T) {
 	}
 	defer transactionDB.Close()
 
-	// Подготовка БД для таблицы с заказами
-	orderDB, orderMock, createOrderErr := sqlmock.New()
-	if createOrderErr != nil {
-		t.Fatalf("cant create mock: %s", createOrderErr)
-	}
-	defer orderDB.Close()
-
 	// Создание объектов
 	accountRepo := account_repo.NewAccountRepo(accountDB)
 	accountController := ac.CreateNewAccountController(accountRepo)
 
-	orderRepo := order_repo.NewOrderRepo(orderDB)
-	orderController := oc.CreateNewOrderController(orderRepo)
-
 	transactionRepo := transaction_repo.NewTransactionRepo(transactionDB)
 	transactionController := tc.CreateNewTransactionController(transactionRepo)
 
-	serverManager := manager.CreateNewManager(accountController, orderController, transactionController)
+	serverManager := account_manager.CreateNewAccountManager(accountController, transactionController)
 
 	accountHandler := CreateAccountHandler(serverManager)
 	ts := httptest.NewServer(http.HandlerFunc(accountHandler.Transfer))
@@ -717,11 +630,6 @@ func TestHandlerTransferAccNotExistError(t *testing.T) {
 
 	if expectationAccErr := accountMock.ExpectationsWereMet(); expectationAccErr != nil {
 		t.Errorf("there were unfulfilled expectations: %s", expectationAccErr)
-		return
-	}
-
-	if expectationOrderErr := orderMock.ExpectationsWereMet(); expectationOrderErr != nil {
-		t.Errorf("there were unfulfilled expectations: %s", expectationOrderErr)
 		return
 	}
 
@@ -780,24 +688,14 @@ func TestHandlerTransferNotEnoughMoneyError(t *testing.T) {
 	}
 	defer transactionDB.Close()
 
-	// Подготовка БД для таблицы с заказами
-	orderDB, orderMock, createOrderErr := sqlmock.New()
-	if createOrderErr != nil {
-		t.Fatalf("cant create mock: %s", createOrderErr)
-	}
-	defer orderDB.Close()
-
 	// Создание объектов
 	accountRepo := account_repo.NewAccountRepo(accountDB)
 	accountController := ac.CreateNewAccountController(accountRepo)
 
-	orderRepo := order_repo.NewOrderRepo(orderDB)
-	orderController := oc.CreateNewOrderController(orderRepo)
-
 	transactionRepo := transaction_repo.NewTransactionRepo(transactionDB)
 	transactionController := tc.CreateNewTransactionController(transactionRepo)
 
-	serverManager := manager.CreateNewManager(accountController, orderController, transactionController)
+	serverManager := account_manager.CreateNewAccountManager(accountController, transactionController)
 
 	accountHandler := CreateAccountHandler(serverManager)
 	ts := httptest.NewServer(http.HandlerFunc(accountHandler.Transfer))
@@ -830,11 +728,6 @@ func TestHandlerTransferNotEnoughMoneyError(t *testing.T) {
 
 	if expectationAccErr := accountMock.ExpectationsWereMet(); expectationAccErr != nil {
 		t.Errorf("there were unfulfilled expectations: %s", expectationAccErr)
-		return
-	}
-
-	if expectationOrderErr := orderMock.ExpectationsWereMet(); expectationOrderErr != nil {
-		t.Errorf("there were unfulfilled expectations: %s", expectationOrderErr)
 		return
 	}
 

@@ -4,7 +4,7 @@ import (
 	ac "Avito-Internship-Task/internal/app/balance_service_app/account/account_controller"
 	"Avito-Internship-Task/internal/app/balance_service_app/handlers/models"
 	"Avito-Internship-Task/internal/app/balance_service_app/handlers/service_handler/request_models"
-	"Avito-Internship-Task/internal/app/balance_service_app/manager"
+	"Avito-Internship-Task/internal/app/balance_service_app/managers/order_manager"
 	oc "Avito-Internship-Task/internal/app/balance_service_app/order/order_controller"
 	"encoding/json"
 	"fmt"
@@ -15,10 +15,10 @@ import (
 
 type ServiceHandler struct {
 	logger  *logrus.Entry
-	manager manager.ManagerInterface
+	manager order_manager.OrderManagerInterface
 }
 
-func CreateServiceHandler(man manager.ManagerInterface) *ServiceHandler {
+func CreateServiceHandler(man order_manager.OrderManagerInterface) *ServiceHandler {
 	contextLogger := logrus.WithFields(logrus.Fields{})
 	logrus.SetReportCaller(false)
 	logrus.SetFormatter(&logrus.TextFormatter{PadLevelText: false, DisableLevelTruncation: false})

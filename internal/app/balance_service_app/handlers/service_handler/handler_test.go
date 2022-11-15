@@ -5,7 +5,7 @@ import (
 	"Avito-Internship-Task/internal/app/balance_service_app/account/account_repo"
 	"Avito-Internship-Task/internal/app/balance_service_app/handlers/models"
 	"Avito-Internship-Task/internal/app/balance_service_app/handlers/service_handler/request_models"
-	"Avito-Internship-Task/internal/app/balance_service_app/manager"
+	"Avito-Internship-Task/internal/app/balance_service_app/managers/order_manager"
 	"Avito-Internship-Task/internal/app/balance_service_app/order"
 	oc "Avito-Internship-Task/internal/app/balance_service_app/order/order_controller"
 	"Avito-Internship-Task/internal/app/balance_service_app/order/order_repo"
@@ -150,7 +150,7 @@ func TestHandlerBuyServiceSuccess(t *testing.T) {
 	transactionRepo := transaction_repo.NewTransactionRepo(transactionDB)
 	transactionController := tc.CreateNewTransactionController(transactionRepo)
 
-	serverManager := manager.CreateNewManager(accountController, orderController, transactionController)
+	serverManager := order_manager.CreateNewOrderManager(accountController, orderController, transactionController)
 
 	serviceHandler := CreateServiceHandler(serverManager)
 	ts := httptest.NewServer(http.HandlerFunc(serviceHandler.BuyService))
@@ -252,7 +252,7 @@ func TestHandlerBuyServiceNotAccExist(t *testing.T) {
 	transactionRepo := transaction_repo.NewTransactionRepo(transactionDB)
 	transactionController := tc.CreateNewTransactionController(transactionRepo)
 
-	serverManager := manager.CreateNewManager(accountController, orderController, transactionController)
+	serverManager := order_manager.CreateNewOrderManager(accountController, orderController, transactionController)
 
 	serviceHandler := CreateServiceHandler(serverManager)
 	ts := httptest.NewServer(http.HandlerFunc(serviceHandler.BuyService))
@@ -361,7 +361,7 @@ func TestHandlerBuyServiceNotEnoughMoneyErr(t *testing.T) {
 	transactionRepo := transaction_repo.NewTransactionRepo(transactionDB)
 	transactionController := tc.CreateNewTransactionController(transactionRepo)
 
-	serverManager := manager.CreateNewManager(accountController, orderController, transactionController)
+	serverManager := order_manager.CreateNewOrderManager(accountController, orderController, transactionController)
 
 	serviceHandler := CreateServiceHandler(serverManager)
 	ts := httptest.NewServer(http.HandlerFunc(serviceHandler.BuyService))
@@ -498,7 +498,7 @@ func TestHandlerAcceptBuySuccess(t *testing.T) {
 	transactionRepo := transaction_repo.NewTransactionRepo(transactionDB)
 	transactionController := tc.CreateNewTransactionController(transactionRepo)
 
-	serverManager := manager.CreateNewManager(accountController, orderController, transactionController)
+	serverManager := order_manager.CreateNewOrderManager(accountController, orderController, transactionController)
 
 	serviceHandler := CreateServiceHandler(serverManager)
 	ts := httptest.NewServer(http.HandlerFunc(serviceHandler.AcceptService))
@@ -596,7 +596,7 @@ func TestHandlerAcceptBuyError(t *testing.T) {
 	transactionRepo := transaction_repo.NewTransactionRepo(transactionDB)
 	transactionController := tc.CreateNewTransactionController(transactionRepo)
 
-	serverManager := manager.CreateNewManager(accountController, orderController, transactionController)
+	serverManager := order_manager.CreateNewOrderManager(accountController, orderController, transactionController)
 
 	serviceHandler := CreateServiceHandler(serverManager)
 	ts := httptest.NewServer(http.HandlerFunc(serviceHandler.AcceptService))
@@ -727,7 +727,7 @@ func TestHandlerAcceptBuyWrongStatusError(t *testing.T) {
 	transactionRepo := transaction_repo.NewTransactionRepo(transactionDB)
 	transactionController := tc.CreateNewTransactionController(transactionRepo)
 
-	serverManager := manager.CreateNewManager(accountController, orderController, transactionController)
+	serverManager := order_manager.CreateNewOrderManager(accountController, orderController, transactionController)
 
 	serviceHandler := CreateServiceHandler(serverManager)
 	ts := httptest.NewServer(http.HandlerFunc(serviceHandler.AcceptService))
@@ -885,7 +885,7 @@ func TestHandlerRefuseServiceSuccess(t *testing.T) {
 	transactionRepo := transaction_repo.NewTransactionRepo(transactionDB)
 	transactionController := tc.CreateNewTransactionController(transactionRepo)
 
-	serverManager := manager.CreateNewManager(accountController, orderController, transactionController)
+	serverManager := order_manager.CreateNewOrderManager(accountController, orderController, transactionController)
 
 	serviceHandler := CreateServiceHandler(serverManager)
 	ts := httptest.NewServer(http.HandlerFunc(serviceHandler.RefuseService))
@@ -1016,7 +1016,7 @@ func TestHandlerRefuseServiceWrongStatusError(t *testing.T) {
 	transactionRepo := transaction_repo.NewTransactionRepo(transactionDB)
 	transactionController := tc.CreateNewTransactionController(transactionRepo)
 
-	serverManager := manager.CreateNewManager(accountController, orderController, transactionController)
+	serverManager := order_manager.CreateNewOrderManager(accountController, orderController, transactionController)
 
 	serviceHandler := CreateServiceHandler(serverManager)
 	ts := httptest.NewServer(http.HandlerFunc(serviceHandler.RefuseService))
@@ -1114,7 +1114,7 @@ func TestHandlerRefuseServiceOrderNoExistError(t *testing.T) {
 	transactionRepo := transaction_repo.NewTransactionRepo(transactionDB)
 	transactionController := tc.CreateNewTransactionController(transactionRepo)
 
-	serverManager := manager.CreateNewManager(accountController, orderController, transactionController)
+	serverManager := order_manager.CreateNewOrderManager(accountController, orderController, transactionController)
 
 	serviceHandler := CreateServiceHandler(serverManager)
 	ts := httptest.NewServer(http.HandlerFunc(serviceHandler.RefuseService))

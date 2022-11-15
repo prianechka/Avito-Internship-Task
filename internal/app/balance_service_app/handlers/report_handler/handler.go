@@ -3,7 +3,7 @@ package report_handler
 import (
 	ac "Avito-Internship-Task/internal/app/balance_service_app/account/account_controller"
 	"Avito-Internship-Task/internal/app/balance_service_app/handlers/models"
-	"Avito-Internship-Task/internal/app/balance_service_app/manager"
+	"Avito-Internship-Task/internal/app/balance_service_app/managers/report_manager"
 	"Avito-Internship-Task/internal/app/balance_service_app/order/order_controller"
 	"Avito-Internship-Task/internal/pkg/utils"
 	"fmt"
@@ -14,10 +14,10 @@ import (
 
 type ReportHandler struct {
 	logger  *logrus.Entry
-	manager manager.ManagerInterface
+	manager report_manager.ReportManagerInterface
 }
 
-func CreateReportHandler(man manager.ManagerInterface) *ReportHandler {
+func CreateReportHandler(man report_manager.ReportManagerInterface) *ReportHandler {
 	contextLogger := logrus.WithFields(logrus.Fields{})
 	logrus.SetReportCaller(false)
 	logrus.SetFormatter(&logrus.TextFormatter{PadLevelText: false, DisableLevelTruncation: false})

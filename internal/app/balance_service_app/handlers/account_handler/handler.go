@@ -4,7 +4,7 @@ import (
 	ac "Avito-Internship-Task/internal/app/balance_service_app/account/account_controller"
 	"Avito-Internship-Task/internal/app/balance_service_app/handlers/account_handler/request_models"
 	"Avito-Internship-Task/internal/app/balance_service_app/handlers/models"
-	"Avito-Internship-Task/internal/app/balance_service_app/manager"
+	"Avito-Internship-Task/internal/app/balance_service_app/managers/account_manager"
 	"encoding/json"
 	"fmt"
 	"github.com/sirupsen/logrus"
@@ -15,10 +15,10 @@ import (
 
 type AccountHandler struct {
 	logger  *logrus.Entry
-	manager manager.ManagerInterface
+	manager account_manager.AccountManagerInterface
 }
 
-func CreateAccountHandler(newManager manager.ManagerInterface) *AccountHandler {
+func CreateAccountHandler(newManager account_manager.AccountManagerInterface) *AccountHandler {
 	contextLogger := logrus.WithFields(logrus.Fields{})
 	logrus.SetReportCaller(false)
 	logrus.SetFormatter(&logrus.TextFormatter{PadLevelText: false, DisableLevelTruncation: false})

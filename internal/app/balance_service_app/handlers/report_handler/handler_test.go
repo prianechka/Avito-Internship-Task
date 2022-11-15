@@ -4,7 +4,7 @@ import (
 	ac "Avito-Internship-Task/internal/app/balance_service_app/account/account_controller"
 	"Avito-Internship-Task/internal/app/balance_service_app/account/account_repo"
 	"Avito-Internship-Task/internal/app/balance_service_app/handlers/models"
-	"Avito-Internship-Task/internal/app/balance_service_app/manager"
+	"Avito-Internship-Task/internal/app/balance_service_app/managers/report_manager"
 	"Avito-Internship-Task/internal/app/balance_service_app/order"
 	oc "Avito-Internship-Task/internal/app/balance_service_app/order/order_controller"
 	"Avito-Internship-Task/internal/app/balance_service_app/order/order_repo"
@@ -70,7 +70,7 @@ func TestHandlerGetFinanceReportSuccess(t *testing.T) {
 	transactionRepo := transaction_repo.NewTransactionRepo(transactionDB)
 	transactionController := tc.CreateNewTransactionController(transactionRepo)
 
-	testManager := manager.CreateNewManager(accountController, orderController, transactionController)
+	testManager := report_manager.CreateNewReportManager(accountController, orderController, transactionController)
 	handler := CreateReportHandler(testManager)
 
 	ts := httptest.NewServer(http.HandlerFunc(handler.GetFinanceReport))
@@ -196,7 +196,7 @@ func TestHandlerGetUserReport(t *testing.T) {
 	transactionRepo := transaction_repo.NewTransactionRepo(transactionDB)
 	transactionController := tc.CreateNewTransactionController(transactionRepo)
 
-	testManager := manager.CreateNewManager(accountController, orderController, transactionController)
+	testManager := report_manager.CreateNewReportManager(accountController, orderController, transactionController)
 	handler := CreateReportHandler(testManager)
 
 	ts := httptest.NewServer(http.HandlerFunc(handler.GetUserReport))

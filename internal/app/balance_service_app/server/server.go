@@ -8,7 +8,9 @@ import (
 	"Avito-Internship-Task/internal/app/balance_service_app/handlers/account_handler"
 	"Avito-Internship-Task/internal/app/balance_service_app/handlers/report_handler"
 	"Avito-Internship-Task/internal/app/balance_service_app/handlers/service_handler"
-	"Avito-Internship-Task/internal/app/balance_service_app/manager"
+	"Avito-Internship-Task/internal/app/balance_service_app/managers/account_manager"
+	"Avito-Internship-Task/internal/app/balance_service_app/managers/order_manager"
+	"Avito-Internship-Task/internal/app/balance_service_app/managers/report_manager"
 	"Avito-Internship-Task/internal/app/balance_service_app/middleware"
 	oc "Avito-Internship-Task/internal/app/balance_service_app/order/order_controller"
 	"Avito-Internship-Task/internal/app/balance_service_app/order/order_repo"
@@ -53,11 +55,13 @@ func (s *Server) Start() error {
 	transactionRepo := transaction_repo.NewTransactionRepo(transactionDB)
 	transactionController := tc.CreateNewTransactionController(transactionRepo)
 
-	serverManager := manager.CreateNewManager(accountController, orderController, transactionController)
+	accountManager := account_manager.CreateNewAccountManager(accountController, transactionController)
+	orderManager := order_manager.CreateNewOrderManager(accountController, orderController, transactionController)
+	reportManager := report_manager.CreateNewReportManager(accountController, orderController, transactionController)
 
-	accountHandler := account_handler.CreateAccountHandler(serverManager)
-	serviceHandler := service_handler.CreateServiceHandler(serverManager)
-	reportHandler := report_handler.CreateReportHandler(serverManager)
+	accountHandler := account_handler.CreateAccountHandler(accountManager)
+	serviceHandler := service_handler.CreateServiceHandler(orderManager)
+	reportHandler := report_handler.CreateReportHandler(reportManager)
 
 	router.PathPrefix("/swagger/").Handler(httpSwagger.WrapHandler)
 
